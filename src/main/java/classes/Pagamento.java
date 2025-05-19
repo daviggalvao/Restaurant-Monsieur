@@ -26,13 +26,13 @@ public class Pagamento{
 
     public boolean ehPix(){
         if(!this.tipo.equalsIgnoreCase("Pix"))return false;
-        this.preco = this.preco*0.9;
-        return true
+        this.preco *= 0.9;
+        return true;
     }
 
     public void parcelamento(int num){
         for(int i=1; i<=num; i++){
-            this.preco += this.preco*0.01
+            this.preco += this.preco*0.01;
         }
     }
 }
