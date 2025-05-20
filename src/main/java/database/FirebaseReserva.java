@@ -1,20 +1,31 @@
-import com.google.firebase.database.*;
-
-import classes.Reserva;
-
-import java.util.concurrent.CompletableFuture;
-import java.util.ArrayList;
-import java.util.List;
 package database;
 
+import classes.Reserva;
+import com.google.firebase.database.*;
+
 public class FirebaseReserva{
-    private final DatabaseReference reservasRef;
+    private final DatabaseReference reservaRef;
 
     public FirebaseReserva(){
-        this.reservasRef = FirebaseManager.getDatabase().getReference("reservas");
+        this.reservaRef = FirebaseManager.getDatabase().getReference("reservas");
     }
     
-    public void criar(Reserva reserva){
+    public void criarReserva(Reserva reserva,DatabaseReference.CompletionListener listener){
+        String id = reservaRef.push().getKey();
+        reserva.setId(id);
+        reservaRef.child(id).setValue(reserva,listener);
+    }
 
+    public void deletarReserva(Reserva reserva, DatabaseReference.CompletionListener listener){
+        reservaRef.child(reserva.getId()).removeValue(listener);
+    }
+
+    public void lerReserva(Reserva reserva, ValueEventListener listener){
+        reservaRef.child(reserva.getId()).addListenerForSingleValueEvent(listener);
+    }
+
+    public void lerReservaPorCliente(String cliente, ValueEventListener listener){
+        reservaRef.orderByChild("cliente/nome").equalTo(cliente)
+        .addListenerForSingleValueEvent(listener);
     }
 }
