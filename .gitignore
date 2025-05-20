@@ -2,3 +2,4 @@
 .target/
 .serviceAccountKey.json
 .vscode
+.idea

@@ -5,6 +5,7 @@ import com.google.firebase.database.*;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+package database;
 
 public class FirebaseManager {
     private static FirebaseDatabase database;
