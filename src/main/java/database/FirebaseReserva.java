@@ -20,8 +20,8 @@ public class FirebaseReserva{
         reservaRef.child(reserva.getId()).removeValue(listener);
     }
 
-    public void lerReserva(Reserva reserva, ValueEventListener listener){
-        reservaRef.child(reserva.getId()).addListenerForSingleValueEvent(listener);
+    public void lerReserva(String reservaID, ValueEventListener listener){
+        reservaRef.child(reservaID).addListenerForSingleValueEvent(listener);
     }
 
     public void lerReservaPorCliente(String cliente, ValueEventListener listener){

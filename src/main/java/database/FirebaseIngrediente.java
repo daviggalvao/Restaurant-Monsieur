@@ -21,8 +21,8 @@ public class FirebaseIngrediente{
         ingredienteRef.child(ingrediente.getId()).removeValue(listener);
     }
 
-    public void lerIngrediente(Ingrediente ingrediente, ValueEventListener listener){
-        ingredienteRef.child(ingrediente.getId()).addListenerForSingleValueEvent(listener);
+    public void lerIngrediente(String ingredienteID, ValueEventListener listener){
+        ingredienteRef.child(inngredienteID).addListenerForSingleValueEvent(listener);
     }
 
     public void lerTodosIngredientes(ValueEventListener listener){
