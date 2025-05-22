@@ -2,6 +2,7 @@ package classes;
 
 import java.time.LocalDate;
 import java.time.DayOfWeek;
+import classes.Pagamento;
 
     public class Reserva{
         private String id;
@@ -26,10 +27,10 @@ import java.time.DayOfWeek;
         public String getId(){return this.id;}
         public String getData(){return this.data;}
         public String getHorario(){return this.horario;}
-        public String getChofer(){return this.chofer;}
+        public boolean getChofer(){return this.chofer;}
         public Cliente getCliente(){return this.cliente;}
-        public String getQuantidadePessoas(){return this.qtdPessoas;}
-        public String getPagamento(){return this.pagamento;}
+        public int getQuantidadePessoas(){return this.qtdPessoas;}
+        public String getPagamento(){return this.pagamento.getTipo();}
 
         public void setId(String id){this.id = id;}
         public void setData(String data){this.data = data;}
@@ -41,17 +42,21 @@ import java.time.DayOfWeek;
 
         public boolean ehDiaSemana(){
             int dia,mes,ano;
-            String[] Partes = this.data.split("/")
+            String[] Partes = this.data.split("/");
             dia = Integer.parseInt(Partes[0]);
             mes = Integer.parseInt(Partes[1]);
             ano = Integer.parseInt(Partes[2]);
             LocalDate data = LocalDate.of(ano,mes,dia);
-            data.getDayOfWeek().getValue() >=6 ? return true : return false;
+            DayOfWeek diaSemana = data.getDayOfWeek();
+            return diaSemana.getValue() >=1 && diaSemana.getValue() <=5;
         }
 
         public void ehMuitaGente(){
-            this.qtdPessoas >= 10 ? this.pagamento.setPreco(this.qtdPessoas) 
-            : this.pagamento.setPreco(this.qtdPessoas*2);
+            if(this.qtdPessoas >= 10){
+                this.pagamento.setPreco(this.qtdPessoas);
+            }else{ 
+                this.pagamento.setPreco(this.qtdPessoas*2);
+            }
         }
 
         public boolean querChofer(){

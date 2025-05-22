@@ -49,7 +49,7 @@ public class Pedido {
     }
 
     public float calcularPrecoTotal(){
-        float valorTotal = 0.0;
+        float valorTotal = 0.0f;
         for(int i=0;i<this.pratos.size();i++){
             valorTotal += (this.pratos.get(i).getPreco()*this.quantidades.get(i));
         }

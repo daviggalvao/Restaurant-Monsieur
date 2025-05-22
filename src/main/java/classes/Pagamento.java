@@ -1,5 +1,6 @@
 package classes;
 
+
 public class Pagamento{
     private float preco;
     private String nome;
