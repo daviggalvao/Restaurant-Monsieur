@@ -1,7 +1,8 @@
+package database;
+
 import classes.Ingrediente;
 import classes.Prato;
 import com.google.firebase.database.*;
-package database;
 
 public class FirebasePrato{
     private final DatabaseReference pratoRef;

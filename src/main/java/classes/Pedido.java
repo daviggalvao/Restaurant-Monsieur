@@ -1,5 +1,6 @@
-import java.util.ArrayList;
 package classes;
+
+import java.util.ArrayList;
 
 public class Pedido {
     private Pagamento pagamento;
@@ -8,12 +9,12 @@ public class Pedido {
     private Cliente consumidor;
     private int frete;
 
-    public Pedido(
+    public Pedido(){
         this.pratos = new ArrayList<>();
         this.quantidades = new ArrayList<>();
-    ){}
+    }
 
-    public Pedido(Pagamento pagamento,ArrayList<Prato> pratos,ArrayList<int> quantidades,
+    public Pedido(Pagamento pagamento,ArrayList<Prato> pratos,ArrayList<Integer> quantidades,
     Cliente consumidor){
         this.pagamento = pagamento;
         this.pratos = pratos;
@@ -33,26 +34,31 @@ public class Pedido {
     public void setQuantidades(ArrayList<Integer> quantidades){this.quantidades = quantidades;}
     public void setConsumidor(Cliente consumidor){this.consumidor = consumidor;}
     
-    private void calcularFrete(){
+    public void calcularFrete(){
         if(cliente.getEndereco().equalsIgnoreCase("Centro")){
             this.frete = 10;
-        }else if(cliente.getEndereco().equalsIgnoreCase("Zona Leste")){
+        }else if(consumidor.getEndereco().equalsIgnoreCase("Zona Leste")){
             this.frete = 15;
-        }else if(cliente.getEndereco().equalsIgnoreCase("Zona Sul")){
+        }else if(consumidor.getEndereco().equalsIgnoreCase("Zona Sul")){
             this.frete = 20;
-        }else if(cliente.getEndereco().equalsIgnoreCase("Zona Norte")){
+        }else if(consumidor.getEndereco().equalsIgnoreCase("Zona Norte")){
             this.frete = 25;
-        }else if(cliente.getEndereco().equalsIgnoreCase("Zona Oeste")){
+        }else if(consumidor.getEndereco().equalsIgnoreCase("Zona Oeste")){
             this.frete = 30;
         }
     }
 
     public float calcularPrecoTotal(){
-        float valorTotal;
-        for(int i=0;i < this.pratos.size();i++){
-            valorTotal += (this.pratos[i]*this.quantidades[i]);
+        float valorTotal = 0.0;
+        for(int i=0;i<this.pratos.size();i++){
+            valorTotal += (this.pratos.get(i).getPreco()*this.quantidades.get(i));
         }
-        valorTotal += this.calcularFrete();
+        this.calcularFrete();
+        valorTotal += this.frete;
         return valorTotal;
+    }
+
+    public void fidelidade(Cliente cliente){
+        
     }
 }

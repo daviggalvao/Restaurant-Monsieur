@@ -1,6 +1,7 @@
+package database;
+
 import classes.Reserva;
 import com.google.firebase.database.*;
-package database;
 
 public class FirebaseReserva{
     private final DatabaseReference reservaRef;
