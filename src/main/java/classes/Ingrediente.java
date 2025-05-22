@@ -26,6 +26,17 @@ public class Ingrediente {
     public void setQuantidade(int quantidade) {this.quantidade = quantidade;}
     public void setValidade(String validade) {this.validade = validade;}
 
-    void previsaoEstoque(){}
-    void compoePrato(Prato prato){}
+    boolean precisaRepor(int quantidadeMinima){
+        return this.quantidade < quantidadeMinima;
+    }
+    boolean encomendaIngrediente(ContaBancariaJose conta, int quantidade){
+        float precoEncomenda = quantidade * this.preco;
+        if(conta.getSaldo() > precoEncomenda){
+            conta.setSaida(conta.getSaida() + precoEncomenda);
+            conta.setSaldo(conta.getSaldo() - precoEncomenda);
+            this.quantidade += quantidade;
+            return true;
+        }
+        return false;
+    }
 }

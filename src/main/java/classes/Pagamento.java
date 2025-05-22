@@ -27,7 +27,7 @@ public class Pagamento{
 
     public boolean ehPix(){
         if(!this.tipo.equalsIgnoreCase("Pix"))return false;
-        this.preco *= 0.9;
+        this.preco *= 0.9f;
         return true;
     }
 

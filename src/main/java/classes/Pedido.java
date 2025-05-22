@@ -35,7 +35,7 @@ public class Pedido {
     public void setConsumidor(Cliente consumidor){this.consumidor = consumidor;}
     
     public void calcularFrete(){
-        if(cliente.getEndereco().equalsIgnoreCase("Centro")){
+        if(consumidor.getEndereco().equalsIgnoreCase("Centro")){
             this.frete = 10;
         }else if(consumidor.getEndereco().equalsIgnoreCase("Zona Leste")){
             this.frete = 15;
