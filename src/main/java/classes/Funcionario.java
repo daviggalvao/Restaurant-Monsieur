@@ -3,7 +3,7 @@ package classes;
 import java.time.LocalDate;
 
 public class Funcionario extends Cliente {
-    private static int id = 1;
+    private static String id;
     private int idade;
     private FuncionarioCargo cargo;
     private float salario;
@@ -17,15 +17,15 @@ public class Funcionario extends Cliente {
         this.dataContrato = dataContrato;
     }
 
-    public int getId() {return id;}
+    public String getId() {return id;}
     public int getIdade() {return idade;}
-    public String getCargo() {return cargo;}
+    public FuncionarioCargo getCargo() {return cargo;}
     public float getSalario() {return salario;}
     public String getDataContrato() {return dataContrato;}  
 
-    public void setId(int id) {this.id = id;}
+    public void setId(String id) {this.id = id;}
     public void setIdade(int idade) {this.idade = idade;}
-    public void setCargo(String cargo) {this.cargo = cargo;}
+    public void setCargo(FuncionarioCargo cargo) {this.cargo = cargo;}
     public void setSalario(float salario) {this.salario = salario;}
     public void setDataContrato() {this.dataContrato = LocalDate.now().toString();}
     

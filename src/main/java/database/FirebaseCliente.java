@@ -2,8 +2,7 @@ package database;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-
-import classes.Reserva;
+import classes.Cliente;
 
 public class FirebaseCliente{
     private final DatabaseReference clienteRef;

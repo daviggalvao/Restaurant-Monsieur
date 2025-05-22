@@ -1,8 +1,8 @@
 package database;
 
-import classes.Ingrediente;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import classes.Prato;
-import com.google.firebase.database.*;
 
 public class FirebasePrato{
     private final DatabaseReference pratoRef;

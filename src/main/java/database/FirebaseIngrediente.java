@@ -1,8 +1,8 @@
 package database;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 import classes.Ingrediente;
-import classes.Prato;
-import com.google.firebase.database.*;
 
 public class FirebaseIngrediente{
     private final DatabaseReference ingredienteRef;
@@ -22,7 +22,7 @@ public class FirebaseIngrediente{
     }
 
     public void lerIngrediente(String ingredienteID, ValueEventListener listener){
-        ingredienteRef.child(inngredienteID).addListenerForSingleValueEvent(listener);
+        ingredienteRef.child(ingredienteID).addListenerForSingleValueEvent(listener);
     }
 
     public void lerTodosIngredientes(ValueEventListener listener){

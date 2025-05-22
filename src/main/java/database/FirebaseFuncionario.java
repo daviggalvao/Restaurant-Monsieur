@@ -1,9 +1,13 @@
 package database;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import classes.Funcionario;
+
 public class FirebaseFuncionario{
     private final DatabaseReference funcionarioRef;
 
-    public FirebaseCliente(){
+    public FirebaseFuncionario(){
         this.funcionarioRef = FirebaseManager.getDatabase().getReference("funcionario");
     }
     
@@ -21,5 +25,4 @@ public class FirebaseFuncionario{
         funcionarioRef.child(funcionarioID).addListenerForSingleValueEvent(listener);
     }
 
-    
 }
