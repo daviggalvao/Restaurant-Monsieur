@@ -28,6 +28,7 @@ public class Cliente {
     public void setEndereco(String endereco) {this.endereco = endereco;}
     public void setNome(String nome) {this.nome = nome;}
     public void setId(String id) {this.id = id;}
+    public void setFidelidade(int fidelidade) {this.fidelidade = fidelidade;}
 
     public boolean ehAniversario(){
         int dia,mes,ano;

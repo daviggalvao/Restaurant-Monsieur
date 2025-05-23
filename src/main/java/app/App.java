@@ -6,8 +6,7 @@ public class App{
     {
         String Roberto = "Roberto";
         String pix = "pix";
-        float ola = 10.0f;
-        Pagamento hello = new Pagamento(ola,Roberto,pix,10);
-        System.out.println("hello.getNome(): " + hello.getTipo());
+        Pagamento hello = new Pagamento(10.f,Roberto,pix,10);
+        System.out.println("hello.getNome(): " + hello.getPreco());
     }
 }

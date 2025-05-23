@@ -59,6 +59,16 @@ public class Pedido {
     }
 
     public void fidelidade(Cliente cliente){
-        
+        int quantidadePedido = cliente.getFidelidade();
+        float preco = this.pagamento.getPreco();
+        float descontoTotal = 0.0f;
+
+        for(int i=1;i<=quantidadePedido;i++){
+            preco -= (preco*0.05f);
+        }
+
+        if(this.frete == 0){this.calcularFrete();}
+        float valorTotal = preco + this.frete;
+        this.pagamento.setPreco(valorTotal);
     }
 }

@@ -33,7 +33,7 @@ public class Pagamento{
 
     public void parcelamento(int num){
         for(int i=1; i<=num; i++){
-            this.preco += this.preco*0.01;
+            this.preco += this.preco*0.01f;
         }
     }
 }
