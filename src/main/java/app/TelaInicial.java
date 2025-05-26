@@ -6,6 +6,7 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -14,6 +15,8 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+
+import javax.swing.*;
 
 public class TelaInicial {
     private Stage stage;
@@ -40,6 +43,7 @@ public class TelaInicial {
         Label title = new Label(titleText);
         title.setTextFill(Color.web(cortexto));
         title.setFont(playfairFont);
+        title.setAlignment(Pos.CENTER);
 
         // Descrição
         Label desc = new Label(descText);
@@ -47,6 +51,7 @@ public class TelaInicial {
         desc.setWrapText(true);
         desc.setMaxWidth(200);
         desc.setFont(interfont);
+        desc.setAlignment(Pos.CENTER);
 
         VBox vbox = new VBox(10, iconStack, title, desc);
         vbox.setAlignment(Pos.CENTER);
@@ -106,12 +111,12 @@ public class TelaInicial {
     }
 
     public void mostrar() {
-        Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 82);
-        Font playfairFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 56);
-        Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"),30);
-        Font interfont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"),20);
-        Font interfont3 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"),15);
-        Font interfont4 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"),12);
+        Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
+        Font playfairFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 46);
+        Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 24);
+        Font interfont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 16);
+        Font interfont3 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 14);
+        Font interfont4 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12);
 
         Label nomeRest = new Label("Restaurant");
         nomeRest.setFont(playfairFont);
@@ -131,44 +136,84 @@ public class TelaInicial {
         inforest2.setStyle("-fx-text-fill: black;");
         inforest2.setFont(interfont2);
 
-        VBox infos = new VBox();
+        VBox infos = new VBox(5);
         infos.setAlignment(Pos.CENTER);
-        infos.setSpacing(20);
         infos.getChildren().addAll(inforest1, inforest2);
-        VBox.setMargin(infos,  new Insets(50,0,0,0));
+        VBox.setMargin(infos, new Insets(15, 0, 10, 0));
 
-        VBox blocoMonsieur = new VBox();
+        VBox blocoMonsieur = new VBox(5);
         blocoMonsieur.setAlignment(Pos.CENTER);
         blocoMonsieur.getChildren().addAll(nomeRest2, sublinhado);
 
-        VBox vbox1 = new VBox(-15, nomeRest, blocoMonsieur,infos);
+        VBox vbox1 = new VBox(0, nomeRest, blocoMonsieur,infos);
         vbox1.setAlignment(Pos.CENTER);
-        vbox1.setMargin(nomeRest, new Insets(-100,0,0,0));
+        VBox.setMargin(nomeRest, new Insets(0, 0, -10, 0)); // Ajuste fino para aproximar "Restaurant" e "Monsieur-José"
+        VBox.setMargin(blocoMonsieur, new Insets(-10, 0, 0, 0)); // A
 
         VBox card1 = createCard("📅", "Reservas", "Gerenciar Pedidos de Reserva", "#E4E9F0","#660018");
         VBox card2 = createCard("🚚", "Delivery", "Gerenciar Pedidos de Delivery", "#E4E9F0","black");
         VBox card3 = createCard("\uD83D\uDDC2", "Serviços", "Gerenciar Serviços de Caixa", "#E4E9F0","#FFC300");
         HBox cardBox = new HBox(20, card1, card2, card3);
         cardBox.setAlignment(Pos.CENTER);
-        cardBox.setPadding(new Insets(50));
+        cardBox.setPadding(new Insets(20,50,50,50));
 
-        Label desc1 = new Label("© 2024 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
+        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfont3);
         Label desc2 = new Label("Projetado para a excelência culinária francesa");
         desc2.setFont(interfont4);
-        VBox descricao = new VBox(10, desc1, desc2);
+        VBox descricao = new VBox(5, desc1, desc2);
         descricao.setAlignment(Pos.CENTER);
+        VBox.setMargin(descricao, new Insets(20, 0, 20, 0));
 
         VBox root = new VBox(10, vbox1, cardBox,descricao);
         root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(20));
+        VBox.setVgrow(vbox1, Priority.ALWAYS);
+        VBox.setVgrow(cardBox, Priority.ALWAYS);
+        VBox.setVgrow(descricao, Priority.ALWAYS);
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER); // Centraliza o GridPane na cena
         grid.getColumnConstraints().add(new ColumnConstraints(1000));
         grid.add(root, 0, 0);
+        grid.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
 
-        Scene scene = new Scene(grid);
+        ScrollPane scrollPane = new ScrollPane(grid);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+
+
+        Scene scene = new Scene(scrollPane);
+
+        scene.widthProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.doubleValue() < 1000) {
+                nomeRest.setFont(Font.font(playfairFont.getFamily(), 52));
+                nomeRest2.setFont(Font.font(playfairFont2.getFamily(), 36));
+                inforest1.setFont(Font.font(interfont1.getFamily(), 18));
+                inforest2.setFont(Font.font(interfont2.getFamily(), 14));
+
+                card1.setPrefSize(250, 200);
+                card2.setPrefSize(250, 200);
+                card3.setPrefSize(250, 200);
+                cardBox.setSpacing(10);
+
+            } else {
+                nomeRest.setFont(playfairFont);
+                nomeRest2.setFont(playfairFont2);
+                inforest1.setFont(interfont1);
+                inforest2.setFont(interfont2);
+
+                card1.setPrefSize(300, 250);
+                card2.setPrefSize(300, 250);
+                card3.setPrefSize(300, 250);
+                cardBox.setSpacing(20);
+            }
+        });
+
         stage.setScene(scene);
+        stage.setMinWidth(800);
+        stage.setMinHeight(600);
         stage.setMaximized(true);
         stage.show();
     }
