@@ -1,4 +1,4 @@
-package app;
+/* package app;
 
 import javafx.scene.*;
 import javafx.scene.control.Label;
@@ -23,3 +23,4 @@ public class TelaServicos extends TelaInicial{
         VBox card1 = createCard("A", "Reservas", "Gerenciar Pedidos de Reserva", "#E4E9F0","#660018");
     }
 }
+*/

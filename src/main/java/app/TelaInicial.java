@@ -5,6 +5,7 @@ import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
@@ -18,9 +19,96 @@ import javafx.util.Duration;
 
 public class TelaInicial {
     private Stage stage;
+    private boolean emFrances = false;
+    private WebView webView;
+    private String txtNomeRest = "Restaurant";
+    private String txtNomeRest2 = "Monsieur-José";
+    private String txtInfo1 = "Sistema de Gestão Profissional";
+    private String txtInfo2 = "Gerencie suas reservas e entregas com elegância e simplicidade";
+    private String txtDesc1 = "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante";
+    private String txtDesc2 = "Projetado para a excelência culinária francesa";
+
+    private String txtCard1Title = "Reservas";
+    private String txtCard1Desc = "Gerenciar Pedidos de Reserva";
+    private String txtCard2Title = "Delivery";
+    private String txtCard2Desc = "Gerenciar Pedidos de Delivery";
+    private String txtCard3Title = "Serviços";
+    private String txtCard3Desc = "Gerenciar Serviços de Caixa";
+
+    private Label nomeRest, nomeRest2, inforest1, inforest2, desc1, desc2;
+    private VBox card1, card2, card3;
 
     public TelaInicial(Stage stage) {
         this.stage = stage;
+    }
+
+    private void traduzirParaFrances(Button botaoTraduzir){
+        if (!emFrances) {
+            // Traduz para francês
+            txtNomeRest = "Restaurant";
+            txtNomeRest2 = "Monsieur-José";
+            txtInfo1 = "Système de gestion professionnelle";
+            txtInfo2 = "Gérez vos réservations et livraisons avec élégance et simplicité";
+            txtDesc1 = "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant";
+            txtDesc2 = "Conçu pour l'excellence culinaire française";
+
+            txtCard1Title = "Réservations";
+            txtCard1Desc = "Gérer les demandes de réservation";
+            txtCard2Title = "Livraison";
+            txtCard2Desc = "Gérer les demandes de livraison";
+            txtCard3Title = "Services";
+            txtCard3Desc = "Gérer les services de caisse";
+
+            emFrances = true;
+            botaoTraduzir.setStyle(
+                    "-fx-background-color: #008000; " +  // verde Brasil
+                            "-fx-text-fill: white; " +
+                            "-fx-font-weight: bold; " +
+                            "-fx-border-radius: 10; " +
+                            "-fx-background-radius: 10; "
+            );
+        } else {
+            // Traduz para português
+            txtNomeRest = "Restaurant";
+            txtNomeRest2 = "Monsieur-José";
+            txtInfo1 = "Sistema de Gestão Profissional";
+            txtInfo2 = "Gerencie suas reservas e entregas com elegância e simplicidade";
+            txtDesc1 = "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante";
+            txtDesc2 = "Projetado para a excelência culinária francesa";
+
+            txtCard1Title = "Reservas";
+            txtCard1Desc = "Gerenciar Pedidos de Reserva";
+            txtCard2Title = "Delivery";
+            txtCard2Desc = "Gerenciar Pedidos de Delivery";
+            txtCard3Title = "Serviços";
+            txtCard3Desc = "Gerenciar Serviços de Caixa";
+
+            emFrances = false;
+            botaoTraduzir.setStyle(
+                    "-fx-background-color: #0055A4; " +  // azul da bandeira da França
+                            "-fx-text-fill: white; " +
+                            "-fx-font-weight: bold; " +
+                            "-fx-border-radius: 10; " +
+                            "-fx-background-radius: 10; "
+            );
+        }
+        nomeRest.setText(txtNomeRest);
+        nomeRest2.setText(txtNomeRest2);
+        inforest1.setText(txtInfo1);
+        inforest2.setText(txtInfo2);
+        desc1.setText(txtDesc1);
+        desc2.setText(txtDesc2);
+
+        atualizarCard(card1, txtCard1Title, txtCard1Desc);
+        atualizarCard(card2, txtCard2Title, txtCard2Desc);
+        atualizarCard(card3, txtCard3Title, txtCard3Desc);
+    }
+
+    private void atualizarCard(VBox card, String novoTitulo, String novaDescricao) {
+        Label titulo = (Label) card.getChildren().get(1);
+        Label descricao = (Label) card.getChildren().get(2);
+        titulo.setText(novoTitulo);
+        descricao.setText(novaDescricao);
     }
 
     private void abrirNovaJanela(String titulo) {
@@ -155,19 +243,19 @@ public class TelaInicial {
         Font interfont3 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12);
         Font interfont4 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 10);
 
-        Label nomeRest = new Label("Restaurant");
+        nomeRest = new Label(txtNomeRest);
         nomeRest.setFont(playfairFont);
         nomeRest.setStyle("-fx-text-fill: #660018;");
 
-        Label nomeRest2 = new Label("Monsieur-José");
+        nomeRest2 = new Label(txtNomeRest2);
         nomeRest2.setFont(playfairFont2);
         nomeRest2.setStyle("-fx-text-fill: #FFC300;");
 
         Rectangle sublinhado = new Rectangle(260, 3);
         sublinhado.setFill(Color.web("#FFC300"));
 
-        Label inforest1 = new Label("Sistema de Gestão Profissional");
-        Label inforest2 = new Label("Gerencie suas reservas e entregas com elegância e simplicidade" );
+        inforest1 = new Label(txtInfo1);
+        inforest2 = new Label(txtInfo2);
         inforest1.setStyle("-fx-text-fill: black;");
         inforest1.setFont(interfont1);
         inforest2.setStyle("-fx-text-fill: black;");
@@ -188,16 +276,16 @@ public class TelaInicial {
         VBox.setMargin(nomeRest, new Insets(0, 0, -10, 0)); // Ajuste fino para aproximar "Restaurant" e "Monsieur-José"
         VBox.setMargin(blocoMonsieur, new Insets(-10, 0, 0, 0)); // A
 
-        VBox card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", "Reservas", "Gerenciar Pedidos de Reserva", "#E4E9F0","#660018");
-        VBox card2 = createCard("/svg/delivery-svgrepo-com.svg", "Delivery", "Gerenciar Pedidos de Delivery", "#E4E9F0","black");
-        VBox card3 = createCard("/svg/flag-for-flag-france-svgrepo-com.svg", "Serviços", "Gerenciar Serviços de Caixa", "#E4E9F0","#FFC300");
+        VBox card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#E4E9F0","#660018");
+        VBox card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#E4E9F0","black");
+        VBox card3 = createCard("/svg/flag-for-flag-france-svgrepo-com.svg", txtCard3Title, txtCard3Desc, "#E4E9F0","#FFC300");
         HBox cardBox = new HBox(20, card1, card2, card3);
         cardBox.setAlignment(Pos.CENTER);
         cardBox.setPadding(new Insets(20,50,50,50));
 
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
+        desc1 = new Label(txtDesc1);
         desc1.setFont(interfont3);
-        Label desc2 = new Label("Projetado para a excelência culinária francesa");
+        desc2 =  new Label(txtDesc2);
         desc2.setFont(interfont4);
         VBox descricao = new VBox(5, desc1, desc2);
         descricao.setAlignment(Pos.CENTER);
@@ -217,11 +305,17 @@ public class TelaInicial {
         grid.add(root, 0, 0);
         grid.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
 
-        ScrollPane scrollPane = new ScrollPane(grid);
+        Button botaoTraduzir = new Button("🇫🇷 Traduzir para Francês");
+        botaoTraduzir.setOnAction(e -> traduzirParaFrances(botaoTraduzir));
+
+        VBox conteudoScroll = new VBox(20, grid, botaoTraduzir);
+        conteudoScroll.setAlignment(Pos.CENTER);
+        conteudoScroll.setPadding(new Insets(20));
+
+        ScrollPane scrollPane = new ScrollPane(conteudoScroll);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-
 
         Scene scene = new Scene(scrollPane);
 
