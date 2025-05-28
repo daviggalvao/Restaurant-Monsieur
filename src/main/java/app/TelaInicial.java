@@ -5,6 +5,7 @@ import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.*;
@@ -12,38 +13,158 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.shape.SVGPath;
-import javafx.scene.text.FontWeight;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import javax.swing.text.html.ImageView;
-import java.awt.*;
-
 public class TelaInicial {
     private Stage stage;
+    private boolean emFrances = false;
+    private WebView webView;
+    private String txtNomeRest = "Restaurant";
+    private String txtNomeRest2 = "Monsieur-José";
+    private String txtInfo1 = "Sistema de Gestão Profissional";
+    private String txtInfo2 = "Gerencie suas reservas e entregas com elegância e simplicidade";
+    private String txtDesc1 = "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante";
+    private String txtDesc2 = "Projetado para a excelência culinária francesa";
+
+    private String txtCard1Title = "Reservas";
+    private String txtCard1Desc = "Gerenciar Pedidos de Reserva";
+    private String txtCard2Title = "Delivery";
+    private String txtCard2Desc = "Gerenciar Pedidos de Delivery";
+    private String txtCard3Title = "Serviços";
+    private String txtCard3Desc = "Gerenciar Serviços de Caixa";
+
+    private Label nomeRest, nomeRest2, inforest1, inforest2, desc1, desc2;
+    private VBox card1, card2, card3;
 
     public TelaInicial(Stage stage) {
         this.stage = stage;
     }
 
-    protected VBox createCard(String svgPath, String titleText, String descText, String color,String cortexto) {
+    private void traduzirParaFrances(Button botaoTraduzir){
+        if (!emFrances) {
+            // Traduz para francês
+            txtNomeRest = "Restaurant";
+            txtNomeRest2 = "Monsieur-José";
+            txtInfo1 = "Système de gestion professionnelle";
+            txtInfo2 = "Gérez vos réservations et livraisons avec élégance et simplicité";
+            txtDesc1 = "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant";
+            txtDesc2 = "Conçu pour l'excellence culinaire française";
+
+            txtCard1Title = "Réservations";
+            txtCard1Desc = "Gérer les demandes de réservation";
+            txtCard2Title = "Livraison";
+            txtCard2Desc = "Gérer les demandes de livraison";
+            txtCard3Title = "Services";
+            txtCard3Desc = "Gérer les services de caisse";
+
+            emFrances = true;
+
+            WebView brasil = new WebView();
+            brasil.setPrefSize(15,15);
+            brasil.setMouseTransparent(true);
+
+            String svgFrance = "/svg/flag-for-flag-brazil-svgrepo-com.svg";
+            String svgUrl = getClass().getResource(svgFrance).toExternalForm();
+            String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
+                    "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                    "</body></html>";
+
+            brasil.getEngine().loadContent(html);
+            botaoTraduzir.setGraphic(brasil);
+        } else {
+            // Traduz para português
+            txtNomeRest = "Restaurant";
+            txtNomeRest2 = "Monsieur-José";
+            txtInfo1 = "Sistema de Gestão Profissional";
+            txtInfo2 = "Gerencie suas reservas e entregas com elegância e simplicidade";
+            txtDesc1 = "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante";
+            txtDesc2 = "Projetado para a excelência culinária francesa";
+
+            txtCard1Title = "Reservas";
+            txtCard1Desc = "Gerenciar Pedidos de Reserva";
+            txtCard2Title = "Delivery";
+            txtCard2Desc = "Gerenciar Pedidos de Delivery";
+            txtCard3Title = "Serviços";
+            txtCard3Desc = "Gerenciar Serviços de Caixa";
+
+            emFrances = false;
+
+            WebView france = new WebView();
+            france.setPrefSize(15,15);
+            france.setMouseTransparent(true);
+
+            String svgFrance = "/svg/flag-for-flag-france-svgrepo-com.svg";
+            String svgUrl = getClass().getResource(svgFrance).toExternalForm();
+            String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
+                    "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                    "</body></html>";
+
+            france.getEngine().loadContent(html);
+            botaoTraduzir.setGraphic(france);
+        }
+        nomeRest.setText(txtNomeRest);
+        nomeRest2.setText(txtNomeRest2);
+        inforest1.setText(txtInfo1);
+        inforest2.setText(txtInfo2);
+        desc1.setText(txtDesc1);
+        desc2.setText(txtDesc2);
+
+        atualizarCard(card1, txtCard1Title, txtCard1Desc);
+        atualizarCard(card2, txtCard2Title, txtCard2Desc);
+        atualizarCard(card3, txtCard3Title, txtCard3Desc);
+    }
+
+    private void atualizarCard(VBox card, String novoTitulo, String novaDescricao) {
+        Label titulo = (Label) card.getChildren().get(1);
+        Label descricao = (Label) card.getChildren().get(2);
+        titulo.setText(novoTitulo);
+        descricao.setText(novaDescricao);
+    }
+
+    private void abrirNovaJanela(String titulo) {
+        Stage novaJanela = new Stage();
+        novaJanela.setTitle(titulo);
+
+        Label label = new Label("Conteúdo da janela: " + titulo);
+        label.setStyle("-fx-font-size: 20px; -fx-padding: 20px;");
+
+        StackPane pane = new StackPane(label);
+        pane.setPadding(new Insets(20));
+        Scene scene = new Scene(pane, 400, 300);
+
+        novaJanela.setMaximized(true);
+        novaJanela.setScene(scene);
+        novaJanela.show();
+    }
+
+    protected VBox createCard(String svgPath, String titleText, String descText, String color, String cortexto) {
         // Ícone como Label ou pode usar ImageView
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30);
         Font interfont = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"),12);
 
-        WebView webView = new WebView();
-        webView.setPrefSize(40, 40); // Tamanho do ícone
 
         // Carrega o SVG diretamente do arquivo
-        String svgContent = getClass().getResource(svgPath).toExternalForm();
-        webView.getEngine().load(svgContent);
+        WebView webView = new WebView();
+        webView.setMinSize(40, 40);  // Tamanho mínimo
+        webView.setPrefSize(50, 50); // Tamanho preferencial
+        webView.setMaxSize(40, 40);
 
-        // 2. Ajuste do StackPane (remova o SVGPath antigo)
+        // Tamanho máximo
+        String svgUrl = getClass().getResource(svgPath).toExternalForm();
+        String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
+                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                "</body></html>";
+        webView.getEngine().loadContent(html);
+
+
+        // efeito hover
         Circle circle = new Circle(40);
         circle.setFill(Color.web(cortexto));
         circle.setVisible(false);
         StackPane iconStack = new StackPane(circle, webView);
+        iconStack.setAlignment(Pos.CENTER);
 
         // Título
         Label title = new Label(titleText);
@@ -80,12 +201,15 @@ public class TelaInicial {
             translate.setToY(-5);
             translate.play();
 
+            vbox.setCursor(javafx.scene.Cursor.HAND);
+
             ScaleTransition scale = new ScaleTransition(Duration.millis(200), vbox);
             scale.setToX(1.05);
             scale.setToY(1.05);
             scale.play();
 
             circle.setVisible(true);
+            circle.setFill(Color.web(cortexto));
 
             vbox.setStyle(
                     "-fx-border-color: " + color + ";" +
@@ -101,16 +225,24 @@ public class TelaInicial {
             translate.setToY(0);
             translate.play();
 
+            vbox.setCursor(javafx.scene.Cursor.DEFAULT);
+
             ScaleTransition scale = new ScaleTransition(Duration.millis(200), vbox);
             scale.setToX(1);
             scale.setToY(1);
             scale.play();
 
             circle.setVisible(false);
-            svgIcon.setFill(Color.web(cortexto));
 
             vbox.setStyle(normalStyle);
         });
+
+
+        // Evento de clique para abrir nova janela
+        vbox.setOnMouseClicked(e -> {
+            abrirNovaJanela(titleText);  // chama método que cria e mostra a nova janela
+        });
+
 
         return vbox;
     }
@@ -123,27 +255,43 @@ public class TelaInicial {
         Font interfont3 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12);
         Font interfont4 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 10);
 
-        Label nomeRest = new Label("Restaurant");
+        nomeRest = new Label(txtNomeRest);
         nomeRest.setFont(playfairFont);
         nomeRest.setStyle("-fx-text-fill: #660018;");
 
-        Label nomeRest2 = new Label("Monsieur-José");
+        nomeRest2 = new Label(txtNomeRest2);
         nomeRest2.setFont(playfairFont2);
         nomeRest2.setStyle("-fx-text-fill: #FFC300;");
 
         Rectangle sublinhado = new Rectangle(260, 3);
         sublinhado.setFill(Color.web("#FFC300"));
 
-        Label inforest1 = new Label("Sistema de Gestão Profissional");
-        Label inforest2 = new Label("Gerencie suas reservas e entregas com elegância e simplicidade" );
+        inforest1 = new Label(txtInfo1);
+        inforest2 = new Label(txtInfo2);
         inforest1.setStyle("-fx-text-fill: black;");
         inforest1.setFont(interfont1);
         inforest2.setStyle("-fx-text-fill: black;");
         inforest2.setFont(interfont2);
 
+        WebView france = new WebView();
+        france.setPrefSize(15,15);
+        france.setMouseTransparent(true);
+
+        String svgFrance = "/svg/flag-for-flag-france-svgrepo-com.svg";
+        String svgUrl = getClass().getResource(svgFrance).toExternalForm();
+        String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
+                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                "</body></html>";
+
+        france.getEngine().loadContent(html);
+        Button botaoTraduzir = new Button();
+        botaoTraduzir.setGraphic(france);
+        botaoTraduzir.setOnAction(e -> traduzirParaFrances(botaoTraduzir));
+
         VBox infos = new VBox(5);
         infos.setAlignment(Pos.CENTER);
-        infos.getChildren().addAll(inforest1, inforest2);
+        infos.getChildren().addAll(inforest1, inforest2,botaoTraduzir);
+       // VBox.setMargin(botaoTraduzir, new Insets(0, 0, 0, 0));
         VBox.setMargin(infos, new Insets(15, 0, 10, 0));
 
 
@@ -156,20 +304,16 @@ public class TelaInicial {
         VBox.setMargin(nomeRest, new Insets(0, 0, -10, 0)); // Ajuste fino para aproximar "Restaurant" e "Monsieur-José"
         VBox.setMargin(blocoMonsieur, new Insets(-10, 0, 0, 0)); // A
 
-        String svgContent =
-                "M36 27a4 4 0 0 1-4 4h-8V5h8a4 4 0 0 1 4 4v18z " +  // Path vermelho
-                "M4 5a4 4 0 0 0-4 4v18a4 4 0 0 0 4 4h8V5H4z " +     // Path azul
-                "M12 5h12v26H12z";
-        VBox card1 = createCard(svgContent, "Reservas", "Gerenciar Pedidos de Reserva", "#E4E9F0","#660018");
-        VBox card2 = createCard("svg/flag-for-flag-france-svgrepo-com.svg", "Delivery", "Gerenciar Pedidos de Delivery", "#E4E9F0","black");
-        VBox card3 = createCard("svg/flag-for-flag-france-svgrepo-com.svg", "Serviços", "Gerenciar Serviços de Caixa", "#E4E9F0","#FFC300");
+         card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#E4E9F0","#660018");
+         card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#E4E9F0","black");
+         card3 = createCard("/svg/flag-for-flag-france-svgrepo-com.svg", txtCard3Title, txtCard3Desc, "#E4E9F0","#FFC300");
         HBox cardBox = new HBox(20, card1, card2, card3);
         cardBox.setAlignment(Pos.CENTER);
         cardBox.setPadding(new Insets(20,50,50,50));
 
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
+        desc1 = new Label(txtDesc1);
         desc1.setFont(interfont3);
-        Label desc2 = new Label("Projetado para a excelência culinária francesa");
+        desc2 =  new Label(txtDesc2);
         desc2.setFont(interfont4);
         VBox descricao = new VBox(5, desc1, desc2);
         descricao.setAlignment(Pos.CENTER);
@@ -186,46 +330,50 @@ public class TelaInicial {
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER); // Centraliza o GridPane na cena
         grid.getColumnConstraints().add(new ColumnConstraints(1000));
-        grid.add(root, 0, 0);   
+        grid.add(root, 0, 0);
         grid.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
 
-        ScrollPane scrollPane = new ScrollPane(grid);
+
+        VBox conteudoScroll = new VBox(20, grid);
+        conteudoScroll.setAlignment(Pos.CENTER);
+        conteudoScroll.setPadding(new Insets(20));
+
+        ScrollPane scrollPane = new ScrollPane(conteudoScroll);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-
         Scene scene = new Scene(scrollPane);
 
         scene.widthProperty().addListener((obs, oldVal, newVal) -> {
-                    if (newVal.doubleValue() < 1000) {
-                        nomeRest.setFont(Font.font(playfairFont.getFamily(), 52));
-                        nomeRest2.setFont(Font.font(playfairFont2.getFamily(), 36));
-                        inforest1.setFont(Font.font(interfont1.getFamily(), 18));
-                        inforest2.setFont(Font.font(interfont2.getFamily(), 14));
+            if (newVal.doubleValue() < 1000) {
+                nomeRest.setFont(Font.font(playfairFont.getFamily(), 52));
+                nomeRest2.setFont(Font.font(playfairFont2.getFamily(), 36));
+                inforest1.setFont(Font.font(interfont1.getFamily(), 18));
+                inforest2.setFont(Font.font(interfont2.getFamily(), 14));
 
-                        card1.setPrefSize(250, 200);
-                        card2.setPrefSize(250, 200);
-                        card3.setPrefSize(250, 200);
-                        cardBox.setSpacing(10);
+                card1.setPrefSize(250, 200);
+                card2.setPrefSize(250, 200);
+                card3.setPrefSize(250, 200);
+                cardBox.setSpacing(10);
 
-                    } else {
-                        nomeRest.setFont(playfairFont);
-                        nomeRest2.setFont(playfairFont2);
-                        inforest1.setFont(interfont1);
-                        inforest2.setFont(interfont2);
+            } else {
+                nomeRest.setFont(playfairFont);
+                nomeRest2.setFont(playfairFont2);
+                inforest1.setFont(interfont1);
+                inforest2.setFont(interfont2);
 
-                        card1.setPrefSize(300, 250);
-                        card2.setPrefSize(300, 250);
-                        card3.setPrefSize(300, 250);
-                        cardBox.setSpacing(20);
-                    }
+                card1.setPrefSize(300, 250);
+                card2.setPrefSize(300, 250);
+                card3.setPrefSize(300, 250);
+                cardBox.setSpacing(20);
+            }
         });
 
-            stage.setScene(scene);
-            stage.setMinWidth(800);
-            stage.setMinHeight(600);
-            stage.setMaximized(true);
-            stage.show();
+        stage.setScene(scene);
+        stage.setMinWidth(800);
+        stage.setMinHeight(600);
+        stage.setMaximized(true);
+        stage.show();
     }
 }
