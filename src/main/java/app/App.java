@@ -9,8 +9,8 @@ public class App extends Application{
 
     @Override
     public void start(Stage primaryStage) {
-        TelaInicial tela = new TelaInicial(primaryStage);
-        tela.mostrar();
+        Reserva tela = new Reserva(primaryStage);
+        tela.mostrarReserva();
     }
 
     public static void main(String[] args) {

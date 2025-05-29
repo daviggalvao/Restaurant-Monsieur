@@ -1,0 +1,149 @@
+
+package app;
+
+import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.stage.Stage;
+
+public class Reserva {
+    private Stage stage;
+
+    public Reserva(Stage stage) {
+        this.stage = stage;
+    }
+
+    public void mostrarReserva() {
+        Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 52);
+        Font playfairFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 26);
+        Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 20);
+        Font interfont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 14);
+
+        Label Nome = new Label("Reserve Sua Mesa");
+        Nome.setFont(playfairFont);
+        Label desc = new Label("Desfrute de uma experiência única em nosso restaurante. \n" +
+                "Reserve sua mesa e deixe-nos cuidar de todo os detalhes");
+        desc.setFont(interfont2);
+        Label infores = new Label("Informações da Reserva");
+        infores.setFont(playfairFont2);
+        Label inforesdesc = new Label("Preencha os Dados abaixo para garantir sua mesa");
+        inforesdesc.setFont(interfont2);
+
+        TextField nome = new TextField("Seu Nome Completo");
+        VBox titulo = new VBox(Nome, desc);
+        VBox informacoes = new VBox(infores, inforesdesc);
+        titulo.setAlignment(Pos.CENTER);
+        informacoes.setAlignment(Pos.CENTER);
+
+        GridPane gridtitulo = new GridPane();
+        gridtitulo.add(titulo, 0, 0);
+        gridtitulo.add(informacoes, 0, 1);
+        gridtitulo.setVgap(35);
+        gridtitulo.setAlignment(Pos.TOP_CENTER); // Centraliza o GridPane na cena
+        gridtitulo.getColumnConstraints().add(new ColumnConstraints(1000));;
+        gridtitulo.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
+
+        GridPane inputs = new GridPane();
+        inputs.setHgap(20);
+        inputs.setVgap(15);
+        inputs.setPadding(new Insets(20, 20, 20, 20));
+        inputs.setAlignment(Pos.CENTER);
+        inputs.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
+
+
+        String inputStyle = "-fx-background-color: white;\n" +
+                "    -fx-background-radius: 5px;\n" +
+                "    -fx-border-color: #ddd;\n" +
+                "    -fx-border-radius: 5px;\n" +
+                "    -fx-border-width: 1px;\n" +
+                "    -fx-font-size: 14px;\n" +
+                "    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 1);";
+
+        String checkBoxStyle =
+                "-fx-font-size: 14px; " +
+                        "-fx-text-fill: #333333; " +
+                        "-fx-padding: 5px 0; " +
+
+                        // Estilo da caixa não selecionada
+                        "-box-background-color: white; " +
+                        "-box-border-color: #999999; " +
+                        "-box-border-radius: 3px; " +
+                        "-box-border-width: 1px; " +
+                        "-box-background-radius: 3px; " +
+                        "-box-padding: 3px; " +
+
+                        // Estilo do check mark
+                        "-mark-color: #4CAF50; " +
+                        "-mark-shape: 'M 5 10 L 8 13 L 13 5'; ";
+
+        Label lblNome = new Label("\uD83D\uDC64 Nome Completo *");
+        TextField tfNome = new TextField();
+        tfNome.setPrefHeight(40);
+        tfNome.setPromptText("Seu nome completo");
+        tfNome.setStyle(inputStyle);
+
+        Label lblData = new Label("\uD83D\uDCC5 Data *");
+        DatePicker dpData = new DatePicker();
+        dpData.setPrefHeight(40);
+
+        Label lblHorario = new Label("\u23F0 Horário *");
+        ComboBox<String> cbHorario = new ComboBox<>();
+        cbHorario.getItems().addAll("12:00", "12:30", "13:00", "13:30", "14:00","14:30","15:00",
+                "19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30");
+        cbHorario.setPromptText("Selecione o horário");
+        cbHorario.setPrefHeight(40);
+        cbHorario.setStyle(inputStyle);
+
+        Label lblChofer = new Label("\uD83D\uDC64 Chofer(Valet) *");
+        CheckBox checkSim = new CheckBox("Quer Chofer?");
+        checkSim.setPrefHeight(40);
+        checkSim.setStyle(checkBoxStyle);
+
+        Label lblPessoas = new Label("\uD83D\uDC65 Pessoas *");
+        ComboBox<Integer> cbPessoas = new ComboBox<>();
+        cbPessoas.getItems().addAll(1, 2, 3, 4, 5, 6, 7, 8);
+        cbPessoas.setPromptText("Quantas pessoas?");
+        cbPessoas.setPrefHeight(40);
+        cbPessoas.setStyle(inputStyle);
+
+        Label lblPagamento = new Label("\uD83D\uDC64 Tipo de Pagamento *");
+        ComboBox<String> cbPagamento = new ComboBox<>();
+        cbPagamento.getItems().addAll("Pix","Cartão De Crédito","Cartão De Débito",
+                "Talão de Cheque","Dinheiro Físico","Pagar Fiado");
+        cbPagamento.setPromptText("Selecione o Método de Pagamento");
+        cbPagamento.setPrefHeight(40);
+        cbPagamento.setStyle(inputStyle);
+
+        inputs.add(lblNome, 0, 0);
+        inputs.add(tfNome, 0, 1, 5, 1); // Ajuste o span conforme necessário
+
+        inputs.add(lblHorario, 0, 2, 2, 1);
+        inputs.add(cbHorario, 0, 3, 2, 1);
+
+        inputs.add(lblData, 2, 2);
+        inputs.add(dpData, 2, 3);
+
+        inputs.add(lblChofer, 4, 2);  // Antes estava na coluna 6
+        inputs.add(checkSim, 4, 3);
+
+        inputs.add(lblPessoas, 0, 4);  // Alinhado com Horário acima
+        inputs.add(cbPessoas, 0, 5);
+
+        inputs.add(lblPagamento, 2, 4);  // Alinhado com Data acima
+        inputs.add(cbPagamento, 2, 5, 2, 1);  // Reduzi o span para 2
+
+        VBox root = new VBox(10, gridtitulo, inputs);
+        root.setAlignment(Pos.TOP_CENTER);
+        root.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
+
+        Scene scene = new Scene(root);
+        stage.setScene(scene);
+        stage.setMaximized(true);
+        stage.show();
+    }
+}
+
