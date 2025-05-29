@@ -69,7 +69,7 @@ public class TelaServicos{
 
         // O círculo de hover usará a textColor (que será preta)
         Circle circle = new Circle(40);
-        circle.setFill(Color.web(textColor));
+        circle.setFill(Color.TRANSPARENT);
         circle.setVisible(false);
         StackPane iconStack = new StackPane(circle, webView);
         iconStack.setAlignment(Pos.CENTER);
@@ -169,14 +169,14 @@ public class TelaServicos{
         String corTextoCard = "black";
 
         // Criação dos 6 cards, todos com texto preto
-        VBox cardCliente = createCard(svgPlaceholder, "Clientes", "Gerenciar Clientes", corBordaCard, corTextoCard);
-        VBox cardFuncionario = createCard(svgPlaceholder, "Funcionários", "Gerenciar Funcionários", corBordaCard, corTextoCard);
-        VBox cardReserva = createCard(svgPlaceholder, "Reservas", "Gerenciar Reservas", corBordaCard, corTextoCard);
-        VBox cardEstoque = createCard(svgPlaceholder, "Estoque", "Gerenciar Estoque", corBordaCard, corTextoCard);
-        VBox cardConta = createCard(svgPlaceholder, "Cardápio", "Gerenciar Cardápio", corBordaCard, corTextoCard);
-        VBox cardMenu = createCard(svgPlaceholder, "Conta", "Gerenciar Conta", corBordaCard, corTextoCard);
+        VBox cardCadastro = createCard("/svg/contacts-svgrepo-com.svg", "Cadastros", "Gerenciar Cadastros", corBordaCard, corTextoCard);
+        VBox cardPedido = createCard("/svg/shopping-cart-svgrepo-com.svg", "Pedidos", "Gerenciar Pedidos", corBordaCard, corTextoCard);
+        VBox cardReserva = createCard("/svg/calendar-big-svgrepo-com.svg", "Reservas", "Gerenciar Reservas", corBordaCard, corTextoCard);
+        VBox cardEstoque = createCard("/svg/box-svgrepo-com.svg", "Estoque", "Gerenciar Estoque", corBordaCard, corTextoCard);
+        VBox cardConta = createCard("/svg/diary-svgrepo-com.svg", "Cardápio", "Gerenciar Cardápio", corBordaCard, corTextoCard);
+        VBox cardMenu = createCard("/svg/bank-svgrepo-com.svg", "Conta", "Gerenciar Conta", corBordaCard, corTextoCard);
 
-        HBox linha1Cards = new HBox(20, cardCliente, cardFuncionario, cardReserva);
+        HBox linha1Cards = new HBox(20, cardCadastro, cardPedido, cardReserva);
         linha1Cards.setAlignment(Pos.CENTER);
         HBox linha2Cards = new HBox(20, cardEstoque, cardConta, cardMenu);
         linha2Cards.setAlignment(Pos.CENTER);
@@ -222,8 +222,8 @@ public class TelaServicos{
                 sublinhado.setWidth(190);
                 double cardWidthSmall = 260;
                 double cardHeightSmall = 220;
-                cardCliente.setPrefSize(cardWidthSmall, cardHeightSmall);
-                cardFuncionario.setPrefSize(cardWidthSmall, cardHeightSmall);
+                cardCadastro.setPrefSize(cardWidthSmall, cardHeightSmall);
+                cardPedido.setPrefSize(cardWidthSmall, cardHeightSmall);
                 cardReserva.setPrefSize(cardWidthSmall, cardHeightSmall);
                 cardEstoque.setPrefSize(cardWidthSmall, cardHeightSmall);
                 cardConta.setPrefSize(cardWidthSmall, cardHeightSmall);
@@ -236,8 +236,8 @@ public class TelaServicos{
                 sublinhado.setWidth(230);
                 double cardWidthLarge = 300;
                 double cardHeightLarge = 250;
-                cardCliente.setPrefSize(cardWidthLarge, cardHeightLarge);
-                cardFuncionario.setPrefSize(cardWidthLarge, cardHeightLarge);
+                cardCadastro.setPrefSize(cardWidthLarge, cardHeightLarge);
+                cardPedido.setPrefSize(cardWidthLarge, cardHeightLarge);
                 cardReserva.setPrefSize(cardWidthLarge, cardHeightLarge);
                 cardEstoque.setPrefSize(cardWidthLarge, cardHeightLarge);
                 cardConta.setPrefSize(cardWidthLarge, cardHeightLarge);

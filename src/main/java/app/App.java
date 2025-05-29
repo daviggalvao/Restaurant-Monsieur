@@ -17,4 +17,4 @@ public class App extends Application{
         launch(args);
     }
 }
-
+//da um bizu no q ta errado no bgl do javafx
