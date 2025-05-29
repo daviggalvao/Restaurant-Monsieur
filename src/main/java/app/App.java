@@ -11,7 +11,8 @@ public class App extends Application{
     public void start(Stage primaryStage) {
         TelaInicial tela = new TelaInicial(primaryStage);
         TelaServicos telaa = new TelaServicos(primaryStage);
-        tela.mostrar();
+        Reserva telaaa = new Reserva((primaryStage));
+        telaaa.mostrarReserva();
         //telaa.mostrarTelaServicos();
     }
 
