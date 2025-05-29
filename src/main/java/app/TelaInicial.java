@@ -293,6 +293,7 @@ public class TelaInicial {
         infos.getChildren().addAll(inforest1, inforest2,botaoTraduzir);
        // VBox.setMargin(botaoTraduzir, new Insets(0, 0, 0, 0));
         VBox.setMargin(infos, new Insets(15, 0, 10, 0));
+        infos.setMargin(botaoTraduzir, new Insets(-55, 600, 0, 0));
 
 
         VBox blocoMonsieur = new VBox(5);
@@ -306,10 +307,10 @@ public class TelaInicial {
 
          card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#E4E9F0","#660018");
          card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#E4E9F0","black");
-         card3 = createCard("/svg/flag-for-flag-france-svgrepo-com.svg", txtCard3Title, txtCard3Desc, "#E4E9F0","#FFC300");
+         card3 = createCard("/svg/system-management-svgrepo-com.svg", txtCard3Title, txtCard3Desc, "#E4E9F0","#FFC300");
         HBox cardBox = new HBox(20, card1, card2, card3);
         cardBox.setAlignment(Pos.CENTER);
-        cardBox.setPadding(new Insets(20,50,50,50));
+        cardBox.setPadding(new Insets(35,50,50,0));
 
         desc1 = new Label(txtDesc1);
         desc1.setFont(interfont3);
@@ -317,7 +318,7 @@ public class TelaInicial {
         desc2.setFont(interfont4);
         VBox descricao = new VBox(5, desc1, desc2);
         descricao.setAlignment(Pos.CENTER);
-        VBox.setMargin(descricao, new Insets(20, 0, 20, 0));
+        VBox.setMargin(descricao, new Insets(0, 0, 20, 0));
 
         VBox root = new VBox(10, vbox1, cardBox,descricao);
         root.setAlignment(Pos.CENTER);
@@ -349,8 +350,8 @@ public class TelaInicial {
             if (newVal.doubleValue() < 1000) {
                 nomeRest.setFont(Font.font(playfairFont.getFamily(), 52));
                 nomeRest2.setFont(Font.font(playfairFont2.getFamily(), 36));
-                inforest1.setFont(Font.font(interfont1.getFamily(), 18));
-                inforest2.setFont(Font.font(interfont2.getFamily(), 14));
+                inforest1.setFont(Font.font(interfont1.getFamily(), 22));
+                inforest2.setFont(Font.font(interfont2.getFamily(), 18));
 
                 card1.setPrefSize(250, 200);
                 card2.setPrefSize(250, 200);

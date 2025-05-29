@@ -147,8 +147,8 @@ public class TelaServicos{
      */
     public void mostrarTelaServicos() {
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
-        Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12);
-        Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 10);
+        Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
+        Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
 
         Label tituloPrincipal = new Label("Serviços");
         tituloPrincipal.setFont(playfairFontTitulo);
@@ -182,7 +182,7 @@ public class TelaServicos{
         linha2Cards.setAlignment(Pos.CENTER);
         VBox cardBoxContainer = new VBox(20, linha1Cards, linha2Cards);
         cardBoxContainer.setAlignment(Pos.CENTER);
-        cardBoxContainer.setPadding(new Insets(20, 50, 50, 50));
+        cardBoxContainer.setPadding(new Insets(20, 0, 0, 50));
 
         // Rodapé (texto branco sobre fundo vinho)
         Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
@@ -209,17 +209,10 @@ public class TelaServicos{
         grid.getColumnConstraints().add(new ColumnConstraints(1000));
         grid.add(root, 0, 0);
 
-        // Fundo da tela geral mantido como vinho
-        String corFundoVinho = "#660018";
-        grid.setStyle("-fx-background-color: " + corFundoVinho + ";");
-        root.setStyle("-fx-background-color: " + corFundoVinho + ";");
-
-
         ScrollPane scrollPane = new ScrollPane(grid);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle("-fx-background-color: " + corFundoVinho + ";");
 
         Scene scene = new Scene(scrollPane);
 
