@@ -2,52 +2,23 @@ package classes;
 
 import java.time.LocalDate;
 
-public class Cliente {
-    private String dataAniversario;
+public class Cliente extends Pessoa {
     private int numeroReservas = 0;
-    private String endereco;
     private int fidelidade = 0;
-    private String nome;
-    private String id;
-
 
     public Cliente(String nome, String dataAniversario, String endereco) {
-        this.nome = nome;
-        this.dataAniversario = dataAniversario;
-        this.endereco = endereco;
+        super(nome, dataAniversario, endereco);
     }
-    public String getId(){return id;}
-    public String getDataAniversario() {return dataAniversario;}
+
     public int getFidelidade() {return fidelidade;}
-    public String getNome() {return nome;}
     public int getNumeroReservas() {return numeroReservas;}
-    public String getEndereco() {return endereco;}
 
-    public void setDataAniversario(String dataAniversario) {this.dataAniversario = dataAniversario;}
-    public void setNumeroReservas(int numeroReservas) {this.numeroReservas = numeroReservas;}
-    public void setEndereco(String endereco) {this.endereco = endereco;}
-    public void setNome(String nome) {this.nome = nome;}
-    public void setId(String id) {this.id = id;}
+    public void setNumeroReservas(int numeroReservas) {this.numeroReservas += numeroReservas;}
     public void setFidelidade(int fidelidade) {this.fidelidade = fidelidade;}
-
-    public boolean ehAniversario(){
-        int dia,mes,ano;
-        String[] Partes = this.dataAniversario.split("/");
-        dia = Integer.parseInt(Partes[0]);
-        mes = Integer.parseInt(Partes[1]);
-        ano = Integer.parseInt(Partes[2]);
-        LocalDate data = LocalDate.of(ano,mes,dia);
-        LocalDate hoje = LocalDate.now();
-        if (data.getDayOfMonth() == hoje.getDayOfMonth() && data.getMonthValue() == hoje.getMonthValue()){
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     public float descontoIdade(float valor){
         int dia,mes,ano;
-        String[] Partes = this.dataAniversario.split("/");
+        String[] Partes = this.getDataAniversario().split("/");
         dia = Integer.parseInt(Partes[0]);
         mes = Integer.parseInt(Partes[1]);
         ano = Integer.parseInt(Partes[2]);
