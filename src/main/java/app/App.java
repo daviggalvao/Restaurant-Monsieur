@@ -1,9 +1,6 @@
 package app;
-import classes.*;
-import database.*;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import app.*;
 
 public class App extends Application{
 
@@ -11,7 +8,7 @@ public class App extends Application{
     public void start(Stage primaryStage) {
         TelaInicial tela = new TelaInicial(primaryStage);
         TelaServicos telaa = new TelaServicos(primaryStage);
-        Reserva telaaa = new Reserva((primaryStage));
+        TelaReserva telaaa = new TelaReserva((primaryStage));
         telaaa.mostrarReserva();
         //telaa.mostrarTelaServicos();
     }

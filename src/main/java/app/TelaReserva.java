@@ -1,6 +1,18 @@
 
 package app;
 
+import javafx.application.Platform;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import classes.Cliente;
+import classes.Pagamento;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
+import database.FirebaseCliente;
+import database.FirebaseReserva;
+import classes.Reserva;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -10,10 +22,12 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
-public class Reserva {
+import java.time.LocalDate;
+
+public class TelaReserva {
     private Stage stage;
 
-    public Reserva(Stage stage) {
+    public TelaReserva(Stage stage) {
         this.stage = stage;
     }
 
@@ -136,7 +150,88 @@ public class Reserva {
         inputs.add(lblPagamento, 2, 4);  // Alinhado com Data acima
         inputs.add(cbPagamento, 2, 5, 2, 1);  // Reduzi o span para 2
 
-        VBox root = new VBox(10, gridtitulo, inputs);
+        Button confirmar = new Button("Confirmar reserva");
+
+        confirmar.setOnMouseClicked(e -> {
+            FirebaseReserva refdatabase = new FirebaseReserva();
+            FirebaseCliente refcliente = new FirebaseCliente();
+
+            // Pega os valores dos inputs do usuário
+            String nomeCliente = tfNome.getText().trim();
+            LocalDate dataReserva = dpData.getValue();
+            String horario = cbHorario.getValue();
+            boolean chofer = checkSim.isSelected();
+            Integer qtdPessoas = cbPessoas.getValue();
+            String tipoPagamento = cbPagamento.getValue();
+
+            Pagamento pagamento = new Pagamento(20.0f,nomeCliente,tipoPagamento,0);
+            pagamento.ehPix();
+
+            if (nomeCliente.isEmpty() || dataReserva == null || horario == null || qtdPessoas == null || pagamento == null) {
+                System.out.println("Por favor, preencha todos os campos obrigatórios.");
+                return;
+            }
+
+            // Busca o cliente pelo nome de forma assíncrona
+            refcliente.lerClienteNome(nomeCliente, new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        // Pega o primeiro cliente encontrado com o nome informado
+                        DataSnapshot clienteSnap = snapshot.getChildren().iterator().next();
+                        Cliente cliente = clienteSnap.getValue(Cliente.class);
+
+                        if (cliente == null) {
+                            System.err.println("Erro ao converter dados do cliente.");
+                            return;
+                        }
+
+                        // Cria a nova reserva com os dados coletados
+                        Reserva novaReserva = new Reserva(
+                                dataReserva.toString(),
+                                horario,
+                                cliente,
+                                qtdPessoas,
+                                chofer,
+                                pagamento
+                        );
+
+                        // Salva a reserva no Firebase
+                        refdatabase.criarReserva(novaReserva, new DatabaseReference.CompletionListener() {
+                            @Override
+                            public void onComplete(DatabaseError error, DatabaseReference ref) {
+                                Platform.runLater(() -> {
+                                    if (error != null) {
+                                        mostrarAlerta(AlertType.ERROR, "Erro", "Erro ao criar reserva: " + error.getMessage());
+                                    } else {
+                                        mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Reserva criada com sucesso!");
+                                    }
+                                });
+                            }
+                        });
+
+                    } else {
+
+                        Platform.runLater(() -> {
+                            mostrarAlerta(AlertType.WARNING, "Cliente não encontrado", "Não foi possível encontrar cliente com esse nome.");
+                            System.out.println("Nenhum cliente encontrado com o nome: " + nomeCliente);
+                        });
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError error) {
+
+                    Platform.runLater(() -> {
+                        mostrarAlerta(AlertType.ERROR, "Erro", "Erro na consulta: " + error.getMessage());
+                        System.err.println("Erro ao consultar cliente: " + error.getMessage());
+                    });
+                }
+            });
+        });
+
+
+        VBox root = new VBox(10, gridtitulo, inputs,confirmar);
         root.setAlignment(Pos.TOP_CENTER);
         root.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
 
@@ -145,5 +240,14 @@ public class Reserva {
         stage.setMaximized(true);
         stage.show();
     }
+
+    private void mostrarAlerta(AlertType tipo, String titulo, String mensagem) {
+        Alert alerta = new Alert(tipo);
+        alerta.setTitle(titulo);
+        alerta.setHeaderText(null);
+        alerta.setContentText(mensagem);
+        alerta.showAndWait();
+    }
+
 }
 
