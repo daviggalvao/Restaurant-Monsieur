@@ -288,13 +288,28 @@ public class TelaInicial {
         botaoTraduzir.setGraphic(france);
         botaoTraduzir.setOnAction(e -> traduzirParaFrances(botaoTraduzir));
 
+        WebView gerente = new WebView();
+        gerente.setPrefSize(15,15);
+        gerente.setMouseTransparent(true);
+
+        String svgGerente = "/svg/manager-avatar-svgrepo-com.svg";
+        String svgUrl2 = getClass().getResource(svgGerente).toExternalForm();
+        String html2 = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
+                "<img src='" + svgUrl2 + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                "</body></html>";
+
+        gerente.getEngine().loadContent(html2);
+        Button botaoGerente = new Button();
+        botaoGerente.setGraphic(gerente);
+        botaoGerente.setOnMouseClicked(e->{abrirNovaJanela("gerente");});
+
         VBox infos = new VBox(5);
         infos.setAlignment(Pos.CENTER);
-        infos.getChildren().addAll(inforest1, inforest2,botaoTraduzir);
-       // VBox.setMargin(botaoTraduzir, new Insets(0, 0, 0, 0));
+        infos.getChildren().addAll(inforest1, inforest2,botaoTraduzir,botaoGerente);
+
         VBox.setMargin(infos, new Insets(15, 0, 10, 0));
         infos.setMargin(botaoTraduzir, new Insets(-55, 600, 0, 0));
-
+        infos.setMargin(botaoGerente, new Insets(-30, 0, 0, 575));
 
         VBox blocoMonsieur = new VBox(5);
         blocoMonsieur.setAlignment(Pos.CENTER);
@@ -310,7 +325,7 @@ public class TelaInicial {
          card3 = createCard("/svg/system-management-svgrepo-com.svg", txtCard3Title, txtCard3Desc, "#F0F0F0","#000000");
         HBox cardBox = new HBox(20, card1, card2, card3);
         cardBox.setAlignment(Pos.CENTER);
-        cardBox.setPadding(new Insets(35,50,50,0));
+ cardBox.setPadding(new Insets(35,0,50,0));
 
         desc1 = new Label(txtDesc1);
         desc1.setFont(interfont3);
