@@ -12,8 +12,11 @@ public class App extends Application{
         TelaInicial tela = new TelaInicial(primaryStage);
         TelaServicos telaa = new TelaServicos(primaryStage);
         Reserva telaaa = new Reserva((primaryStage));
-        telaaa.mostrarReserva();
+        TelaGerente telaaaa = new TelaGerente(primaryStage);
+        tela.mostrar();
+        //telaaa.mostrarReserva();
         //telaa.mostrarTelaServicos();
+        //telaaaa.mostrarTelaGerente();
     }
 
     public static void main(String[] args) {
