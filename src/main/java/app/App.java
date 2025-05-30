@@ -13,10 +13,12 @@ public class App extends Application{
         TelaServicos telaa = new TelaServicos(primaryStage);
         Reserva telaaa = new Reserva((primaryStage));
         TelaGerente telaaaa = new TelaGerente(primaryStage);
-        tela.mostrar();
+        TelaCardapio cardapio = new TelaCardapio(primaryStage);
+        //tela.mostrar();
         //telaaa.mostrarReserva();
         //telaa.mostrarTelaServicos();
         //telaaaa.mostrarTelaGerente();
+        cardapio.mostrarTelaCardapio();
     }
 
     public static void main(String[] args) {
