@@ -39,15 +39,20 @@ public class TelaReserva {
 
         Label Nome = new Label("Reserve Sua Mesa");
         Nome.setFont(playfairFont);
+        Nome.setStyle("-fx-text-fill: #FFC300;");
         Label desc = new Label("Desfrute de uma experiência única em nosso restaurante. \n" +
                 "Reserve sua mesa e deixe-nos cuidar de todo os detalhes");
         desc.setFont(interfont2);
+        desc.setStyle("-fx-text-fill: #FFC300;");
         Label infores = new Label("Informações da Reserva");
         infores.setFont(playfairFont2);
+        infores.setStyle("-fx-text-fill: #FFC300;");
         Label inforesdesc = new Label("Preencha os Dados abaixo para garantir sua mesa");
         inforesdesc.setFont(interfont2);
+        inforesdesc.setStyle("-fx-text-fill: #FFC300;");
 
         TextField nome = new TextField("Seu Nome Completo");
+        nome.setStyle("-fx-text-fill: #FFC300;");
         VBox titulo = new VBox(Nome, desc);
         VBox informacoes = new VBox(infores, inforesdesc);
         titulo.setAlignment(Pos.CENTER);
@@ -59,14 +64,15 @@ public class TelaReserva {
         gridtitulo.setVgap(35);
         gridtitulo.setAlignment(Pos.TOP_CENTER); // Centraliza o GridPane na cena
         gridtitulo.getColumnConstraints().add(new ColumnConstraints(1000));;
-        gridtitulo.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
+        String estiloFundoVinho = "-fx-background-color: linear-gradient(to right, #30000C, #800020)";
+        gridtitulo.setStyle(estiloFundoVinho);
 
         GridPane inputs = new GridPane();
         inputs.setHgap(20);
         inputs.setVgap(15);
         inputs.setPadding(new Insets(20, 20, 20, 20));
         inputs.setAlignment(Pos.CENTER);
-        inputs.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
+       inputs.setStyle(estiloFundoVinho);
 
 
         String inputStyle = "-fx-background-color: white;\n" +
@@ -79,7 +85,7 @@ public class TelaReserva {
 
         String checkBoxStyle =
                 "-fx-font-size: 14px; " +
-                        "-fx-text-fill: #333333; " +
+                        "-fx-text-fill: #FFC300; " +
                         "-fx-padding: 5px 0; " +
 
                         // Estilo da caixa não selecionada
@@ -95,16 +101,19 @@ public class TelaReserva {
                         "-mark-shape: 'M 5 10 L 8 13 L 13 5'; ";
 
         Label lblNome = new Label("\uD83D\uDC64 Nome Completo *");
+        lblNome.setStyle("-fx-text-fill: #FFC300;");
         TextField tfNome = new TextField();
         tfNome.setPrefHeight(40);
         tfNome.setPromptText("Seu nome completo");
         tfNome.setStyle(inputStyle);
 
         Label lblData = new Label("\uD83D\uDCC5 Data *");
+        lblData.setStyle("-fx-text-fill: #FFC300;");
         DatePicker dpData = new DatePicker();
         dpData.setPrefHeight(40);
 
         Label lblHorario = new Label("\u23F0 Horário *");
+        lblHorario.setStyle("-fx-text-fill: #FFC300;");
         ComboBox<String> cbHorario = new ComboBox<>();
         cbHorario.getItems().addAll("12:00", "12:30", "13:00", "13:30", "14:00","14:30","15:00",
                 "19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30");
@@ -112,12 +121,14 @@ public class TelaReserva {
         cbHorario.setPrefHeight(40);
         cbHorario.setStyle(inputStyle);
 
-        Label lblChofer = new Label("\uD83D\uDC64 Chofer(Valet) *");
+        Label lblChofer = new Label("\uD83D\uDC64 Chofer *");
+        lblChofer.setStyle("-fx-text-fill: #FFC300;");
         CheckBox checkSim = new CheckBox("Quer Chofer?");
         checkSim.setPrefHeight(40);
         checkSim.setStyle(checkBoxStyle);
 
         Label lblPessoas = new Label("\uD83D\uDC65 Pessoas *");
+        lblPessoas.setStyle("-fx-text-fill: #FFC300");
         ComboBox<Integer> cbPessoas = new ComboBox<>();
         cbPessoas.getItems().addAll(1, 2, 3, 4, 5, 6, 7, 8);
         cbPessoas.setPromptText("Quantas pessoas?");
@@ -125,6 +136,7 @@ public class TelaReserva {
         cbPessoas.setStyle(inputStyle);
 
         Label lblPagamento = new Label("\uD83D\uDC64 Tipo de Pagamento *");
+        lblPagamento.setStyle("-fx-text-fill: #FFC300;");
         ComboBox<String> cbPagamento = new ComboBox<>();
         cbPagamento.getItems().addAll("Pix","Cartão De Crédito","Cartão De Débito",
                 "Talão de Cheque","Dinheiro Físico","Pagar Fiado");
@@ -151,6 +163,44 @@ public class TelaReserva {
         inputs.add(cbPagamento, 2, 5, 2, 1);  // Reduzi o span para 2
 
         Button confirmar = new Button("Confirmar reserva");
+        confirmar.setStyle(
+                "-fx-background-color: #500020;" +          // Vinho escuro
+                        "-fx-text-fill: #ffcc00;" +                  // Amarelo
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-padding: 10 20 10 20;" +                 // Espaçamento interno
+                        "-fx-background-radius: 10;" +                // Bordas arredondadas
+                        "-fx-border-radius: 10;" +
+                        "-fx-border-color: #ffcc00;" +                // Borda amarela
+                        "-fx-border-width: 2;" +
+                        "-fx-cursor: hand;"                            // Cursor de mãozinha no hover
+        );
+
+        confirmar.setOnMouseEntered(e -> confirmar.setStyle(
+                "-fx-background-color: #ffcc00;" +            // Fundo amarelo ao passar o mouse
+                        "-fx-text-fill: #500020;" +                    // Texto vinho escuro
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-padding: 10 20 10 20;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-border-radius: 10;" +
+                        "-fx-border-color: #ffcc00;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-cursor: hand;"
+        ));
+
+        confirmar.setOnMouseExited(e -> confirmar.setStyle(
+                "-fx-background-color: #500020;" +
+                        "-fx-text-fill: #ffcc00;" +
+                        "-fx-font-weight: bold;" +
+                        "-fx-font-size: 14px;" +
+                        "-fx-padding: 10 20 10 20;" +
+                        "-fx-background-radius: 10;" +
+                        "-fx-border-radius: 10;" +
+                        "-fx-border-color: #ffcc00;" +
+                        "-fx-border-width: 2;" +
+                        "-fx-cursor: hand;"
+        ));
 
         confirmar.setOnMouseClicked(e -> {
             FirebaseReserva refdatabase = new FirebaseReserva();
@@ -233,7 +283,7 @@ public class TelaReserva {
 
         VBox root = new VBox(10, gridtitulo, inputs,confirmar);
         root.setAlignment(Pos.TOP_CENTER);
-        root.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
+        root.setStyle(estiloFundoVinho);
 
         Scene scene = new Scene(root);
         stage.setScene(scene);

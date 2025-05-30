@@ -197,15 +197,14 @@ public class TelaGerente {
         grid.add(root, 0, 0); //
 
         // Fundo da tela: vinho
-        String corFundoVinho = "#660018"; //
-        grid.setStyle("-fx-background-color: " + corFundoVinho + ";"); //
-        root.setStyle("-fx-background-color: " + corFundoVinho + ";"); // Fundo do root também vinho
+        String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)"; //
+        grid.setStyle("-fx-background-color: " + estiloFundoVinho + ";"); //
 
         ScrollPane scrollPane = new ScrollPane(grid); //
         scrollPane.setFitToWidth(true); //
         scrollPane.setFitToHeight(true); //
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); //
-        scrollPane.setStyle("-fx-background-color: " + corFundoVinho + ";"); // Fundo do ScrollPane vinho
+        scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";"); // Fundo do ScrollPane vinho
 
         Scene scene = new Scene(scrollPane); //
 

@@ -161,7 +161,7 @@ public class TelaInicial {
 
         // efeito hover
         Circle circle = new Circle(40);
-        circle.setFill(Color.web(cortexto));
+        circle.setFill(Color.WHITE);
         circle.setVisible(false);
         StackPane iconStack = new StackPane(circle, webView);
         iconStack.setAlignment(Pos.CENTER);
@@ -190,7 +190,7 @@ public class TelaInicial {
                 "-fx-border-radius: 10;" +
                 "-fx-border-width: 2.0;" +
                 "-fx-background-radius: 10;" +
-                "-fx-background-color: white;";
+                "-fx-background-color: #F0F0F0;";
 
         vbox.setStyle(normalStyle);
 
@@ -209,14 +209,14 @@ public class TelaInicial {
             scale.play();
 
             circle.setVisible(true);
-            circle.setFill(Color.web(cortexto));
+            circle.setFill(Color.WHITE);
 
             vbox.setStyle(
                     "-fx-border-color: " + color + ";" +
                             "-fx-border-radius: 10;" +
                             "-fx-border-width: 2;" +
                             "-fx-background-radius: 10;" +
-                            "-fx-background-color: white;"  // ou qualquer outra cor
+                            "-fx-background-color: #F0F0F0;"  // ou qualquer outra cor
             );
         });
 
@@ -257,7 +257,7 @@ public class TelaInicial {
 
         nomeRest = new Label(txtNomeRest);
         nomeRest.setFont(playfairFont);
-        nomeRest.setStyle("-fx-text-fill: #660018;");
+        nomeRest.setStyle("-fx-text-fill: #FFC300;");
 
         nomeRest2 = new Label(txtNomeRest2);
         nomeRest2.setFont(playfairFont2);
@@ -268,9 +268,9 @@ public class TelaInicial {
 
         inforest1 = new Label(txtInfo1);
         inforest2 = new Label(txtInfo2);
-        inforest1.setStyle("-fx-text-fill: black;");
+        inforest1.setStyle("-fx-text-fill: #FFC300;");
         inforest1.setFont(interfont1);
-        inforest2.setStyle("-fx-text-fill: black;");
+        inforest2.setStyle("-fx-text-fill: #FFC300;");
         inforest2.setFont(interfont2);
 
         WebView france = new WebView();
@@ -305,19 +305,22 @@ public class TelaInicial {
         VBox.setMargin(nomeRest, new Insets(0, 0, -10, 0)); // Ajuste fino para aproximar "Restaurant" e "Monsieur-José"
         VBox.setMargin(blocoMonsieur, new Insets(-10, 0, 0, 0)); // A
 
-         card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#E4E9F0","#660018");
-         card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#E4E9F0","black");
-         card3 = createCard("/svg/system-management-svgrepo-com.svg", txtCard3Title, txtCard3Desc, "#E4E9F0","#FFC300");
+         card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#F0F0F0","#000000");
+         card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#F0F0F0","#000000");
+         card3 = createCard("/svg/system-management-svgrepo-com.svg", txtCard3Title, txtCard3Desc, "#F0F0F0","#000000");
         HBox cardBox = new HBox(20, card1, card2, card3);
         cardBox.setAlignment(Pos.CENTER);
         cardBox.setPadding(new Insets(35,50,50,0));
 
         desc1 = new Label(txtDesc1);
         desc1.setFont(interfont3);
+        desc1.setTextFill(Color.web("white"));
         desc2 =  new Label(txtDesc2);
         desc2.setFont(interfont4);
+        desc2.setTextFill(Color.web("white"));
         VBox descricao = new VBox(5, desc1, desc2);
         descricao.setAlignment(Pos.CENTER);
+
         VBox.setMargin(descricao, new Insets(0, 0, 20, 0));
 
         VBox root = new VBox(10, vbox1, cardBox,descricao);
@@ -332,12 +335,11 @@ public class TelaInicial {
         grid.setAlignment(Pos.CENTER); // Centraliza o GridPane na cena
         grid.getColumnConstraints().add(new ColumnConstraints(1000));
         grid.add(root, 0, 0);
-        grid.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
-
+        String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)";
+        grid.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
         VBox conteudoScroll = new VBox(20, grid);
         conteudoScroll.setAlignment(Pos.CENTER);
-        conteudoScroll.setPadding(new Insets(20));
 
         ScrollPane scrollPane = new ScrollPane(conteudoScroll);
         scrollPane.setFitToWidth(true);
