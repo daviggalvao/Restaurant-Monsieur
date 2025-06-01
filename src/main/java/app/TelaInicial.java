@@ -104,6 +104,22 @@ public class TelaInicial {
         atualizarCard(card3, txtCard3Title, txtCard3Desc);
     }
 
+    private WebView criarWebViewSVG(String svgPath, double largura, double altura) {
+        WebView webView = new WebView();
+        webView.setPrefSize(largura, altura);
+        webView.setMaxSize(largura, altura);
+        webView.setMinSize(largura, altura);
+
+        String svgUrl = getClass().getResource(svgPath).toExternalForm();
+        String html = "<html><body style='margin:0; overflow:hidden;'>" +
+                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                "</body></html>";
+
+        webView.getEngine().loadContent(html);
+
+        return webView;
+    }
+
     private void atualizarCard(VBox card, String novoTitulo, String novaDescricao) {
         Label titulo = (Label) card.getChildren().get(1);
         Label descricao = (Label) card.getChildren().get(2);
