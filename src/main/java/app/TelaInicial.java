@@ -301,7 +301,7 @@ public class TelaInicial {
         gerente.getEngine().loadContent(html2);
         Button botaoGerente = new Button();
         botaoGerente.setGraphic(gerente);
-        botaoGerente.setOnMouseClicked(e->{abrirNovaJanela("gerente");});
+        botaoGerente.setOnMouseClicked(e->{new TelaGerente(new Stage()).mostrarTelaGerente();});
 
         VBox infos = new VBox(5);
         infos.setAlignment(Pos.CENTER);
@@ -323,6 +323,11 @@ public class TelaInicial {
          card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#F0F0F0","#000000");
          card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#F0F0F0","#000000");
          card3 = createCard("/svg/system-management-svgrepo-com.svg", txtCard3Title, txtCard3Desc, "#F0F0F0","#000000");
+
+        card1.setOnMouseClicked(mouseEvent->{ new TelaReserva(new Stage()).mostrarReserva();});
+        card2.setOnMouseClicked(mouseEvent->{ new TelaCardapio(new Stage()).mostrarTelaCardapio();});
+        card3.setOnMouseClicked(mouseEvent->{ new TelaServicos(new Stage()).mostrarTelaServicos();});
+
         HBox cardBox = new HBox(20, card1, card2, card3);
         cardBox.setAlignment(Pos.CENTER);
  cardBox.setPadding(new Insets(35,0,50,0));
