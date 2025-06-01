@@ -231,11 +231,11 @@ public class TelaGerente {
             }
         });
 
-        stage.setTitle("Serviços"); //
+        stage.setTitle("Gerente"); //
+        stage.setMaximized(true); //
         stage.setScene(scene); //
         stage.setMinWidth(800); //
         stage.setMinHeight(600); //
-        stage.setMaximized(true); //
         stage.show(); //
     }
 }
