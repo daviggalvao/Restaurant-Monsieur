@@ -24,4 +24,8 @@ public class FirebaseCliente{
     public void lerCliente(String clienteID, ValueEventListener listener){
         clienteRef.child(clienteID).addListenerForSingleValueEvent(listener);
     }
+    public void lerClienteNome(String clienteNome, ValueEventListener listener){
+        clienteRef.orderByChild("nome").equalTo(clienteNome)
+                .addListenerForSingleValueEvent(listener);
+    }
 }

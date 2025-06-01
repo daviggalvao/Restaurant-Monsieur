@@ -13,14 +13,14 @@ import javafx.geometry.*;
 import javafx.animation.*;
 import javafx.util.Duration;
 
-public class TelaServicos{
+public class TelaGerente {
     private Stage stage;
 
     /**
-     * Construtor da TelaServicos.
+     * Construtor da TelaGerente.
      * @param stage O palco principal da aplicação.
      */
-    public TelaServicos(Stage stage) {this.stage = stage;}
+    public TelaGerente(Stage stage) {this.stage = stage;}
 
     /**
      * Abre uma nova janela maximizada com um título e um conteúdo simples.
@@ -52,6 +52,7 @@ public class TelaServicos{
      * @param textColor Cor do texto do card.
      * @return Um VBox configurado como um card.
      */
+
     private VBox createCard(String svgPath, String titleText, String descText, String borderColor, String textColor) {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30); //
         Font interfont = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"),12); //
@@ -137,16 +138,13 @@ public class TelaServicos{
         return vbox; //
     }
 
-    /**
-     * Configura e exibe a tela de Serviços.
-     */
-    public void mostrarTelaServicos() { //
+    public void mostrarTelaGerente() { //
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62); //
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15); //
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17); //
 
         // --- Título Principal ---
-        Label tituloPrincipal = new Label("Serviços"); //
+        Label tituloPrincipal = new Label("Área do Gerente"); //
         tituloPrincipal.setFont(playfairFontTitulo); //
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;"); // Cor do título: amarelo
 
@@ -163,20 +161,12 @@ public class TelaServicos{
         String corTextoCard = "black"; // Texto dos cards: PRETO
 
         // Nomes e SVGs dos cards conforme o arquivo fornecido
-        VBox cardCadastro = createCard("/svg/contacts-svgrepo-com.svg", "Cadastros", "Gerenciar Cadastros", corBordaCard, corTextoCard); //
-        VBox cardPedido = createCard("/svg/shopping-cart-svgrepo-com.svg", "Pedidos", "Gerenciar Pedidos", corBordaCard, corTextoCard); //
-        VBox cardReserva = createCard("/svg/calendar-big-svgrepo-com.svg", "Reservas", "Gerenciar Reservas", corBordaCard, corTextoCard); //
-        VBox cardEstoque = createCard("/svg/box-svgrepo-com.svg", "Estoque", "Gerenciar Estoque", corBordaCard, corTextoCard); //
-        VBox cardConta = createCard("/svg/diary-svgrepo-com.svg", "Cardápio", "Gerenciar Cardápio", corBordaCard, corTextoCard); //
-        VBox cardMenu = createCard("/svg/bank-svgrepo-com.svg", "Conta", "Gerenciar Conta", corBordaCard, corTextoCard); //
+        VBox cardExtrato = createCard("/svg/bills-svgrepo-com.svg", "Extrato", "Verificar saldo do restaurante", corBordaCard, corTextoCard); //
+        VBox cardPromocao = createCard("/svg/promotion-svgrepo-com.svg", "Promoções", "Promover funcionários", corBordaCard, corTextoCard); //
+        VBox cardPagarFunc = createCard("/svg/payment-business-and-finance-svgrepo-com.svg", "Pagamentos", "Pagar os funcionários", corBordaCard, corTextoCard); //
 
-        HBox linha1Cards = new HBox(20, cardCadastro, cardPedido, cardReserva); //
+        HBox linha1Cards = new HBox(20, cardExtrato, cardPromocao, cardPagarFunc); //
         linha1Cards.setAlignment(Pos.CENTER); //
-        HBox linha2Cards = new HBox(20, cardEstoque, cardConta, cardMenu); //
-        linha2Cards.setAlignment(Pos.CENTER); //
-        VBox cardBoxContainer = new VBox(20, linha1Cards, linha2Cards); //
-        cardBoxContainer.setAlignment(Pos.CENTER); //
-        cardBoxContainer.setPadding(new Insets(20, 0, 0, 50)); //
 
         // --- Rodapé ---
         Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
@@ -193,12 +183,12 @@ public class TelaServicos{
         VBox.setMargin(descricaoRodape, new Insets(20, 0, 20, 0)); //
 
         // --- Layout Principal com VBox root (rodapé rolável) ---
-        VBox root = new VBox(10, blocoTitulo, cardBoxContainer, descricaoRodape); //
+        VBox root = new VBox(10, blocoTitulo, linha1Cards, descricaoRodape); //
         root.setAlignment(Pos.CENTER); //
         root.setPadding(new Insets(20)); //
 
         VBox.setVgrow(blocoTitulo, Priority.NEVER); //
-        VBox.setVgrow(cardBoxContainer, Priority.ALWAYS); //
+        VBox.setVgrow(linha1Cards, Priority.ALWAYS); //
         VBox.setVgrow(descricaoRodape, Priority.NEVER); //
 
         GridPane grid = new GridPane(); //
@@ -225,29 +215,19 @@ public class TelaServicos{
                 sublinhado.setWidth(190); //
                 double cardWidthSmall = 260; //
                 double cardHeightSmall = 220; //
-                cardCadastro.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                cardPedido.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                cardReserva.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                cardEstoque.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                cardConta.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                cardMenu.setPrefSize(cardWidthSmall, cardHeightSmall); //
+                cardExtrato.setPrefSize(cardWidthSmall, cardHeightSmall); //
+                cardPromocao.setPrefSize(cardWidthSmall, cardHeightSmall); //
+                cardPagarFunc.setPrefSize(cardWidthSmall, cardHeightSmall); //
                 linha1Cards.setSpacing(15); //
-                linha2Cards.setSpacing(15); //
-                cardBoxContainer.setSpacing(15); //
             } else { //
                 tituloPrincipal.setFont(playfairFontTitulo); //
                 sublinhado.setWidth(230); //
                 double cardWidthLarge = 300; //
                 double cardHeightLarge = 250; //
-                cardCadastro.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardPedido.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardReserva.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardEstoque.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardConta.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardMenu.setPrefSize(cardWidthLarge, cardHeightLarge); //
+                cardPromocao.setPrefSize(cardWidthLarge, cardHeightLarge); //
+                cardExtrato.setPrefSize(cardWidthLarge, cardHeightLarge); //
+                cardPagarFunc.setPrefSize(cardWidthLarge, cardHeightLarge); //
                 linha1Cards.setSpacing(20); //
-                linha2Cards.setSpacing(20); //
-                cardBoxContainer.setSpacing(20); //
             }
         });
 

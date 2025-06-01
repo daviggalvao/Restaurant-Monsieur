@@ -2,8 +2,16 @@ package classes;
 
 import java.time.LocalDate;
 
-public class Funcionario extends Cliente {
-    private static String id;
+enum FuncionarioCargo {
+    GERENTE,
+    VENDEDOR,
+    SUPERVISOR,
+    GARCOM,
+    CHEF,
+    ZELADOR
+}
+
+public class Funcionario extends Pessoa {
     private int idade;
     private FuncionarioCargo cargo;
     private float salario;
@@ -15,15 +23,16 @@ public class Funcionario extends Cliente {
         this.cargo = cargo;
         this.salario = salario;
         this.dataContrato = dataContrato;
+        char[] functId = this.getId().toCharArray();
+        functId[0] = 'F';
+        this.setId(String.valueOf(functId));
     }
 
-    public String getId() {return id;}
     public int getIdade() {return idade;}
     public FuncionarioCargo getCargo() {return cargo;}
     public float getSalario() {return salario;}
     public String getDataContrato() {return dataContrato;}  
 
-    public void setId(String id) {this.id = id;}
     public void setIdade(int idade) {this.idade = idade;}
     public void setCargo(FuncionarioCargo cargo) {this.cargo = cargo;}
     public void setSalario(float salario) {this.salario = salario;}
@@ -52,13 +61,4 @@ public class Funcionario extends Cliente {
             this.dataContrato = LocalDate.now().toString();
         }
     }
-}
-
-enum FuncionarioCargo {
-    GERENTE,
-    VENDEDOR,
-    SUPERVISOR,
-    GARCOM,
-    CHEF,
-    ZELADOR
 }

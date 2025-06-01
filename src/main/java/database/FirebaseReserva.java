@@ -10,7 +10,7 @@ public class FirebaseReserva{
     public FirebaseReserva(){
         this.reservaRef = FirebaseManager.getDatabase().getReference("reservas");
     }
-    
+
     public void criarReserva(Reserva reserva,DatabaseReference.CompletionListener listener){
         String id = reservaRef.push().getKey();
         reserva.setId(id);

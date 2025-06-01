@@ -60,13 +60,19 @@ public class TelaInicial {
             txtCard3Desc = "Gérer les services de caisse";
 
             emFrances = true;
-            botaoTraduzir.setStyle(
-                    "-fx-background-color: #008000; " +  // verde Brasil
-                            "-fx-text-fill: white; " +
-                            "-fx-font-weight: bold; " +
-                            "-fx-border-radius: 10; " +
-                            "-fx-background-radius: 10; "
-            );
+
+            WebView brasil = new WebView();
+            brasil.setPrefSize(15,15);
+            brasil.setMouseTransparent(true);
+
+            String svgFrance = "/svg/flag-for-flag-brazil-svgrepo-com.svg";
+            String svgUrl = getClass().getResource(svgFrance).toExternalForm();
+            String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
+                    "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                    "</body></html>";
+
+            brasil.getEngine().loadContent(html);
+            botaoTraduzir.setGraphic(brasil);
         } else {
             // Traduz para português
             txtNomeRest = "Restaurant";
@@ -84,13 +90,19 @@ public class TelaInicial {
             txtCard3Desc = "Gerenciar Serviços de Caixa";
 
             emFrances = false;
-            botaoTraduzir.setStyle(
-                    "-fx-background-color: #0055A4; " +  // azul da bandeira da França
-                            "-fx-text-fill: white; " +
-                            "-fx-font-weight: bold; " +
-                            "-fx-border-radius: 10; " +
-                            "-fx-background-radius: 10; "
-            );
+
+            WebView france = new WebView();
+            france.setPrefSize(15,15);
+            france.setMouseTransparent(true);
+
+            String svgFrance = "/svg/flag-for-flag-france-svgrepo-com.svg";
+            String svgUrl = getClass().getResource(svgFrance).toExternalForm();
+            String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
+                    "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                    "</body></html>";
+
+            france.getEngine().loadContent(html);
+            botaoTraduzir.setGraphic(france);
         }
         nomeRest.setText(txtNomeRest);
         nomeRest2.setText(txtNomeRest2);
@@ -102,22 +114,6 @@ public class TelaInicial {
         atualizarCard(card1, txtCard1Title, txtCard1Desc);
         atualizarCard(card2, txtCard2Title, txtCard2Desc);
         atualizarCard(card3, txtCard3Title, txtCard3Desc);
-    }
-
-    private WebView criarWebViewSVG(String svgPath, double largura, double altura) {
-        WebView webView = new WebView();
-        webView.setPrefSize(largura, altura);
-        webView.setMaxSize(largura, altura);
-        webView.setMinSize(largura, altura);
-
-        String svgUrl = getClass().getResource(svgPath).toExternalForm();
-        String html = "<html><body style='margin:0; overflow:hidden;'>" +
-                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
-                "</body></html>";
-
-        webView.getEngine().loadContent(html);
-
-        return webView;
     }
 
     private void atualizarCard(VBox card, String novoTitulo, String novaDescricao) {
@@ -165,7 +161,7 @@ public class TelaInicial {
 
         // efeito hover
         Circle circle = new Circle(40);
-        circle.setFill(Color.web(cortexto));
+        circle.setFill(Color.WHITE);
         circle.setVisible(false);
         StackPane iconStack = new StackPane(circle, webView);
         iconStack.setAlignment(Pos.CENTER);
@@ -194,7 +190,7 @@ public class TelaInicial {
                 "-fx-border-radius: 10;" +
                 "-fx-border-width: 2.0;" +
                 "-fx-background-radius: 10;" +
-                "-fx-background-color: white;";
+                "-fx-background-color: #F0F0F0;";
 
         vbox.setStyle(normalStyle);
 
@@ -213,14 +209,14 @@ public class TelaInicial {
             scale.play();
 
             circle.setVisible(true);
-            circle.setFill(Color.web(cortexto));
+            circle.setFill(Color.WHITE);
 
             vbox.setStyle(
                     "-fx-border-color: " + color + ";" +
                             "-fx-border-radius: 10;" +
                             "-fx-border-width: 2;" +
                             "-fx-background-radius: 10;" +
-                            "-fx-background-color: white;"  // ou qualquer outra cor
+                            "-fx-background-color: #F0F0F0;"  // ou qualquer outra cor
             );
         });
 
@@ -244,7 +240,7 @@ public class TelaInicial {
 
         // Evento de clique para abrir nova janela
         vbox.setOnMouseClicked(e -> {
-           abrirNovaJanela(titleText);  // chama método que cria e mostra a nova janela
+            abrirNovaJanela(titleText);  // chama método que cria e mostra a nova janela
         });
 
 
@@ -261,7 +257,7 @@ public class TelaInicial {
 
         nomeRest = new Label(txtNomeRest);
         nomeRest.setFont(playfairFont);
-        nomeRest.setStyle("-fx-text-fill: #660018;");
+        nomeRest.setStyle("-fx-text-fill: #FFC300;");
 
         nomeRest2 = new Label(txtNomeRest2);
         nomeRest2.setFont(playfairFont2);
@@ -272,16 +268,48 @@ public class TelaInicial {
 
         inforest1 = new Label(txtInfo1);
         inforest2 = new Label(txtInfo2);
-        inforest1.setStyle("-fx-text-fill: black;");
+        inforest1.setStyle("-fx-text-fill: #FFC300;");
         inforest1.setFont(interfont1);
-        inforest2.setStyle("-fx-text-fill: black;");
+        inforest2.setStyle("-fx-text-fill: #FFC300;");
         inforest2.setFont(interfont2);
+
+        WebView france = new WebView();
+        france.setPrefSize(15,15);
+        france.setMouseTransparent(true);
+
+        String svgFrance = "/svg/flag-for-flag-france-svgrepo-com.svg";
+        String svgUrl = getClass().getResource(svgFrance).toExternalForm();
+        String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
+                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                "</body></html>";
+
+        france.getEngine().loadContent(html);
+        Button botaoTraduzir = new Button();
+        botaoTraduzir.setGraphic(france);
+        botaoTraduzir.setOnAction(e -> traduzirParaFrances(botaoTraduzir));
+
+        WebView gerente = new WebView();
+        gerente.setPrefSize(15,15);
+        gerente.setMouseTransparent(true);
+
+        String svgGerente = "/svg/manager-avatar-svgrepo-com.svg";
+        String svgUrl2 = getClass().getResource(svgGerente).toExternalForm();
+        String html2 = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
+                "<img src='" + svgUrl2 + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                "</body></html>";
+
+        gerente.getEngine().loadContent(html2);
+        Button botaoGerente = new Button();
+        botaoGerente.setGraphic(gerente);
+        botaoGerente.setOnMouseClicked(e->{abrirNovaJanela("gerente");});
 
         VBox infos = new VBox(5);
         infos.setAlignment(Pos.CENTER);
-        infos.getChildren().addAll(inforest1, inforest2);
-        VBox.setMargin(infos, new Insets(15, 0, 10, 0));
+        infos.getChildren().addAll(inforest1, inforest2,botaoTraduzir,botaoGerente);
 
+        VBox.setMargin(infos, new Insets(15, 0, 10, 0));
+        infos.setMargin(botaoTraduzir, new Insets(-55, 600, 0, 0));
+        infos.setMargin(botaoGerente, new Insets(-30, 0, 0, 575));
 
         VBox blocoMonsieur = new VBox(5);
         blocoMonsieur.setAlignment(Pos.CENTER);
@@ -292,20 +320,23 @@ public class TelaInicial {
         VBox.setMargin(nomeRest, new Insets(0, 0, -10, 0)); // Ajuste fino para aproximar "Restaurant" e "Monsieur-José"
         VBox.setMargin(blocoMonsieur, new Insets(-10, 0, 0, 0)); // A
 
-        VBox card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#E4E9F0","#660018");
-        VBox card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#E4E9F0","black");
-        VBox card3 = createCard("/svg/flag-for-flag-france-svgrepo-com.svg", txtCard3Title, txtCard3Desc, "#E4E9F0","#FFC300");
+         card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#F0F0F0","#000000");
+         card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#F0F0F0","#000000");
+         card3 = createCard("/svg/system-management-svgrepo-com.svg", txtCard3Title, txtCard3Desc, "#F0F0F0","#000000");
         HBox cardBox = new HBox(20, card1, card2, card3);
         cardBox.setAlignment(Pos.CENTER);
-        cardBox.setPadding(new Insets(20,50,50,50));
+ cardBox.setPadding(new Insets(35,0,50,0));
 
         desc1 = new Label(txtDesc1);
         desc1.setFont(interfont3);
+        desc1.setTextFill(Color.web("white"));
         desc2 =  new Label(txtDesc2);
         desc2.setFont(interfont4);
+        desc2.setTextFill(Color.web("white"));
         VBox descricao = new VBox(5, desc1, desc2);
         descricao.setAlignment(Pos.CENTER);
-        VBox.setMargin(descricao, new Insets(20, 0, 20, 0));
+
+        VBox.setMargin(descricao, new Insets(0, 0, 20, 0));
 
         VBox root = new VBox(10, vbox1, cardBox,descricao);
         root.setAlignment(Pos.CENTER);
@@ -319,14 +350,11 @@ public class TelaInicial {
         grid.setAlignment(Pos.CENTER); // Centraliza o GridPane na cena
         grid.getColumnConstraints().add(new ColumnConstraints(1000));
         grid.add(root, 0, 0);
-        grid.setBackground(new Background(new BackgroundFill(Color.web("white"), new CornerRadii(5), null)));
+        String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)";
+        grid.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        Button botaoTraduzir = new Button("🇫🇷 Traduzir para Francês");
-        botaoTraduzir.setOnAction(e -> traduzirParaFrances(botaoTraduzir));
-
-        VBox conteudoScroll = new VBox(20, grid, botaoTraduzir);
+        VBox conteudoScroll = new VBox(20, grid);
         conteudoScroll.setAlignment(Pos.CENTER);
-        conteudoScroll.setPadding(new Insets(20));
 
         ScrollPane scrollPane = new ScrollPane(conteudoScroll);
         scrollPane.setFitToWidth(true);
@@ -339,8 +367,8 @@ public class TelaInicial {
             if (newVal.doubleValue() < 1000) {
                 nomeRest.setFont(Font.font(playfairFont.getFamily(), 52));
                 nomeRest2.setFont(Font.font(playfairFont2.getFamily(), 36));
-                inforest1.setFont(Font.font(interfont1.getFamily(), 18));
-                inforest2.setFont(Font.font(interfont2.getFamily(), 14));
+                inforest1.setFont(Font.font(interfont1.getFamily(), 22));
+                inforest2.setFont(Font.font(interfont2.getFamily(), 18));
 
                 card1.setPrefSize(250, 200);
                 card2.setPrefSize(250, 200);
