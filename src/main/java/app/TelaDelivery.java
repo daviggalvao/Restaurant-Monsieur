@@ -1,12 +1,13 @@
 package app;
 
-import classes.Ingrediente; // Apenas para o App.java, não diretamente aqui
+import classes.Pedido;
 import classes.Prato;
 // Removido: import classes.Pedido; // Não usaremos o Pedido do usuário para o estado interno da UI do carrinho
 // As classes Pagamento e Cliente não são usadas diretamente na construção desta tela de menu/carrinho
 // mas seriam necessárias para popular completamente o 'classes.Pedido' no final.
 
 import javafx.application.Platform;
+import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -23,7 +24,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 public class TelaDelivery {
@@ -58,11 +58,12 @@ public class TelaDelivery {
     private static final Font FONT_ITEM_PRICE = Font.font("Arial", FontWeight.BOLD, 15);
     // --- END STYLE CONSTANTS ---
 
-    public TelaDelivery(Stage stage, List<Prato> pratosDoMenu) {
+    public TelaDelivery(Stage stage) {
         this.stage = stage;
+        Prato pratosDoMenu = null;
         this.pratosDisponiveisNoMenu = FXCollections.observableArrayList(pratosDoMenu);
         this.carrinhoDaUI = FXCollections.observableArrayList(item ->
-                new javafx.beans.Observable[]{ // Para que a ListView observe mudanças
+                new Observable[]{ // Para que a ListView observe mudanças
                         item.quantidadeNoCarrinhoProperty(),
                         item.pratoProperty()
                 });
@@ -495,7 +496,7 @@ public class TelaDelivery {
             return;
         }
 
-        classes.Pedido pedidoFinal = new classes.Pedido(); // Assuming classes.Pedido exists
+        Pedido pedidoFinal = new Pedido(); // Assuming classes.Pedido exists
         ArrayList<Prato> pratosParaPedidoFinal = new ArrayList<>();
         ArrayList<Integer> quantidadesParaPedidoFinal = new ArrayList<>();
 
