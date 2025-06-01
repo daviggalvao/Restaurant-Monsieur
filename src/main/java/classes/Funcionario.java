@@ -2,6 +2,15 @@ package classes;
 
 import java.time.LocalDate;
 
+enum FuncionarioCargo {
+    GERENTE,
+    VENDEDOR,
+    SUPERVISOR,
+    GARCOM,
+    CHEF,
+    ZELADOR
+}
+
 public class Funcionario extends Pessoa {
     private int idade;
     private FuncionarioCargo cargo;
@@ -14,7 +23,7 @@ public class Funcionario extends Pessoa {
         this.cargo = cargo;
         this.salario = salario;
         this.dataContrato = dataContrato;
-        char functId[] = this.getId().toCharArray();
+        char[] functId = this.getId().toCharArray();
         functId[0] = 'F';
         this.setId(String.valueOf(functId));
     }
@@ -52,13 +61,4 @@ public class Funcionario extends Pessoa {
             this.dataContrato = LocalDate.now().toString();
         }
     }
-}
-
-enum FuncionarioCargo {
-    GERENTE,
-    VENDEDOR,
-    SUPERVISOR,
-    GARCOM,
-    CHEF,
-    ZELADOR
 }
