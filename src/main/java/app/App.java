@@ -14,8 +14,8 @@ public class App extends Application{
         TelaReserva telaaa = new TelaReserva(primaryStage);
         TelaGerente telaaaa = new TelaGerente(primaryStage);
         TelaCardapio cardapio = new TelaCardapio(primaryStage);
-        tela.mostrar();
-        //telaaa.mostrarReserva();
+        // tela.mostrar();
+         telaaa.mostrarReserva();
         // telaa.mostrarTelaServicos();
         //telaaaa.mostrarTelaGerente();
         //cardapio.mostrarTelaCardapio();

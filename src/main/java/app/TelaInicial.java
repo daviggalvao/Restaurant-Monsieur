@@ -355,13 +355,23 @@ public class TelaInicial {
 
         VBox conteudoScroll = new VBox(20, grid);
         conteudoScroll.setAlignment(Pos.CENTER);
+        conteudoScroll.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
         ScrollPane scrollPane = new ScrollPane(conteudoScroll);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
+        scrollPane.setStyle(
+                "-fx-background-color: transparent;"      +  // remove o fundo branco da própria ScrollPane
+                        "-fx-background: transparent;"            +  // garante que o fundo seja transparente
+                        "-fx-border-color: transparent;"          +  // remove qualquer borda externa que viesse por padrão
+                        "-fx-focus-color: transparent;"           +  // impede que apareça o contorno de seleção azul
+                        "-fx-faint-focus-color: transparent;"
+        );
+
         Scene scene = new Scene(scrollPane);
+        scene.setFill(Color.web("#30000C"));
 
         scene.widthProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.doubleValue() < 1000) {
@@ -393,5 +403,6 @@ public class TelaInicial {
         stage.setMinHeight(600);
         stage.setMaximized(true);
         stage.show();
+
     }
 }

@@ -290,7 +290,7 @@ public class TelaReserva {
 
 
         VBox root = new VBox(10, gridtitulo, inputs,confirmar);
-        root.setAlignment(Pos.TOP_CENTER);
+        root.setAlignment(Pos.CENTER);
         root.setStyle(estiloFundoVinho);
 
         Scene scene = new Scene(root);
