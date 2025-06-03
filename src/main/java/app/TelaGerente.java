@@ -162,7 +162,7 @@ public class TelaGerente {
 
         // Nomes e SVGs dos cards conforme o arquivo fornecido
         VBox cardExtrato = createCard("/svg/bills-svgrepo-com.svg", "Extrato", "Verificar saldo do restaurante", corBordaCard, corTextoCard); //
-        VBox cardPromocao = createCard("/svg/promotion-svgrepo-com.svg", "Promoções", "Promover funcionários", corBordaCard, corTextoCard); //
+        VBox cardPromocao = createCard("/svg/promotion-svgrepo-com.svg", "Promoções", "Promover/Contratar funcionários", corBordaCard, corTextoCard); //
         VBox cardPagarFunc = createCard("/svg/payment-business-and-finance-svgrepo-com.svg", "Pagamentos", "Pagar os funcionários", corBordaCard, corTextoCard); //
 
         HBox linha1Cards = new HBox(20, cardExtrato, cardPromocao, cardPagarFunc); //

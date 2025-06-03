@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -36,7 +37,7 @@ public class TelaInicial {
     private String txtCard3Desc = "Gerenciar Serviços de Caixa";
 
     private Label nomeRest, nomeRest2, inforest1, inforest2, desc1, desc2;
-    private VBox card1, card2, card3;
+    private VBox card1, card2, card3, parent;
 
     public TelaInicial(Stage stage) {
         this.stage = stage;
@@ -250,6 +251,7 @@ public class TelaInicial {
     public void mostrar() {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
         Font playfairFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 46);
+        Font playfairFont3 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 24);
         Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 24);
         Font interfont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 16);
         Font interfont3 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12);
@@ -301,7 +303,48 @@ public class TelaInicial {
         gerente.getEngine().loadContent(html2);
         Button botaoGerente = new Button();
         botaoGerente.setGraphic(gerente);
-        botaoGerente.setOnMouseClicked(e->{new TelaGerente(new Stage()).mostrarTelaGerente();});
+        botaoGerente.setOnMouseClicked(e->{
+            VBox vbox = new VBox(5);
+            vbox.setAlignment(Pos.CENTER);
+            vbox.setPadding(new Insets(40));
+            vbox.setPrefSize(300, 250);
+
+            vbox.setBackground(new Background(new BackgroundFill(Color.web("#F0F0F0"), CornerRadii.EMPTY, Insets.EMPTY)));
+            TextField senha = new TextField();
+            senha.setPromptText("Senha do gerente");
+            String msg = "Senha do Gerente: ";
+            Label label = new Label(msg);
+            label.setFont(playfairFont3);
+            label.setTextFill(Color.web("#30000C"));
+            label.setWrapText(true);
+
+            String msg2 = "Senha incorreta!";
+            Label error = new Label(msg2);
+            error.setFont(interfont2);
+            error.setTextFill(Color.web("#30000C"));
+            error.setVisible(false);
+
+            Rectangle under = new Rectangle(150, 2);
+            under.setFill(Color.web("#30000C"));
+
+            Button confirm = new Button("Confirmar");
+            VBox.setMargin(under, new Insets(0, 0, 23, 0));
+            VBox.setMargin(senha, new Insets(0, 0, 15, 0));
+
+            vbox.getChildren().addAll(label,under,senha,confirm,error);
+            Scene scene = new Scene(vbox, 300, 250);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Gerente");
+            stage.show();
+
+            confirm.setOnAction(event -> {
+                String password = senha.getText();
+                if (password.equals("PSG5-0")){
+                    stage.close();
+                    new TelaGerente(new Stage()).mostrarTelaGerente();}
+                else{error.setVisible(true);}});
+        });
 
         VBox infos = new VBox(5);
         infos.setAlignment(Pos.CENTER);
