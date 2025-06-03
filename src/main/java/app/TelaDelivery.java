@@ -24,6 +24,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class TelaDelivery {
@@ -58,9 +59,8 @@ public class TelaDelivery {
     private static final Font FONT_ITEM_PRICE = Font.font("Arial", FontWeight.BOLD, 15);
     // --- END STYLE CONSTANTS ---
 
-    public TelaDelivery(Stage stage) {
+    public TelaDelivery(Stage stage, List<Prato> pratosDoMenu) {
         this.stage = stage;
-        Prato pratosDoMenu = null;
         this.pratosDisponiveisNoMenu = FXCollections.observableArrayList(pratosDoMenu);
         this.carrinhoDaUI = FXCollections.observableArrayList(item ->
                 new Observable[]{ // Para que a ListView observe mudanças
