@@ -8,6 +8,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -32,11 +33,9 @@ public class TelaInicial {
     private String txtCard1Desc = "Gerenciar Pedidos de Reserva";
     private String txtCard2Title = "Delivery";
     private String txtCard2Desc = "Gerenciar Pedidos de Delivery";
-    private String txtCard3Title = "Serviços";
-    private String txtCard3Desc = "Gerenciar Serviços de Caixa";
 
     private Label nomeRest, nomeRest2, inforest1, inforest2, desc1, desc2;
-    private VBox card1, card2, card3;
+    private VBox card1, card2, parent;
 
     public TelaInicial(Stage stage) {
         this.stage = stage;
@@ -56,8 +55,6 @@ public class TelaInicial {
             txtCard1Desc = "Gérer les demandes de réservation";
             txtCard2Title = "Livraison";
             txtCard2Desc = "Gérer les demandes de livraison";
-            txtCard3Title = "Services";
-            txtCard3Desc = "Gérer les services de caisse";
 
             emFrances = true;
 
@@ -86,8 +83,6 @@ public class TelaInicial {
             txtCard1Desc = "Gerenciar Pedidos de Reserva";
             txtCard2Title = "Delivery";
             txtCard2Desc = "Gerenciar Pedidos de Delivery";
-            txtCard3Title = "Serviços";
-            txtCard3Desc = "Gerenciar Serviços de Caixa";
 
             emFrances = false;
 
@@ -113,7 +108,6 @@ public class TelaInicial {
 
         atualizarCard(card1, txtCard1Title, txtCard1Desc);
         atualizarCard(card2, txtCard2Title, txtCard2Desc);
-        atualizarCard(card3, txtCard3Title, txtCard3Desc);
     }
 
     private void atualizarCard(VBox card, String novoTitulo, String novaDescricao) {
@@ -250,6 +244,7 @@ public class TelaInicial {
     public void mostrar() {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
         Font playfairFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 46);
+        Font playfairFont3 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 24);
         Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 24);
         Font interfont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 16);
         Font interfont3 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12);
@@ -301,7 +296,50 @@ public class TelaInicial {
         gerente.getEngine().loadContent(html2);
         Button botaoGerente = new Button();
         botaoGerente.setGraphic(gerente);
-        botaoGerente.setOnMouseClicked(e->{new TelaGerente(new Stage()).mostrarTelaGerente();});
+        botaoGerente.setOnMouseClicked(e->{
+            VBox vbox = new VBox(5);
+            vbox.setAlignment(Pos.CENTER);
+            vbox.setPadding(new Insets(40));
+            vbox.setPrefSize(300, 250);
+
+            vbox.setBackground(new Background(new BackgroundFill(Color.web("#F0F0F0"), CornerRadii.EMPTY, Insets.EMPTY)));
+            TextField senha = new TextField();
+            senha.setPromptText("Senha do gerente");
+            String msg = "Senha do Gerente: ";
+            Label label = new Label(msg);
+            label.setFont(playfairFont3);
+            label.setTextFill(Color.web("#30000C"));
+            label.setWrapText(true);
+
+            String msg2 = "Senha incorreta!";
+            Label error = new Label(msg2);
+            error.setFont(interfont2);
+            error.setTextFill(Color.web("#30000C"));
+            error.setVisible(false);
+
+            Rectangle under = new Rectangle(150, 2);
+            under.setFill(Color.web("#30000C"));
+
+            Button confirm = new Button("Confirmar");
+            VBox.setMargin(under, new Insets(0, 0, 23, 0));
+            VBox.setMargin(senha, new Insets(0, 0, 15, 0));
+
+            vbox.getChildren().addAll(label,under,senha,confirm,error);
+            Scene scene = new Scene(vbox, 300, 250);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Gerente");
+            stage.show();
+
+            senha.setOnMouseClicked(event->{error.setVisible(false);});
+
+            confirm.setOnAction(event -> {
+                String password = senha.getText();
+                if (password.equals("PSG5-0")){
+                    stage.close();
+                    new TelaServicos(new Stage()).mostrarTelaServicos();}
+                else{error.setVisible(true);}});
+        });
 
         VBox infos = new VBox(5);
         infos.setAlignment(Pos.CENTER);
@@ -322,13 +360,11 @@ public class TelaInicial {
 
          card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#F0F0F0","#000000");
          card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#F0F0F0","#000000");
-         card3 = createCard("/svg/system-management-svgrepo-com.svg", txtCard3Title, txtCard3Desc, "#F0F0F0","#000000");
 
         card1.setOnMouseClicked(mouseEvent->{ new TelaReserva(new Stage()).mostrarReserva();});
         card2.setOnMouseClicked(mouseEvent->{ new TelaCardapio(new Stage()).mostrarTelaCardapio();});
-        card3.setOnMouseClicked(mouseEvent->{ new TelaServicos(new Stage()).mostrarTelaServicos();});
 
-        HBox cardBox = new HBox(20, card1, card2, card3);
+        HBox cardBox = new HBox(20, card1, card2);
         cardBox.setAlignment(Pos.CENTER);
  cardBox.setPadding(new Insets(35,0,50,0));
 
@@ -387,7 +423,6 @@ public class TelaInicial {
 
                 card1.setPrefSize(250, 200);
                 card2.setPrefSize(250, 200);
-                card3.setPrefSize(250, 200);
                 cardBox.setSpacing(10);
 
             } else {
@@ -398,7 +433,6 @@ public class TelaInicial {
 
                 card1.setPrefSize(300, 250);
                 card2.setPrefSize(300, 250);
-                card3.setPrefSize(300, 250);
                 cardBox.setSpacing(20);
             }
         });
