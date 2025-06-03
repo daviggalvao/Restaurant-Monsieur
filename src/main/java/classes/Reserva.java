@@ -52,7 +52,7 @@ import classes.Pagamento;
         }
 
         public void ehMuitaGente(){
-            if(this.qtdPessoas >= 10){
+            if(this.qtdPessoas > 5){
                 this.pagamento.setPreco(this.qtdPessoas);
             }else{ 
                 this.pagamento.setPreco(this.qtdPessoas*2);
