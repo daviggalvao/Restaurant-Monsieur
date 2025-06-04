@@ -23,27 +23,6 @@ public class TelaGerente {
     public TelaGerente(Stage stage) {this.stage = stage;}
 
     /**
-     * Abre uma nova janela maximizada com um título e um conteúdo simples.
-     * Este método é chamado quando um card é clicado.
-     * @param titulo O título da nova janela e parte do conteúdo exibido.
-     */
-    private void abrirNovaJanela(String titulo) {
-        Stage novaJanela = new Stage();
-        novaJanela.setTitle(titulo);
-
-        Label label = new Label("Conteúdo da janela: " + titulo);
-        label.setStyle("-fx-font-size: 20px; -fx-padding: 20px;");
-
-        StackPane pane = new StackPane(label);
-        pane.setPadding(new Insets(20));
-        Scene scene = new Scene(pane, 400, 300);
-
-        novaJanela.setMaximized(true);
-        novaJanela.setScene(scene);
-        novaJanela.show();
-    }
-
-    /**
      * Cria um VBox estilizado como um card.
      * @param svgPath Caminho para o arquivo SVG do ícone.
      * @param titleText Texto do título do card.
@@ -131,10 +110,6 @@ public class TelaGerente {
             vbox.setStyle(normalStyle); //
         });
 
-        vbox.setOnMouseClicked(e -> { //
-            abrirNovaJanela(titleText); //
-        });
-
         return vbox; //
     }
 
@@ -144,7 +119,7 @@ public class TelaGerente {
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17); //
 
         // --- Título Principal ---
-        Label tituloPrincipal = new Label("Área do Gerente"); //
+        Label tituloPrincipal = new Label("Contas/Cadastros"); //
         tituloPrincipal.setFont(playfairFontTitulo); //
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;"); // Cor do título: amarelo
 
@@ -161,12 +136,15 @@ public class TelaGerente {
         String corTextoCard = "black"; // Texto dos cards: PRETO
 
         // Nomes e SVGs dos cards conforme o arquivo fornecido
-        VBox cardExtrato = createCard("/svg/bills-svgrepo-com.svg", "Extrato", "Verificar saldo do restaurante", corBordaCard, corTextoCard); //
-        VBox cardPromocao = createCard("/svg/promotion-svgrepo-com.svg", "Promoções", "Promover/Contratar funcionários", corBordaCard, corTextoCard); //
-        VBox cardPagarFunc = createCard("/svg/payment-business-and-finance-svgrepo-com.svg", "Pagamentos", "Pagar os funcionários", corBordaCard, corTextoCard); //
+        VBox cardCliente = createCard("/svg/client-profile-svgrepo-com.svg", "Clientes", "Gerenciar contas dos clientes", corBordaCard, corTextoCard); //
+        VBox cardPromocao = createCard("/svg/promotion-svgrepo-com.svg", "Funcionários", "Promover/Contratar funcionários", corBordaCard, corTextoCard); //
 
-        HBox linha1Cards = new HBox(20, cardExtrato, cardPromocao, cardPagarFunc); //
+        HBox linha1Cards = new HBox(20, cardCliente, cardPromocao); //
         linha1Cards.setAlignment(Pos.CENTER); //
+
+        cardCliente.setOnMouseClicked(mouseEvent -> {
+            new TelaClientes(new Stage()).mostrarTelaCliente();
+        });
 
         // --- Rodapé ---
         Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
@@ -215,9 +193,8 @@ public class TelaGerente {
                 sublinhado.setWidth(190); //
                 double cardWidthSmall = 260; //
                 double cardHeightSmall = 220; //
-                cardExtrato.setPrefSize(cardWidthSmall, cardHeightSmall); //
+                cardCliente.setPrefSize(cardWidthSmall, cardHeightSmall); //
                 cardPromocao.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                cardPagarFunc.setPrefSize(cardWidthSmall, cardHeightSmall); //
                 linha1Cards.setSpacing(15); //
             } else { //
                 tituloPrincipal.setFont(playfairFontTitulo); //
@@ -225,13 +202,12 @@ public class TelaGerente {
                 double cardWidthLarge = 300; //
                 double cardHeightLarge = 250; //
                 cardPromocao.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardExtrato.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardPagarFunc.setPrefSize(cardWidthLarge, cardHeightLarge); //
+                cardCliente.setPrefSize(cardWidthLarge, cardHeightLarge); //
                 linha1Cards.setSpacing(20); //
             }
         });
 
-        stage.setTitle("Gerente"); //
+        stage.setTitle("Contas"); //
         stage.setMaximized(true); //
         stage.setScene(scene); //
         stage.setMinWidth(800); //

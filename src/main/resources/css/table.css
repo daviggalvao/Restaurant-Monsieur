@@ -1,0 +1,39 @@
+.table-view{
+    -fx-border-color: transparent;
+    -fx-background-color: "linear-gradient(to right, #30000C, #800020)";
+}
+
+.table-view .column-header-background {
+    -fx-background-color: "linear-gradient(to right, #30000C, #800020)"; /* Cor de fundo do cabeçalho */
+    -fx-border-color: transparent;
+}
+
+.table-view .column-header {
+    -fx-background-color: "linear-gradient(to right, #30000C, #800020)"; /* Cor de cada célula de cabeçalho */
+    -fx-border-color: "FFC300";
+    -fx-border-width: 0 0 1 0; /* Borda inferior */
+    -fx-padding: 5 10 5 10;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: "#FFC300"; /* Cor do texto */
+    -fx-font-weight: bold; /* Negrito */
+    -fx-alignment: CENTER; /* Centralizar texto */
+    -fx-border-color: transparent;
+    -fx-font-size: 20;
+    -fx-font-family: "fonte1";
+    -fx-label-padding: 5 10 5 10;
+}
+
+.table-view .column-value .label {
+    -fx-background-color: "linear-gradient(to right, #30000C, #800020)";
+    -fx-text-fill: "#FFC300"; /* Cor do texto */
+    -fx-alignment: CENTER; /* Centralizar texto */
+    -fx-font-size: 15;
+    -fx-font-family: "Inter";
+}
+
+@font-face {
+    font-family: "fonte1";
+    src: url("/fonts/PlayfairDisplay-Bold.ttf");
+}
