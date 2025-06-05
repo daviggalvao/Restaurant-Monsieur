@@ -7,10 +7,11 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.text.Text;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
@@ -23,28 +24,78 @@ public class TelaPagamento {
     }
 
     private void updateContent(String selectedItem, VBox contentBox) {
-        // Limpar conteúdo existente
+
         contentBox.getChildren().clear();
 
         if (selectedItem.equals("Pedidos")) {
-            // Conteúdo para "Pedidos"
-            Text pedido = new Text("Pedido #PED001");
-            Text pizza = new Text("Pizza Margherita x2 .............................. R$ 91.80");
-            Text refrigerante = new Text("Refrigerante 2L x1 ............................. R$ 8.50");
-            Text sobremesa = new Text("Sobremesa x1 ....................................... R$ 12.00");
-            Text taxaEntrega = new Text("Taxa de entrega ................................. R$ 5.00");
+            Label pedido = new Label("Pedido #PED001");
+            pedido.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+            Label pizza = new Label("Pizza Margherita x2                                  R$ 91.80");
+            pizza.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+            Label refrigerante = new Label("Refrigerante 2L x1                                       R$ 8.50");
+            refrigerante.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+            Label sobremesa = new Label("Sobremesa x1                                            R$ 12.00");
+            sobremesa.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+            Label taxaEntrega = new Label("Taxa de entrega                                           R$ 5.00");
+            taxaEntrega.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
 
-            Text subtotal = new Text("Subtotal: ........................................... R$ 117.30");
-            subtotal.setStyle("-fx-font-weight: bold; -fx-fill: green;");
+            Rectangle sublinhado = new Rectangle(325, 2);
+            sublinhado.setFill(Color.web("#ddd"));
 
-            contentBox.getChildren().addAll(pedido, pizza, refrigerante, sobremesa, taxaEntrega, subtotal);
+            Rectangle sublinhado2 = new Rectangle(325, 2);
+            sublinhado2.setFill(Color.web("#ddd"));
+
+
+            Label subtotal = new Label("Subtotal:");
+            subtotal.setStyle("-fx-font-weight: bold; -fx-fill: black; -fx-font-size: 17px; ");
+            subtotal.setAlignment(Pos.CENTER_LEFT);
+            Label preco = new Label("R$ 117.30");
+            preco.setStyle("-fx-font-weight: bold; -fx-text-fill: green; -fx-font-size: 17px; ");
+            preco.setAlignment(Pos.CENTER_RIGHT);
+
+            HBox subtotalPrecoBox = new HBox(170, subtotal, preco);
+            subtotalPrecoBox.setAlignment(Pos.CENTER_LEFT); // Alinha os itens no HBox à esquerda
+            HBox.setHgrow(preco, Priority.ALWAYS); // Garante que o preço ficará alinhado à direita
+
+
+            contentBox.getChildren().addAll(pedido, pizza, refrigerante, sobremesa, sublinhado, taxaEntrega, sublinhado2, subtotalPrecoBox);
+            contentBox.setAlignment(Pos.BASELINE_LEFT);
+            VBox.setMargin(contentBox,  new Insets(0, 0, 0, 3));
+
+
         } else if (selectedItem.equals("Reservas")) {
-            // Conteúdo para "Reservas"
-            Text reserva = new Text("Reserva #RES001");
-            Text data = new Text("Data: 21/11/2025");
-            Text local = new Text("Local: Restaurante Monsieur-José");
 
-            contentBox.getChildren().addAll(reserva, data, local);
+            Label reserva = new Label("Reserva #RES001");
+            reserva.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+            Label data = new Label("15/12/2024 às 19:30");
+            data.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+            Label local = new Label("Local: Salão Principal");
+            local.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+            Label preco = new Label("Mesa para 4 pessoas                                R$ 120.00");
+            preco.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+            Label taxaServico = new Label("Taxa de serviço                                           R$ 15.00");
+            taxaServico.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+
+            Rectangle sublinhado = new Rectangle(325, 2);
+            sublinhado.setFill(Color.web("#ddd"));
+
+            Rectangle sublinhado2 = new Rectangle(325, 2);
+            sublinhado2.setFill(Color.web("#ddd"));
+
+            Label subtotal = new Label("Subtotal:");
+            subtotal.setStyle("-fx-font-weight: bold; -fx-fill: black; -fx-font-size: 17px; ");
+            subtotal.setAlignment(Pos.CENTER_LEFT);
+            Label precoTotal = new Label("R$ 117.30");
+            precoTotal.setStyle("-fx-font-weight: bold; -fx-text-fill: green; -fx-font-size: 17px; ");
+            precoTotal.setAlignment(Pos.CENTER_RIGHT);
+
+            HBox subtotalPrecoBox = new HBox(162, subtotal, precoTotal);
+            subtotalPrecoBox.setAlignment(Pos.CENTER_LEFT); // Alinha os itens no HBox à esquerda
+            HBox.setHgrow(precoTotal, Priority.ALWAYS); // Garante que o preço ficará alinhado à direita
+
+            contentBox.getChildren().addAll(reserva, data, local, preco , sublinhado, taxaServico, sublinhado2, subtotalPrecoBox);
+            contentBox.setAlignment(Pos.BASELINE_LEFT);
+            VBox.setMargin(contentBox,  new Insets(0, 0, 0, 3));
         }
     }
 
@@ -77,8 +128,7 @@ public class TelaPagamento {
                     "    -fx-border-color: #ddd;\n" +
                     "    -fx-border-radius: 5px;\n" +
                     "    -fx-border-width: 1px;\n" +
-                    "    -fx-font-size: 14px;\n" +
-                    "    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 1);";
+                    "    -fx-font-size: 14px;\n";
 
             Label tipo = new Label("Tipo:");
             tipo.setStyle("-fx-font-size: 14px; -fx-font-weight: 500;");
@@ -91,7 +141,7 @@ public class TelaPagamento {
 
 
             final String[] selectedItem = {"Pedidos"};
-            VBox contentBox = new VBox(10);
+            VBox contentBox = new VBox(15);
 
             types.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
