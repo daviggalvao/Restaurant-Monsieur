@@ -366,7 +366,7 @@ public class TelaInicial {
 
         HBox cardBox = new HBox(20, card1, card2);
         cardBox.setAlignment(Pos.CENTER);
- cardBox.setPadding(new Insets(35,0,50,0));
+        cardBox.setPadding(new Insets(35,0,50,0));
 
         desc1 = new Label(txtDesc1);
         desc1.setFont(interfont3);
