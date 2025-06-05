@@ -1,7 +1,9 @@
 package app;
 
+import classes.Cliente;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -13,35 +15,19 @@ import javafx.geometry.*;
 import javafx.animation.*;
 import javafx.util.Duration;
 
-public class TelaServicos{
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+
+public class TelaClientes {
     private Stage stage;
 
     /**
-     * Construtor da TelaServicos.
+     * Construtor da TelaCliente.
      * @param stage O palco principal da aplicação.
      */
-    public TelaServicos(Stage stage) {this.stage = stage;}
-
-    /**
-     * Abre uma nova janela maximizada com um título e um conteúdo simples.
-     * Este método é chamado quando um card é clicado.
-     * @param titulo O título da nova janela e parte do conteúdo exibido.
-     */
-    private void abrirNovaJanela(String titulo) {
-        Stage novaJanela = new Stage();
-        novaJanela.setTitle(titulo);
-
-        Label label = new Label("Conteúdo da janela: " + titulo);
-        label.setStyle("-fx-font-size: 20px; -fx-padding: 20px;");
-
-        StackPane pane = new StackPane(label);
-        pane.setPadding(new Insets(20));
-        Scene scene = new Scene(pane, 400, 300);
-
-        novaJanela.setMaximized(true);
-        novaJanela.setScene(scene);
-        novaJanela.show();
-    }
+    public TelaClientes(Stage stage) {this.stage = stage;}
 
     /**
      * Cria um VBox estilizado como um card.
@@ -52,6 +38,7 @@ public class TelaServicos{
      * @param textColor Cor do texto do card.
      * @return Um VBox configurado como um card.
      */
+
     private VBox createCard(String svgPath, String titleText, String descText, String borderColor, String textColor) {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30); //
         Font interfont = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"),12); //
@@ -130,23 +117,16 @@ public class TelaServicos{
             vbox.setStyle(normalStyle); //
         });
 
-        vbox.setOnMouseClicked(e -> { //
-            abrirNovaJanela(titleText); //
-        });
-
         return vbox; //
     }
 
-    /**
-     * Configura e exibe a tela de Serviços.
-     */
-    public void mostrarTelaServicos() { //
-        Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62); //
+    public void mostrarTelaCliente() { //
+        Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50); //
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15); //
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17); //
 
         // --- Título Principal ---
-        Label tituloPrincipal = new Label("Serviços"); //
+        Label tituloPrincipal = new Label("Clientes"); //
         tituloPrincipal.setFont(playfairFontTitulo); //
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;"); // Cor do título: amarelo
 
@@ -158,29 +138,19 @@ public class TelaServicos{
         VBox.setMargin(tituloPrincipal, new Insets(0, 0, 0, 0)); //
         VBox.setMargin(blocoTitulo, new Insets(20, 0, 30, 0)); //
 
-        // --- Cards ---
-        String corBordaCard = "#E4E9F0"; //
-        String corTextoCard = "black"; // Texto dos cards: PRETO
+        TableView<Cliente> tabela= new TableView<Cliente>();
+        TableColumn<Cliente, String> nomeColuna = new TableColumn<>("Nome");
+        nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
-        // Nomes e SVGs dos cards conforme o arquivo fornecido
-        VBox cardCadastro = createCard("/svg/contacts-svgrepo-com.svg", "Cadastros", "Gerenciar Cadastros", corBordaCard, corTextoCard); //
-        VBox cardPedido = createCard("/svg/shopping-cart-svgrepo-com.svg", "Pedidos", "Gerenciar Pedidos", corBordaCard, corTextoCard); //
-        VBox cardReserva = createCard("/svg/calendar-big-svgrepo-com.svg", "Reservas", "Gerenciar Reservas", corBordaCard, corTextoCard); //
-        VBox cardEstoque = createCard("/svg/box-svgrepo-com.svg", "Estoque", "Gerenciar Estoque", corBordaCard, corTextoCard); //
-        VBox cardConta = createCard("/svg/diary-svgrepo-com.svg", "Cardápio", "Gerenciar Cardápio", corBordaCard, corTextoCard); //
-        VBox cardMenu = createCard("/svg/bank-svgrepo-com.svg", "Conta", "Gerenciar Conta", corBordaCard, corTextoCard); //
+        tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>("Data do aniversário");
+        aniversarioColuna.setCellValueFactory(new PropertyValueFactory<>("data do aniversário"));
 
-        HBox linha1Cards = new HBox(20, cardCadastro, cardPedido, cardReserva); //
-        linha1Cards.setAlignment(Pos.CENTER); //
-        HBox linha2Cards = new HBox(20, cardEstoque, cardConta, cardMenu); //
-        linha2Cards.setAlignment(Pos.CENTER); //
-        VBox cardBoxContainer = new VBox(20, linha1Cards, linha2Cards); //
-        cardBoxContainer.setAlignment(Pos.CENTER); //
-        cardBoxContainer.setPadding(new Insets(20, 0, 0, 50)); //
+        TableColumn<Cliente, String> enderecoColuna = new TableColumn<>("Endereço");
+        enderecoColuna.setCellValueFactory(new PropertyValueFactory<>("endereco"));
 
-        cardCadastro.setOnMouseClicked(e->{
-            new TelaGerente(new Stage()).mostrarTelaGerente();
-        });
+        tabela.getColumns().addAll(nomeColuna, aniversarioColuna, enderecoColuna);
+        tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
         // --- Rodapé ---
         Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
@@ -197,12 +167,11 @@ public class TelaServicos{
         VBox.setMargin(descricaoRodape, new Insets(20, 0, 20, 0)); //
 
         // --- Layout Principal com VBox root (rodapé rolável) ---
-        VBox root = new VBox(10, blocoTitulo, cardBoxContainer, descricaoRodape); //
+        VBox root = new VBox(10, blocoTitulo, tabela, descricaoRodape); //
         root.setAlignment(Pos.CENTER); //
         root.setPadding(new Insets(20)); //
 
         VBox.setVgrow(blocoTitulo, Priority.NEVER); //
-        VBox.setVgrow(cardBoxContainer, Priority.ALWAYS); //
         VBox.setVgrow(descricaoRodape, Priority.NEVER); //
 
         GridPane grid = new GridPane(); //
@@ -227,39 +196,17 @@ public class TelaServicos{
             if (newVal.doubleValue() < 1200) { //
                 tituloPrincipal.setFont(Font.font(playfairFontTitulo.getFamily(), 52)); //
                 sublinhado.setWidth(190); //
-                double cardWidthSmall = 260; //
-                double cardHeightSmall = 220; //
-                cardCadastro.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                cardPedido.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                cardReserva.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                cardEstoque.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                cardConta.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                cardMenu.setPrefSize(cardWidthSmall, cardHeightSmall); //
-                linha1Cards.setSpacing(15); //
-                linha2Cards.setSpacing(15); //
-                cardBoxContainer.setSpacing(15); //
             } else { //
                 tituloPrincipal.setFont(playfairFontTitulo); //
                 sublinhado.setWidth(230); //
-                double cardWidthLarge = 300; //
-                double cardHeightLarge = 250; //
-                cardCadastro.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardPedido.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardReserva.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardEstoque.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardConta.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                cardMenu.setPrefSize(cardWidthLarge, cardHeightLarge); //
-                linha1Cards.setSpacing(20); //
-                linha2Cards.setSpacing(20); //
-                cardBoxContainer.setSpacing(20); //
             }
         });
 
-        stage.setTitle("Serviços"); //
+        stage.setTitle("Contas"); //
+        stage.setMaximized(true); //
         stage.setScene(scene); //
         stage.setMinWidth(800); //
         stage.setMinHeight(600); //
-        stage.setMaximized(true); //
         stage.show(); //
     }
 }
