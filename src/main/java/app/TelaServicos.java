@@ -167,8 +167,8 @@ public class TelaServicos{
         VBox cardPedido = createCard("/svg/shopping-cart-svgrepo-com.svg", "Pedidos", "Gerenciar Pedidos", corBordaCard, corTextoCard); //
         VBox cardReserva = createCard("/svg/calendar-big-svgrepo-com.svg", "Reservas", "Gerenciar Reservas", corBordaCard, corTextoCard); //
         VBox cardEstoque = createCard("/svg/box-svgrepo-com.svg", "Estoque", "Gerenciar Estoque", corBordaCard, corTextoCard); //
-        VBox cardConta = createCard("/svg/diary-svgrepo-com.svg", "Cardápio", "Gerenciar Cardápio", corBordaCard, corTextoCard); //
-        VBox cardMenu = createCard("/svg/bank-svgrepo-com.svg", "Conta", "Gerenciar Conta", corBordaCard, corTextoCard); //
+        VBox cardMenu = createCard("/svg/diary-svgrepo-com.svg", "Cardápio", "Gerenciar Cardápio", corBordaCard, corTextoCard); //
+        VBox cardConta = createCard("/svg/bank-svgrepo-com.svg", "Conta", "Gerenciar Conta", corBordaCard, corTextoCard); //
 
         HBox linha1Cards = new HBox(20, cardCadastro, cardPedido, cardReserva); //
         linha1Cards.setAlignment(Pos.CENTER); //
@@ -180,6 +180,10 @@ public class TelaServicos{
 
         cardCadastro.setOnMouseClicked(e->{
             new TelaGerente(new Stage()).mostrarTelaGerente();
+        });
+
+        cardConta.setOnMouseClicked(e->{
+            new TelaConta(new Stage()).mostrarTelaConta();
         });
 
         // --- Rodapé ---
