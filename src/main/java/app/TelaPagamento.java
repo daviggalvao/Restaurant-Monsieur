@@ -3,6 +3,7 @@ package app;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -12,12 +13,21 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
 public class TelaPagamento {
     private Stage stage;
     private String tituloDesc;
+    private String tituloDesc2;
+    private String p1 = "1x de R$ 117.30(à vista)";
+
+    private String p2 = "2x de R$ 58.65";
+    private String p3 = "3x de R$ 39.10";
+    private String p4 = "4x de R$ 29.32";
+    private String p5 = "5x de R$ 23.46";
+
 
     public TelaPagamento(Stage stage) {
         this.stage = stage;
@@ -85,7 +95,7 @@ public class TelaPagamento {
             Label subtotal = new Label("Subtotal:");
             subtotal.setStyle("-fx-font-weight: bold; -fx-fill: black; -fx-font-size: 17px; ");
             subtotal.setAlignment(Pos.CENTER_LEFT);
-            Label precoTotal = new Label("R$ 117.30");
+            Label precoTotal = new Label("R$ 145.00");
             precoTotal.setStyle("-fx-font-weight: bold; -fx-text-fill: green; -fx-font-size: 17px; ");
             precoTotal.setAlignment(Pos.CENTER_RIGHT);
 
@@ -96,6 +106,107 @@ public class TelaPagamento {
             contentBox.getChildren().addAll(reserva, data, local, preco , sublinhado, taxaServico, sublinhado2, subtotalPrecoBox);
             contentBox.setAlignment(Pos.BASELINE_LEFT);
             VBox.setMargin(contentBox,  new Insets(0, 0, 0, 3));
+        }
+    }
+
+    private void updateContent2(String selectedItem, VBox contentBox) {
+        contentBox.getChildren().clear();
+
+        String[] Partes = selectedItem.split(" ");
+        if(Partes[0].equals("1x")){
+             contentBox.setPadding(new Insets(20));
+             contentBox.setStyle("-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;");
+
+            Label titulo = new Label("Resumo do Pagamento:");
+            titulo.setFont(Font.font("System", FontWeight.BOLD, 16));
+
+            Label valorTotal = new Label("Valor total:       R$ 117,30");
+            valorTotal.setFont(Font.font("System", 14));
+
+            Label parcelas = new Label("Parcelas:           1x");
+            parcelas.setFont(Font.font("System", 14));
+
+            Label valorParcela = new Label("Valor por parcela:   R$ 117,30");
+            valorParcela.setFont(Font.font("System", FontWeight.BOLD, 14));
+
+            Label pagamentoAVista = new Label("✓ Pagamento à vista");
+            pagamentoAVista.setTextFill(Color.GREEN);
+            pagamentoAVista.setFont(Font.font("System", 14));
+
+            contentBox.getChildren().addAll(titulo, valorTotal, parcelas, valorParcela, pagamentoAVista);
+            contentBox.setAlignment(Pos.BASELINE_LEFT);
+        } else if (Partes[0].equals("2x")) {
+            contentBox.setPadding(new Insets(20));
+            contentBox.setStyle("-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;");
+
+            Label titulo = new Label("Resumo do Pagamento:");
+            titulo.setFont(Font.font("System", FontWeight.BOLD, 16));
+
+            Label valorTotal = new Label("Valor total:       R$ 117,30");
+            valorTotal.setFont(Font.font("System", 14));
+
+            Label parcelas = new Label("Parcelas:           2x");
+            parcelas.setFont(Font.font("System", 14));
+
+            Label valorParcela = new Label("Valor por parcela:   R$ 58.65");
+            valorParcela.setFont(Font.font("System", FontWeight.BOLD, 14));
+
+            contentBox.getChildren().addAll(titulo, valorTotal, parcelas, valorParcela);
+            contentBox.setAlignment(Pos.BASELINE_LEFT);
+        }else if (Partes[0].equals("3x")) {
+            contentBox.setPadding(new Insets(20));
+            contentBox.setStyle("-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;");
+
+            Label titulo = new Label("Resumo do Pagamento:");
+            titulo.setFont(Font.font("System", FontWeight.BOLD, 16));
+
+            Label valorTotal = new Label("Valor total:       R$ 117,30");
+            valorTotal.setFont(Font.font("System", 14));
+
+            Label parcelas = new Label("Parcelas:           3x");
+            parcelas.setFont(Font.font("System", 14));
+
+            Label valorParcela = new Label("Valor por parcela:   R$ 39.10");
+            valorParcela.setFont(Font.font("System", FontWeight.BOLD, 14));
+
+            contentBox.getChildren().addAll(titulo, valorTotal, parcelas, valorParcela);
+            contentBox.setAlignment(Pos.BASELINE_LEFT);
+        }else if (Partes[0].equals("4x")) {
+            contentBox.setPadding(new Insets(20));
+            contentBox.setStyle("-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;");
+
+            Label titulo = new Label("Resumo do Pagamento:");
+            titulo.setFont(Font.font("System", FontWeight.BOLD, 16));
+
+            Label valorTotal = new Label("Valor total:       R$ 117,30");
+            valorTotal.setFont(Font.font("System", 14));
+
+            Label parcelas = new Label("Parcelas:           4x");
+            parcelas.setFont(Font.font("System", 14));
+
+            Label valorParcela = new Label("Valor por parcela:   R$ 29.32");
+            valorParcela.setFont(Font.font("System", FontWeight.BOLD, 14));
+
+            contentBox.getChildren().addAll(titulo, valorTotal, parcelas, valorParcela);
+            contentBox.setAlignment(Pos.BASELINE_LEFT);
+        }else if (Partes[0].equals("5x")) {
+            contentBox.setPadding(new Insets(20));
+            contentBox.setStyle("-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;");
+
+            Label titulo = new Label("Resumo do Pagamento:");
+            titulo.setFont(Font.font("System", FontWeight.BOLD, 16));
+
+            Label valorTotal = new Label("Valor total:       R$ 117,30");
+            valorTotal.setFont(Font.font("System", 14));
+
+            Label parcelas = new Label("Parcelas:           5x");
+            parcelas.setFont(Font.font("System", 14));
+
+            Label valorParcela = new Label("Valor por parcela:   R$ 23.46");
+            valorParcela.setFont(Font.font("System", FontWeight.BOLD, 14));
+
+            contentBox.getChildren().addAll(titulo, valorTotal, parcelas, valorParcela);
+            contentBox.setAlignment(Pos.BASELINE_LEFT);
         }
     }
 
@@ -121,6 +232,9 @@ public class TelaPagamento {
         HBox titulos = new HBox(7, webView, title);
         titulos.setAlignment(Pos.TOP_LEFT);
         HBox.setMargin(title, new Insets(-3, 0, 0, 0));
+
+
+        //---------------Criacao card do resumo pagamento ---------------//
 
         if (TipoCard.equals("Informacoes")) {
             String inputStyle = "-fx-background-color: white;\n" +
@@ -170,6 +284,75 @@ public class TelaPagamento {
             vbox.setStyle(normalStyle);
 
             return vbox;
+
+            //-----------------------Criacao Card Pagamento ----------------------//
+
+        }else if(TipoCard.equals("Pagamento")){
+            String inputStyle = "-fx-background-color: white;\n" +
+                    "    -fx-background-radius: 5px;\n" +
+                    "    -fx-border-color: #ddd;\n" +
+                    "    -fx-border-radius: 5px;\n" +
+                    "    -fx-border-width: 1px;\n" +
+                    "    -fx-font-size: 14px;\n";
+
+            Label tipo = new Label("Parcelamento:");
+            tipo.setStyle("-fx-font-size: 14px; -fx-font-weight: 500;");
+            ComboBox<String> types = new ComboBox<String>();
+            types.getItems().addAll(p1,p2,p3,p4,p5);
+            types.setValue("1x de R$ 117.30(à vista)");
+            types.setPrefHeight(40);
+            types.setStyle(inputStyle);
+            types.setPrefWidth(400);
+
+
+            final String[] selectedItem = {p1};
+            VBox contentBox = new VBox(10);
+
+            types.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    // Use o valor selecionado
+                    selectedItem[0] = newValue;
+                    updateContent2(selectedItem[0],contentBox);
+                }
+            });
+
+            VBox tipos = new VBox(10, tipo, types);
+            updateContent2(selectedItem[0], contentBox);
+
+            Button finalizarPagamento = new Button("Finalizar Pagamento  💳");
+            finalizarPagamento.setPrefWidth(400);
+            finalizarPagamento.setFont(Font.font("System", FontWeight.BOLD, 16));
+            finalizarPagamento.setStyle(
+                    "-fx-background-color: #0C1120;" +  // cor escura
+                            "-fx-text-fill: white;" +
+                            "-fx-padding: 15 50 15 50;" +  // padding grande
+                            "-fx-background-radius: 10;" + // canto arredondado
+                            "-fx-cursor: hand;"  // cursor de mão
+            );
+
+            Label mensagemSeguranca = new Label("Pagamento seguro • Seus dados estão protegidos");
+            mensagemSeguranca.setFont(Font.font("System", 13));
+            mensagemSeguranca.setStyle("-fx-text-fill: #5E6D82;");
+            mensagemSeguranca.setAlignment(Pos.CENTER);
+
+            VBox botao = new VBox(10);
+            botao.getChildren().addAll(finalizarPagamento, mensagemSeguranca);
+            botao.setAlignment(Pos.CENTER);
+
+            VBox vbox = new VBox(20, titulos,tipos,contentBox,botao);
+            vbox.setAlignment(Pos.TOP_CENTER); //
+            vbox.setPadding(new Insets(40)); //
+            vbox.setPrefSize(420, 450); //
+
+            String cardBackgroundColor = "White"; // Fundo do card: Cinza Claro
+            String normalStyle = "-fx-border-color: " + borderColor + ";" + //
+                    "-fx-border-radius: 10;" + //
+                    "-fx-border-width: 2.0;" + //
+                    "-fx-background-radius: 10;" + //
+                    "-fx-background-color: " + cardBackgroundColor + ";"; //
+            vbox.setStyle(normalStyle);
+
+            return vbox;
         }
         VBox vbox = new VBox(20, titulos);
         vbox.setAlignment(Pos.TOP_CENTER); //
@@ -188,16 +371,20 @@ public class TelaPagamento {
     }
 
     public void mostrarPagamento() {
+        Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Label titulo = new Label("Finalizar Pagamento");
-        titulo.setStyle("-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #FFC300;");
+        titulo.setFont(playfairFont);
+        titulo.setStyle("-fx-text-fill: #FFC300;");
+
 
         String corBordaCard = "#E4E9F0";
         String corTextoCard = "black";
 
         tituloDesc = "Detalhes do Pedido";
+        tituloDesc2 = "Forma de Pagamento";
 
         VBox cardInfo = createCard("/svg/package-svgrepo-com.svg", tituloDesc, "Informacoes", corBordaCard, corTextoCard);
-        VBox cardPagamento = createCard("/svg/credit-card-svgrepo-com.svg", "Pagamento", "Promover/Contratar funcionários", corBordaCard, corTextoCard);
+        VBox cardPagamento = createCard("/svg/credit-card-svgrepo-com.svg", tituloDesc2, "Pagamento", corBordaCard, corTextoCard);
 
         HBox cardsContainer = new HBox(20); // 10 é o espaçamento entre os cartões
         cardsContainer.getChildren().addAll(cardInfo, cardPagamento);
@@ -207,12 +394,16 @@ public class TelaPagamento {
         contenedor.getChildren().addAll(titulo, cardsContainer);
         contenedor.setAlignment(Pos.CENTER);
 
+        String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)";
+        contenedor.setStyle("-fx-background-color:"  + estiloFundoVinho + ";");
+
         ScrollPane pane = new ScrollPane();
         pane.setContent(contenedor);
         pane.setFitToHeight(true);
         pane.setFitToWidth(true);
+        pane.setStyle("-fx-background-color:"  + estiloFundoVinho + ";");
+
         Scene scene = new Scene(pane);
-        scene.setFill(Color.RED);
 
         stage.setTitle("Pagamento");
         stage.setScene(scene);
