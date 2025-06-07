@@ -171,44 +171,7 @@ public class TelaReserva {
         inputs.add(cbPagamento, 2, 5, 2, 1);  // Reduzi o span para 2
 
         Button confirmar = new Button("Confirmar reserva");
-        confirmar.setStyle(
-                "-fx-background-color: #500020;" +          // Vinho escuro
-                        "-fx-text-fill: #ffcc00;" +                  // Amarelo
-                        "-fx-font-weight: bold;" +
-                        "-fx-font-size: 14px;" +
-                        "-fx-padding: 10 20 10 20;" +                 // Espaçamento interno
-                        "-fx-background-radius: 10;" +                // Bordas arredondadas
-                        "-fx-border-radius: 10;" +
-                        "-fx-border-color: #ffcc00;" +                // Borda amarela
-                        "-fx-border-width: 2;" +
-                        "-fx-cursor: hand;"                            // Cursor de mãozinha no hover
-        );
-
-        confirmar.setOnMouseEntered(e -> confirmar.setStyle(
-                "-fx-background-color: #ffcc00;" +            // Fundo amarelo ao passar o mouse
-                        "-fx-text-fill: #500020;" +                    // Texto vinho escuro
-                        "-fx-font-weight: bold;" +
-                        "-fx-font-size: 14px;" +
-                        "-fx-padding: 10 20 10 20;" +
-                        "-fx-background-radius: 10;" +
-                        "-fx-border-radius: 10;" +
-                        "-fx-border-color: #ffcc00;" +
-                        "-fx-border-width: 2;" +
-                        "-fx-cursor: hand;"
-        ));
-
-        confirmar.setOnMouseExited(e -> confirmar.setStyle(
-                "-fx-background-color: #500020;" +
-                        "-fx-text-fill: #ffcc00;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-font-size: 14px;" +
-                        "-fx-padding: 10 20 10 20;" +
-                        "-fx-background-radius: 10;" +
-                        "-fx-border-radius: 10;" +
-                        "-fx-border-color: #ffcc00;" +
-                        "-fx-border-width: 2;" +
-                        "-fx-cursor: hand;"
-        ));
+        confirmar.getStyleClass().add("button");
 
         confirmar.setOnMouseClicked(e -> {
             FirebaseReserva refdatabase = new FirebaseReserva();
@@ -294,6 +257,7 @@ public class TelaReserva {
         root.setStyle(estiloFundoVinho);
 
         Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
         stage.setScene(scene);
         stage.setMaximized(true);
         stage.show();

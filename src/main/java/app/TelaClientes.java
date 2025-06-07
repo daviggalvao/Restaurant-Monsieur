@@ -1,24 +1,17 @@
 package app;
 
 import classes.Cliente;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.geometry.*;
-import javafx.animation.*;
-import javafx.util.Duration;
-
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TelaClientes {
     private Stage stage;
@@ -29,96 +22,6 @@ public class TelaClientes {
      */
     public TelaClientes(Stage stage) {this.stage = stage;}
 
-    /**
-     * Cria um VBox estilizado como um card.
-     * @param svgPath Caminho para o arquivo SVG do ícone.
-     * @param titleText Texto do título do card.
-     * @param descText Texto da descrição do card.
-     * @param borderColor Cor da borda do card (ex: "#E4E9F0").
-     * @param textColor Cor do texto do card.
-     * @return Um VBox configurado como um card.
-     */
-
-    private VBox createCard(String svgPath, String titleText, String descText, String borderColor, String textColor) {
-        Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30); //
-        Font interfont = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"),12); //
-
-        WebView webView = new WebView(); //
-        webView.setMinSize(40, 40); //
-        webView.setPrefSize(50, 50); //
-        webView.setMaxSize(40, 40); //
-
-        String svgUrl = getClass().getResource(svgPath).toExternalForm(); //
-        String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" + //
-                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" + //
-                "</body></html>"; //
-        webView.getEngine().loadContent(html); //
-
-        Circle circle = new Circle(40); //
-        circle.setFill(Color.WHITE); // Círculo de hover permanece BRANCO
-        circle.setVisible(false); //
-        StackPane iconStack = new StackPane(circle, webView); //
-        iconStack.setAlignment(Pos.CENTER); //
-
-        Label title = new Label(titleText); //
-        title.setTextFill(Color.web(textColor)); // Texto do card PRETO
-        title.setFont(playfairFont); //
-        title.setAlignment(Pos.CENTER); //
-
-        Label desc = new Label(descText); //
-        desc.setTextFill(Color.web(textColor)); // Texto do card PRETO
-        desc.setWrapText(true); //
-        desc.setMaxWidth(200); //
-        desc.setFont(interfont); //
-        desc.setAlignment(Pos.CENTER); //
-
-        VBox vbox = new VBox(10, iconStack, title, desc); //
-        vbox.setAlignment(Pos.CENTER); //
-        vbox.setPadding(new Insets(40)); //
-        vbox.setPrefSize(300, 250); //
-
-        String cardBackgroundColor = "#F0F0F0"; // Fundo do card: Cinza Claro
-        String normalStyle = "-fx-border-color: " + borderColor + ";" + //
-                "-fx-border-radius: 10;" + //
-                "-fx-border-width: 2.0;" + //
-                "-fx-background-radius: 10;" + //
-                "-fx-background-color: " + cardBackgroundColor + ";"; //
-        vbox.setStyle(normalStyle); //
-
-        vbox.setOnMouseEntered(e -> { //
-            TranslateTransition translate = new TranslateTransition(Duration.millis(200), vbox); //
-            translate.setToY(-5); //
-            translate.play(); //
-            vbox.setCursor(javafx.scene.Cursor.HAND); //
-            ScaleTransition scale = new ScaleTransition(Duration.millis(200), vbox); //
-            scale.setToX(1.05); //
-            scale.setToY(1.05); //
-            scale.play(); //
-            circle.setVisible(true); //
-            vbox.setStyle( //
-                    "-fx-border-color: " + borderColor + ";" + //
-                            "-fx-border-radius: 10;" + //
-                            "-fx-border-width: 2;" + //
-                            "-fx-background-radius: 10;" + //
-                            "-fx-background-color: " + cardBackgroundColor + ";" //
-            );
-        });
-
-        vbox.setOnMouseExited(e ->{ //
-            TranslateTransition translate = new TranslateTransition(Duration.millis(200), vbox); //
-            translate.setToY(0); //
-            translate.play(); //
-            vbox.setCursor(javafx.scene.Cursor.DEFAULT); //
-            ScaleTransition scale = new ScaleTransition(Duration.millis(200), vbox); //
-            scale.setToX(1); //
-            scale.setToY(1); //
-            scale.play(); //
-            circle.setVisible(false); //
-            vbox.setStyle(normalStyle); //
-        });
-
-        return vbox; //
-    }
 
     public void mostrarTelaCliente() { //
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50); //
@@ -139,18 +42,32 @@ public class TelaClientes {
         VBox.setMargin(blocoTitulo, new Insets(20, 0, 30, 0)); //
 
         TableView<Cliente> tabela= new TableView<Cliente>();
+
+        tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         TableColumn<Cliente, String> nomeColuna = new TableColumn<>("Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
-        tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>("Data do aniversário");
-        aniversarioColuna.setCellValueFactory(new PropertyValueFactory<>("data do aniversário"));
+        TableColumn<Cliente, String>idColuna = new TableColumn<>("ID");
+        idColuna.setCellValueFactory(new PropertyValueFactory<>("Id"));
+
+        TableColumn<Cliente, String> fidelidadeColuna = new TableColumn<>("Fidelidade");
+        fidelidadeColuna.setCellValueFactory(new PropertyValueFactory<>("fidelidade"));
+
+        TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>("Aniversário");
+        aniversarioColuna.setCellValueFactory(new PropertyValueFactory<>("dataAniversario"));
 
         TableColumn<Cliente, String> enderecoColuna = new TableColumn<>("Endereço");
         enderecoColuna.setCellValueFactory(new PropertyValueFactory<>("endereco"));
+        
 
-        tabela.getColumns().addAll(nomeColuna, aniversarioColuna, enderecoColuna);
+        tabela.getColumns().addAll(nomeColuna, idColuna, fidelidadeColuna, aniversarioColuna, enderecoColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
+
+        Cliente test = new Cliente("Maria", "24/2/2003", "Samambaia Norte q.2");
+
+        ObservableList<Cliente> ClienteList = FXCollections.observableArrayList(test);
+
+        tabela.setItems(ClienteList);
 
         // --- Rodapé ---
         Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
@@ -202,7 +119,7 @@ public class TelaClientes {
             }
         });
 
-        stage.setTitle("Contas"); //
+        stage.setTitle("Clientes"); //
         stage.setMaximized(true); //
         stage.setScene(scene); //
         stage.setMinWidth(800); //

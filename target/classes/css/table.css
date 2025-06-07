@@ -33,6 +33,24 @@
     -fx-font-family: "Inter";
 }
 
+.table-view .cell{
+    -fx-background-color: "linear-gradient(to right, #30000C, #800020)";
+    -fx-border-color: transparent;
+    -fx-alignment: CENTER;
+    -fx-text-fill: "#FFC300"; /* Cor do texto */
+    -fx-font-size: 15;
+    -fx-font-family: "fonte1";
+    -fx-label-padding: 5 10 5 10;
+}
+
+.table-view .cell:hover{
+    -fx-text-fill: "#FFC300"; /* Cor do texto */
+    -fx-alignment: CENTER; /* Centralizar texto */
+    -fx-font-weight: bold;
+    -fx-font-size: 17;
+    -fx-font-family: "fonte1";
+    -fx-label-padding: 5 10 5 10;
+}
 @font-face {
     font-family: "fonte1";
     src: url("/fonts/PlayfairDisplay-Bold.ttf");

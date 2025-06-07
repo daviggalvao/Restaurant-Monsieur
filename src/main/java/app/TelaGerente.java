@@ -2,6 +2,8 @@ package app;
 
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -145,6 +147,13 @@ public class TelaGerente {
         cardCliente.setOnMouseClicked(mouseEvent -> {
             new TelaClientes(new Stage()).mostrarTelaCliente();
         });
+
+        cardPromocao.setOnMouseClicked(mouseEvent -> {
+            new TelaFuncionarios(new Stage()).mostrarTelaFuncionarios();
+        });
+
+        Image img = new Image(getClass().getResource("/svg/bank-svgrepo-com.svg").toExternalForm());
+        ImageView imageView = new ImageView(img);
 
         // --- Rodapé ---
         Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //

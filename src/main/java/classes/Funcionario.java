@@ -1,15 +1,7 @@
 package classes;
 
 import java.time.LocalDate;
-
-enum FuncionarioCargo {
-    GERENTE,
-    VENDEDOR,
-    SUPERVISOR,
-    GARCOM,
-    CHEF,
-    ZELADOR
-}
+import classes.FuncionarioCargo;
 
 public class Funcionario extends Pessoa {
     private int idade;

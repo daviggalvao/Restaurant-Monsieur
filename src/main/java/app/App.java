@@ -17,14 +17,14 @@ public class App extends Application{
         TelaDelivery delivery = new TelaDelivery(primaryStage);
         TelaConta conta = new TelaConta(primaryStage);
         TelaPagamento telaPagamento = new TelaPagamento(primaryStage);
-        // tela.mostrar();
+        tela.mostrar();
         // telaaa.mostrarReserva();
         // telaa.mostrarTelaServicos();
         //telaaaa.mostrarTelaGerente();
         //cardapio.mostrarTelaCardapio();
         //delivery.mostrar();
         //conta.mostrarTelaConta();
-        telaPagamento.mostrarPagamento();
+        //telaPagamento.mostrarPagamento();
     }
 
     public static void main(String[] args) {
