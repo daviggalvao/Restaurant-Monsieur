@@ -17,9 +17,11 @@ public class App extends Application{
         TelaDelivery delivery = new TelaDelivery(primaryStage);
         TelaConta conta = new TelaConta(primaryStage);
         TelaPagamento telaPagamento = new TelaPagamento(primaryStage);
+        TelaEstoque estoque = new TelaEstoque(primaryStage);
+        estoque.mostrarTelaEstoque();
         //tela.mostrar();
         // telaaa.mostrarReserva();
-         telaa.mostrarTelaServicos();
+        //telaa.mostrarTelaServicos();
         //telaaaa.mostrarTelaGerente();
         //cardapio.mostrarTelaCardapio();
         //delivery.mostrar();

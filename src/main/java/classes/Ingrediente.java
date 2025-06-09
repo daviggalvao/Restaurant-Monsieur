@@ -7,7 +7,8 @@ public class Ingrediente {
     private int quantidade;
     private String validade;
 
-    public Ingrediente(String nome, float preco, int quantidade, String validade) {
+    public Ingrediente(String id, String nome, float preco, int quantidade, String validade) {
+        this.id = id;
         this.nome = nome;
         this.preco = preco;
         this.quantidade = quantidade;
