@@ -63,7 +63,7 @@ public class TelaClientes {
         tabela.getColumns().addAll(nomeColuna, idColuna, fidelidadeColuna, aniversarioColuna, enderecoColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        Cliente test = new Cliente("Maria", "24/2/2003", "Samambaia Norte q.2");
+        Cliente test = new Cliente("Maria", "24/2/2003", "Samambaia Norte q.2", "interdelixao", "mariazinha@outlook.com");
 
         ObservableList<Cliente> ClienteList = FXCollections.observableArrayList(test);
 

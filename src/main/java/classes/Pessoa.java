@@ -6,15 +6,16 @@ public class Pessoa {
     private String dataAniversario;
     private String endereco;
     private String nome;
-    private static int idCount = 00000;
+    private String senha;
+    private String email;
     private String id;
 
-    public Pessoa(String nome, String dataAniversario, String endereco) {
-        Pessoa.idCount++;
-        this.id = String.format("%05d",Pessoa.idCount);
+    public Pessoa(String nome, String dataAniversario, String endereco, String senha, String email) {
         this.nome = nome;
         this.dataAniversario = dataAniversario;
         this.endereco = endereco;
+        this.senha = senha;
+        this.email = email;
     }
     public String getId(){return id;}
     public String getDataAniversario() {return dataAniversario;}

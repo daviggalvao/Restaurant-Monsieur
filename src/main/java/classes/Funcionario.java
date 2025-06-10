@@ -4,14 +4,12 @@ import java.time.LocalDate;
 import classes.FuncionarioCargo;
 
 public class Funcionario extends Pessoa {
-    private int idade;
     private FuncionarioCargo cargo;
     private float salario;
     private String dataContrato;
 
-    public Funcionario(String nome, String dataAniversario, String endereco, int idade, FuncionarioCargo cargo, float salario, String dataContrato) {
-        super(nome, dataAniversario, endereco);
-        this.idade = idade;
+    public Funcionario(String nome, String dataAniversario, String endereco, FuncionarioCargo cargo, float salario, String dataContrato, String senha, String email) {
+        super(nome, dataAniversario, endereco, senha, email);
         this.cargo = cargo;
         this.salario = salario;
         this.dataContrato = dataContrato;
@@ -20,12 +18,10 @@ public class Funcionario extends Pessoa {
         this.setId(String.valueOf(functId));
     }
 
-    public int getIdade() {return idade;}
     public FuncionarioCargo getCargo() {return cargo;}
     public float getSalario() {return salario;}
     public String getDataContrato() {return dataContrato;}  
 
-    public void setIdade(int idade) {this.idade = idade;}
     public void setCargo(FuncionarioCargo cargo) {this.cargo = cargo;}
     public void setSalario(float salario) {this.salario = salario;}
     public void setDataContrato() {this.dataContrato = LocalDate.now().toString();}

@@ -6,8 +6,8 @@ public class Cliente extends Pessoa {
     private int numeroReservas = 0;
     private int fidelidade = 0;
 
-    public Cliente(String nome, String dataAniversario, String endereco) {
-        super(nome, dataAniversario, endereco);
+    public Cliente(String nome, String dataAniversario, String endereco, String senha, String email) {
+        super(nome, dataAniversario, endereco, senha, email);
     }
 
     public int getFidelidade() {return fidelidade;}

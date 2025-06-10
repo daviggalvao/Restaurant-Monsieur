@@ -33,11 +33,11 @@ public class Prato {
     public void setDescricao(String descricao) {this.descricao = descricao;}
     public void setQuantidade(int quantidade) {this.quantidade = quantidade;}
 
-    void entregaPrato(ContaBancariaJose conta){
+    public void entregaPrato(ContaBancariaJose conta){
         conta.setEntrada(conta.getEntrada() + this.preco);
         this.quantidade--;
     }
-    void fazPrato(){
+    public void fazPrato(){
         for(Ingrediente i : ingredientes){
             i.setQuantidade(i.getQuantidade() - 1);
         }

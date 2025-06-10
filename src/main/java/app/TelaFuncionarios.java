@@ -86,7 +86,7 @@ public class TelaFuncionarios{
             tabela.getColumns().addAll(nomeColuna, cargoColuna, contratoColuna, promoverColuna);
             tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-            Funcionario test = new Funcionario("Carlos", "24/2/1980", "Rua pinheiros 12", 45, FuncionarioCargo.CHEF, 500, "3/5/2000");
+            Funcionario test = new Funcionario("Carlos", "24/2/1980", "Rua pinheiros 12", FuncionarioCargo.CHEF, 500, "3/5/2000", "carlinhosmaia", "carlinhosmaia@orkut.com");
 
             ObservableList<Funcionario> FuncionarioList = FXCollections.observableArrayList(test);
             tabela.setItems(FuncionarioList);
@@ -116,6 +116,22 @@ public class TelaFuncionarios{
             tfNome.setPromptText("Seu nome completo");
             tfNome.setStyle(inputStyle);
 
+            /*Label lblEmail = new Label("\uD83D\uDC64 Email *");
+            lblNome.setStyle("-fx-text-fill: #FFC300;");
+            TextField tfEmail = new TextField();
+            tfNome.setPrefHeight(40);
+            tfNome.setMinWidth(300);
+            tfNome.setPromptText("Seu email");
+            tfNome.setStyle(inputStyle);
+
+            Label lblSenha = new Label("\uD83D\uDC64 Senha *");
+            lblNome.setStyle("-fx-text-fill: #FFC300;");
+            TextField tfSenha = new TextField();
+            tfNome.setPrefHeight(40);
+            tfNome.setMinWidth(300);
+            tfNome.setPromptText("Senha funcionário");
+            tfNome.setStyle(inputStyle);*/
+
             Label lblData = new Label("\uD83D\uDCC5 Data *");
             lblData.setStyle("-fx-text-fill: #FFC300;");
             DatePicker dpData = new DatePicker();
@@ -134,7 +150,11 @@ public class TelaFuncionarios{
             inputs.add(lblData, 0, 1);
             inputs.add(dpData, 1, 1);
             inputs.add(lblCargo, 0, 2);
-            inputs.add(cbHorario, 1, 2);
+            inputs.add(cbHorario, 1, 2);/*
+            inputs.add(lblEmail, 0, 3);
+            inputs.add(tfEmail, 1, 3);
+            inputs.add(lblSenha, 0, 4);
+            inputs.add(tfSenha, 1, 4);*/
             inputs.setMinWidth(300);
 
 

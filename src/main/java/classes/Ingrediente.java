@@ -27,8 +27,8 @@ public class Ingrediente {
     public void setQuantidade(int quantidade) {this.quantidade = quantidade;}
     public void setValidade(String validade) {this.validade = validade;}
 
-    boolean precisaRepor(int quantidadeMinima){
-        return this.quantidade < quantidadeMinima;
+    boolean precisaRepor(){
+        return this.quantidade < 10;
     }
     boolean encomendaIngrediente(ContaBancariaJose conta, int quantidade){
         float precoEncomenda = quantidade * this.preco;

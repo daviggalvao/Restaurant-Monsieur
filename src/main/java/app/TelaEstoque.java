@@ -71,6 +71,7 @@ public class TelaEstoque {
         validadeColuna.setCellValueFactory(new PropertyValueFactory<>("validade"));
 
         tabela.getColumns().addAll(idColuna, nomeColuna, precoColuna, quantidadeColuna, validadeColuna);
+        tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
         // --- Dados de Exemplo para a Tabela ---
         ObservableList<Ingrediente> dados = FXCollections.observableArrayList(
@@ -117,23 +118,6 @@ public class TelaEstoque {
         scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";"); //
 
         Scene scene = new Scene(scrollPane); //
-
-        // --- CSS Interno para a Tabela ---
-        String cssTabela = """
-            .table-view { -fx-background-color: transparent; }
-            .table-view .viewport { -fx-background-color: transparent; }
-            .table-view .column-header-background { -fx-background-color: #30000C; }
-            .table-view .column-header .label { -fx-text-fill: #FFC300; -fx-font-size: 14px; -fx-font-weight: bold; }
-            .table-view .table-row-cell { -fx-background-color: transparent; -fx-border-color: #FFFFFF20; -fx-border-width: 0 0 1 0; }
-            .table-view .table-cell { -fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-alignment: CENTER; }
-            """;
-
-        try {
-            String encodedCSS = URLEncoder.encode(cssTabela, StandardCharsets.UTF_8.name());
-            scene.getStylesheets().add("data:text/css;charset=UTF-8," + encodedCSS);
-        } catch (UnsupportedEncodingException e) {
-            System.err.println("Erro ao codificar o CSS interno: " + e.getMessage());
-        }
 
         stage.setTitle("Estoque"); //
         stage.setMaximized(true); //
