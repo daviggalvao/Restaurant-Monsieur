@@ -13,9 +13,6 @@ public class Funcionario extends Pessoa {
         this.cargo = cargo;
         this.salario = salario;
         this.dataContrato = dataContrato;
-        char[] functId = this.getId().toCharArray();
-        functId[0] = 'F';
-        this.setId(String.valueOf(functId));
     }
 
     public FuncionarioCargo getCargo() {return cargo;}
