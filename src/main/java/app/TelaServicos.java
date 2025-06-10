@@ -190,6 +190,10 @@ public class TelaServicos{
             new TelaReserva2(new Stage()).mostrarReservas();
         });
 
+        cardPedido.setOnMouseClicked(mouseEvent->{
+            new TelaGerenciarDeliveries(new Stage(), App.fixed).mostrar();
+        });
+
         // --- Rodapé ---
         Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
         desc1.setFont(interfontRodape1); //
