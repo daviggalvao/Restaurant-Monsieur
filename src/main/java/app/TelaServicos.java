@@ -191,7 +191,7 @@ public class TelaServicos{
         });
 
         cardPedido.setOnMouseClicked(mouseEvent->{
-            new TelaGerenciarDeliveries(new Stage(), App.fixed).mostrar();
+            //new TelaGerenciarDeliveries(new Stage(), App.fixed).mostrar();
         });
 
         // --- Rodapé ---

@@ -1,25 +1,28 @@
 package classes;
 
 import java.time.LocalDate;
-import classes.FuncionarioCargo;
+
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 public class Funcionario extends Pessoa {
-    private FuncionarioCargo cargo;
+    private ObjectProperty<FuncionarioCargo> cargo;
     private float salario;
     private String dataContrato;
 
     public Funcionario(String nome, String dataAniversario, String endereco, FuncionarioCargo cargo, float salario, String dataContrato, String senha, String email) {
         super(nome, dataAniversario, endereco, senha, email);
-        this.cargo = cargo;
+        this.cargo = new SimpleObjectProperty<>();
+        this.cargo.set(cargo);
         this.salario = salario;
         this.dataContrato = dataContrato;
     }
 
-    public FuncionarioCargo getCargo() {return cargo;}
+    public ObjectProperty<FuncionarioCargo> getCargo() {return cargo;}
     public float getSalario() {return salario;}
     public String getDataContrato() {return dataContrato;}  
 
-    public void setCargo(FuncionarioCargo cargo) {this.cargo = cargo;}
+    public void setCargo(ObjectProperty<FuncionarioCargo> cargo) {this.cargo = cargo;}
     public void setSalario(float salario) {this.salario = salario;}
     public void setDataContrato() {this.dataContrato = LocalDate.now().toString();}
     
@@ -32,16 +35,16 @@ public class Funcionario extends Pessoa {
     }
 
     public void promocao(){
-        if (this.cargo == FuncionarioCargo.GARCOM){
-            this.cargo = FuncionarioCargo.CHEF;
+        if (this.getCargo().get() == FuncionarioCargo.GARCOM){
+            this.cargo.set(FuncionarioCargo.CHEF);
             this.salario += 200;
             this.dataContrato = LocalDate.now().toString();
-        } else if (this.cargo == FuncionarioCargo.VENDEDOR){
-            this.cargo = FuncionarioCargo.GERENTE;
+        } else if (this.getCargo().get() == FuncionarioCargo.VENDEDOR){
+            this.cargo.set(FuncionarioCargo.GERENTE);
             this.salario += 300;
             this.dataContrato = LocalDate.now().toString();
-        } else if (this.cargo == FuncionarioCargo.ZELADOR){
-            this.cargo = FuncionarioCargo.SUPERVISOR;
+        } else if (this.getCargo().get() == FuncionarioCargo.ZELADOR){
+            this.cargo.set(FuncionarioCargo.SUPERVISOR);
             this.salario += 150;
             this.dataContrato = LocalDate.now().toString();
         }

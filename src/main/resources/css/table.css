@@ -1,15 +1,15 @@
 .table-view{
     -fx-border-color: transparent;
-    -fx-background-color: "linear-gradient(to right, #30000C, #800020)";
+    -fx-background-color: transparent;
 }
 
 .table-view .column-header-background {
-    -fx-background-color: "linear-gradient(to right, #30000C, #800020)"; /* Cor de fundo do cabeçalho */
+    -fx-background-color: transparent; /* Cor de fundo do cabeçalho */
     -fx-border-color: transparent;
 }
 
 .table-view .column-header {
-    -fx-background-color: "linear-gradient(to right, #30000C, #800020)"; /* Cor de cada célula de cabeçalho */
+    -fx-background-color: transparent; /* Cor de cada célula de cabeçalho */
     -fx-border-color: "FFC300";
     -fx-border-width: 0 0 1 0; /* Borda inferior */
     -fx-padding: 5 10 5 10;
@@ -26,7 +26,7 @@
 }
 
 .table-view .column-value .label {
-    -fx-background-color: "linear-gradient(to right, #30000C, #800020)";
+    -fx-background-color: transparent;
     -fx-text-fill: "#FFC300"; /* Cor do texto */
     -fx-alignment: CENTER; /* Centralizar texto */
     -fx-font-size: 15;
@@ -34,7 +34,7 @@
 }
 
 .table-view .cell{
-    -fx-background-color: "linear-gradient(to right, #30000C, #800020)";
+    -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-alignment: CENTER;
     -fx-text-fill: "#FFC300"; /* Cor do texto */

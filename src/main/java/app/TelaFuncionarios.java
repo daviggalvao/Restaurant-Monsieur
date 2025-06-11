@@ -5,6 +5,8 @@ import classes.FuncionarioCargo;
 // import database.FirebaseCliente; // Removido se não usado aqui
 // import database.FirebaseFuncionario; // Removido se não usado aqui
 // import database.FirebaseReserva; // Removido se não usado aqui
+import javafx.beans.binding.Bindings;
+import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -16,6 +18,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.geometry.*;
+
+import java.time.LocalDate;
 // import javafx.animation.*; // Removido se não usado
 // import javafx.util.Callback; // Removido se não usado
 
@@ -60,12 +64,15 @@ public class TelaFuncionarios {
         promotion.setStyle("-fx-text-fill: #FFC300;");
 
         TableView<Funcionario> tabela = new TableView<>();
+        ObservableList<Funcionario> funcionarioList = FXCollections.observableArrayList();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         TableColumn<Funcionario, String> nomeColuna = new TableColumn<>("Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
         TableColumn<Funcionario, FuncionarioCargo> cargoColuna = new TableColumn<>("Cargo");
-        cargoColuna.setCellValueFactory(new PropertyValueFactory<>("cargo"));
+        cargoColuna.setCellValueFactory(celldata ->
+            celldata.getValue().getCargo()
+        );
 
         TableColumn<Funcionario, String> contratoColuna = new TableColumn<>("Contrato");
         contratoColuna.setCellValueFactory(new PropertyValueFactory<>("dataContrato"));
@@ -76,9 +83,9 @@ public class TelaFuncionarios {
             {
                 // Estilo do botão pode ser adicionado aqui, se desejado
                 botao.setOnAction(event -> {
-                    Funcionario func = getTableView().getItems().get(getIndex());
-                    System.out.println("Promovendo: " + func.getNome());
+                    Funcionario func = funcionarioList.get(getIndex());
                     // Adicione a lógica de promoção aqui
+                    func.promocao();
                 });
             }
 
@@ -97,8 +104,8 @@ public class TelaFuncionarios {
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
         // Dados de exemplo
-        Funcionario test = new Funcionario("Carlos", "24/2/1980", "Rua pinheiros 12", FuncionarioCargo.CHEF, 500, "3/5/2000", "carlinhosmaia", "carlinhosmaia@orkut.com");
-        ObservableList<Funcionario> funcionarioList = FXCollections.observableArrayList(test);
+        Funcionario test = new Funcionario("Carlos", "24/2/1980", "Rua pinheiros 12", FuncionarioCargo.ZELADOR, 500, "3/5/2000", "carlinhosmaia", "carlinhosmaia@orkut.com");
+        funcionarioList.add(test);
         tabela.setItems(funcionarioList);
 
         VBox promocao = new VBox(20, promotion, tabela); // Aumentado espaçamento para melhor visual
@@ -174,6 +181,44 @@ public class TelaFuncionarios {
 
         Button confirm = new Button("Confirmar Contratação");
         confirm.getStyleClass().add("button");
+        confirm.setOnMouseClicked(mouseEvent -> {
+            String nome = tfNome.getText();
+            String dataNascimento = dpData.getValue().toString();
+            LocalDate hoje = LocalDate.now();
+            String dataContrato[] = (hoje.toString()).split("-");
+            String date = dataContrato[2] + "/" + dataContrato[1] + "/" + dataContrato[0];
+            String cargo = cbCargo.getValue().toString();
+            String email = tfEmail.getText();
+            String senha = tfSenha.getText();
+            float salario;
+            switch (cargo){
+                case "Gerente":
+                    salario = 1400;
+                    break;
+                case "Vendedor":
+                    salario = 1100;
+                    break;
+                case "Chef":
+                    salario = 1300;
+                    break;
+                case "Garçom":
+                    salario = 1100;
+                    break;
+                case "Supervisor":
+                    salario = 1250;
+                default:
+                    salario = 1100;
+                    break;
+            }
+            Funcionario hired = new Funcionario(nome, dataNascimento, " ", cbCargo.getValue(), salario, date, senha, email);
+            funcionarioList.add(hired);
+            tabela.setItems(funcionarioList);
+            tfNome.clear();
+            dpData.setValue(null);
+            cbCargo.setValue(null);
+            tfEmail.clear();
+            tfSenha.clear();
+        });
         confirm.setPadding(new Insets(10, 20, 10, 20)); // Adiciona um padding melhor
 
         VBox contrato = new VBox(20, register, inputs, confirm); // Aumentado espaçamento
