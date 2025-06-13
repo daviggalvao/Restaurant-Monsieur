@@ -13,17 +13,16 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.geometry.*;
 
-public class TelaClientes {
-    private Stage stage;
+public class TelaClientes extends Tela {
 
     /**
      * Construtor da TelaCliente.
      * @param stage O palco principal da aplicação.
      */
-    public TelaClientes(Stage stage) {this.stage = stage;}
+    public TelaClientes(Stage stage) {super(stage);}
 
-
-    public void mostrarTelaCliente() { //
+    @Override
+    public void mostrarTela() { //
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50); //
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15); //
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17); //
@@ -119,11 +118,11 @@ public class TelaClientes {
             }
         });
 
-        stage.setTitle("Clientes"); //
-        stage.setMaximized(true); //
-        stage.setScene(scene); //
-        stage.setMinWidth(800); //
-        stage.setMinHeight(600); //
-        stage.show(); //
+        super.getStage().setTitle("Clientes"); //
+        super.getStage().setMaximized(true); //
+        super.getStage().setScene(scene); //
+        super.getStage().setMinWidth(800); //
+        super.getStage().setMinHeight(600); //
+        super.getStage().show(); //
     }
 }

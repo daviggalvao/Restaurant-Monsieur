@@ -20,11 +20,10 @@ import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import javafx.util.Duration;                 // Import ADICIONADO
 
-public class TelaCardapio {
-    private Stage stage;
+public class TelaCardapio extends Tela{
 
     public TelaCardapio(Stage stage) {
-        this.stage = stage;
+        super(stage);
     }
 
     private VBox createPratoCard(String nomePrato, String preco, String descricaoPrato, String borderColor, String textColor) {
@@ -124,7 +123,8 @@ public class TelaCardapio {
         return pratoCard;
     }
 
-    public void mostrarTelaCardapio() {
+    @Override
+    public void mostrarTela() {
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12);
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 10);
@@ -221,11 +221,11 @@ public class TelaCardapio {
             }
         });
 
-        stage.setTitle("Cardápio - Restaurant Monsieur-José");
-        stage.setScene(scene);
-        stage.setMinWidth(700);
-        stage.setMinHeight(600);
-        stage.setMaximized(true);
-        stage.show();
+        super.getStage().setTitle("Cardápio - Restaurant Monsieur-José");
+        super.getStage().setScene(scene);
+        super.getStage().setMinWidth(700);
+        super.getStage().setMinHeight(600);
+        super.getStage().setMaximized(true);
+        super.getStage().show();
     }
 }

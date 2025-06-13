@@ -17,8 +17,7 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
-public class TelaPagamento {
-    private Stage stage;
+public class TelaPagamento extends Tela {
     private String tituloDesc;
     private String tituloDesc2;
     private String p1 = "1x de R$ 117.30(à vista)";
@@ -30,7 +29,7 @@ public class TelaPagamento {
 
 
     public TelaPagamento(Stage stage) {
-        this.stage = stage;
+        super(stage);
     }
 
     private void updateContent(String selectedItem, VBox contentBox) {
@@ -370,7 +369,8 @@ public class TelaPagamento {
         return vbox;
     }
 
-    public void mostrarPagamento() {
+    @Override
+    public void mostrarTela() {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Label titulo = new Label("Finalizar Pagamento");
         titulo.setFont(playfairFont);
@@ -405,11 +405,11 @@ public class TelaPagamento {
 
         Scene scene = new Scene(pane);
 
-        stage.setTitle("Pagamento");
-        stage.setScene(scene);
-        stage.setMinWidth(800); // Largura mínima
-        stage.setMinHeight(600); // Altura mínima
-        stage.setMaximized(true); // Maximizar a janela
-        stage.show(); // Exibir a tela
+        super.getStage().setTitle("Pagamento");
+        super.getStage().setScene(scene);
+        super.getStage().setMinWidth(800); // Largura mínima
+        super.getStage().setMinHeight(600); // Altura mínima
+        super.getStage().setMaximized(true); // Maximizar a janela
+        super.getStage().show(); // Exibir a tela
     }
 }

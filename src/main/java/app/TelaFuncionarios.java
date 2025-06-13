@@ -2,9 +2,6 @@ package app;
 
 import classes.Funcionario;
 import classes.FuncionarioCargo;
-// import database.FirebaseCliente; // Removido se não usado aqui
-// import database.FirebaseFuncionario; // Removido se não usado aqui
-// import database.FirebaseReserva; // Removido se não usado aqui
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
@@ -20,21 +17,19 @@ import javafx.stage.Stage;
 import javafx.geometry.*;
 
 import java.time.LocalDate;
-// import javafx.animation.*; // Removido se não usado
-// import javafx.util.Callback; // Removido se não usado
 
-public class TelaFuncionarios {
-    private Stage stage;
+public class TelaFuncionarios extends Tela {
 
     /**
      * Construtor da TelaFuncionarios.
      * @param stage O palco principal da aplicação.
      */
     public TelaFuncionarios(Stage stage) {
-        this.stage = stage;
+        super(stage);
     }
 
-    public void mostrarTelaFuncionarios() {
+    @Override
+    public void mostrarTela() {
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Font playfairFontSubs = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 45);
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
@@ -185,7 +180,7 @@ public class TelaFuncionarios {
             String nome = tfNome.getText();
             String dataNascimento = dpData.getValue().toString();
             LocalDate hoje = LocalDate.now();
-            String dataContrato[] = (hoje.toString()).split("-");
+            String[] dataContrato = (hoje.toString()).split("-");
             String date = dataContrato[2] + "/" + dataContrato[1] + "/" + dataContrato[0];
             String cargo = cbCargo.getValue().toString();
             String email = tfEmail.getText();
@@ -287,11 +282,11 @@ public class TelaFuncionarios {
         // ALTERAÇÃO: O listener de largura não é mais necessário, pois o layout agora é fluido.
         // scene.widthProperty().addListener((obs, oldVal, newVal) -> { ... }); // REMOVIDO
 
-        stage.setTitle("Funcionários");
-        stage.setMaximized(true);
-        stage.setScene(scene);
-        stage.setMinWidth(1000); // Define um tamanho mínimo razoável para a janela
-        stage.setMinHeight(700);
-        stage.show();
+        super.getStage().setTitle("Funcionários");
+        super.getStage().setMaximized(true);
+        super.getStage().setScene(scene);
+        super.getStage().setMinWidth(1000); // Define um tamanho mínimo razoável para a janela
+        super.getStage().setMinHeight(700);
+        super.getStage().show();
     }
 }

@@ -18,17 +18,16 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.geometry.*;
 
-public class TelaReserva2 {
-    private Stage stage;
+public class TelaReserva2 extends Tela {
 
     /**
      * Construtor da TelaCliente.
      * @param stage O palco principal da aplicação.
      */
-    public TelaReserva2(Stage stage) {this.stage = stage;}
+    public TelaReserva2(Stage stage) {super(stage);}
 
-
-    public void mostrarReservas() { //
+    @Override
+    public void mostrarTela() { //
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50); //
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15); //
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17); //
@@ -126,11 +125,11 @@ public class TelaReserva2 {
             }
         });
 
-        stage.setTitle("Reservas"); //
-        stage.setMaximized(true); //
-        stage.setScene(scene); //
-        stage.setMinWidth(800); //
-        stage.setMinHeight(600); //
-        stage.show(); //
+        super.getStage().setTitle("Reservas"); //
+        super.getStage().setMaximized(true); //
+        super.getStage().setScene(scene); //
+        super.getStage().setMinWidth(800); //
+        super.getStage().setMinHeight(600); //
+        super.getStage().show(); //
     }
 }
