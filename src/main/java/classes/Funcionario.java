@@ -10,8 +10,8 @@ public class Funcionario extends Pessoa {
     private float salario;
     private String dataContrato;
 
-    public Funcionario(String nome, String dataAniversario, String endereco, FuncionarioCargo cargo, float salario, String dataContrato, String senha, String email) {
-        super(nome, dataAniversario, endereco, senha, email);
+    public Funcionario(String nome, LocalDate dataAniversario, String endereco, FuncionarioCargo cargo, float salario, String dataContrato, String senha, String email) {
+        super(nome, dataAniversario, endereco, email, senha);
         this.cargo = new SimpleObjectProperty<>();
         this.cargo.set(cargo);
         this.salario = salario;

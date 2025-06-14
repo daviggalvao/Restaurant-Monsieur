@@ -5,8 +5,6 @@ import classes.FuncionarioCargo;
 // import database.FirebaseCliente; // Removido se não usado aqui
 // import database.FirebaseFuncionario; // Removido se não usado aqui
 // import database.FirebaseReserva; // Removido se não usado aqui
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -104,7 +102,8 @@ public class TelaFuncionarios {
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
         // Dados de exemplo
-        Funcionario test = new Funcionario("Carlos", "24/2/1980", "Rua pinheiros 12", FuncionarioCargo.ZELADOR, 500, "3/5/2000", "carlinhosmaia", "carlinhosmaia@orkut.com");
+        LocalDate date =  LocalDate.of(1980,2,24);
+        Funcionario test = new Funcionario("Carlos", date, "Rua pinheiros 12", FuncionarioCargo.ZELADOR, 500, "3/5/2000", "carlinhosmaia", "carlinhosmaia@orkut.com");
         funcionarioList.add(test);
         tabela.setItems(funcionarioList);
 
@@ -183,10 +182,10 @@ public class TelaFuncionarios {
         confirm.getStyleClass().add("button");
         confirm.setOnMouseClicked(mouseEvent -> {
             String nome = tfNome.getText();
-            String dataNascimento = dpData.getValue().toString();
+            LocalDate dataNascimento = dpData.getValue();
             LocalDate hoje = LocalDate.now();
             String dataContrato[] = (hoje.toString()).split("-");
-            String date = dataContrato[2] + "/" + dataContrato[1] + "/" + dataContrato[0];
+            String dates = dataContrato[2] + "/" + dataContrato[1] + "/" + dataContrato[0];
             String cargo = cbCargo.getValue().toString();
             String email = tfEmail.getText();
             String senha = tfSenha.getText();
@@ -210,7 +209,7 @@ public class TelaFuncionarios {
                     salario = 1100;
                     break;
             }
-            Funcionario hired = new Funcionario(nome, dataNascimento, " ", cbCargo.getValue(), salario, date, senha, email);
+            Funcionario hired = new Funcionario(nome, dataNascimento, " ", cbCargo.getValue(), salario, dates, senha, email);
             funcionarioList.add(hired);
             tabela.setItems(funcionarioList);
             tfNome.clear();

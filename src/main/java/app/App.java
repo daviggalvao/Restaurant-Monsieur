@@ -18,15 +18,18 @@ public class App extends Application{
         TelaConta conta = new TelaConta(primaryStage);
         TelaPagamento telaPagamento = new TelaPagamento(primaryStage);
         TelaEstoque estoque = new TelaEstoque(primaryStage);
+        TelaCriarConta telacriar = new TelaCriarConta(primaryStage);
         //estoque.mostrarTelaEstoque();
         //tela.mostrar();
         //telaaa.mostrarReserva();
         //telaa.mostrarTelaServicos();
-        telaaaa.mostrarTelaGerente();
+       // telaaaa.mostrarTelaGerente();
         //cardapio.mostrarTelaCardapio();
         //delivery.mostrar();
         //conta.mostrarTelaConta();
         //telaPagamento.mostrarPagamento();
+        telacriar.mostrarTelaCriarConta();
+
     }
 
     public static void main(String[] args) {

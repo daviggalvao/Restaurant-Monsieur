@@ -10,7 +10,6 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
-import database.FirebaseCliente;
 import database.FirebaseReserva;
 import classes.Reserva;
 import javafx.geometry.Insets;
@@ -18,7 +17,6 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
@@ -174,81 +172,6 @@ public class TelaReserva {
         confirmar.getStyleClass().add("button");
 
         confirmar.setOnMouseClicked(e -> {
-            FirebaseReserva refdatabase = new FirebaseReserva();
-            FirebaseCliente refcliente = new FirebaseCliente();
-
-            // Pega os valores dos inputs do usuário
-            String nomeCliente = tfNome.getText().trim();
-            LocalDate dataReserva = dpData.getValue();
-            String horario = cbHorario.getValue();
-            boolean chofer = checkSim.isSelected();
-            Integer qtdPessoas = cbPessoas.getValue();
-            String tipoPagamento = cbPagamento.getValue();
-
-            Pagamento pagamento = new Pagamento(20.0f,nomeCliente,tipoPagamento,0);
-            pagamento.ehPix();
-
-            if (nomeCliente.isEmpty() || dataReserva == null || horario == null || qtdPessoas == null || pagamento == null) {
-                System.out.println("Por favor, preencha todos os campos obrigatórios.");
-                return;
-            }
-
-            // Busca o cliente pelo nome de forma assíncrona
-            refcliente.lerClienteNome(nomeCliente, new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot snapshot) {
-                    if (snapshot.exists()) {
-                        // Pega o primeiro cliente encontrado com o nome informado
-                        DataSnapshot clienteSnap = snapshot.getChildren().iterator().next();
-                        Cliente cliente = clienteSnap.getValue(Cliente.class);
-
-                        if (cliente == null) {
-                            System.err.println("Erro ao converter dados do cliente.");
-                            return;
-                        }
-
-                        // Cria a nova reserva com os dados coletados
-                        Reserva novaReserva = new Reserva(
-                                dataReserva.toString(),
-                                horario,
-                                cliente,
-                                qtdPessoas,
-                                chofer,
-                                pagamento
-                        );
-
-                        // Salva a reserva no Firebase
-                        refdatabase.criarReserva(novaReserva, new DatabaseReference.CompletionListener() {
-                            @Override
-                            public void onComplete(DatabaseError error, DatabaseReference ref) {
-                                Platform.runLater(() -> {
-                                    if (error != null) {
-                                        mostrarAlerta(AlertType.ERROR, "Erro", "Erro ao criar reserva: " + error.getMessage());
-                                    } else {
-                                        mostrarAlerta(AlertType.INFORMATION, "Sucesso", "Reserva criada com sucesso!");
-                                    }
-                                });
-                            }
-                        });
-
-                    } else {
-
-                        Platform.runLater(() -> {
-                            mostrarAlerta(AlertType.WARNING, "Cliente não encontrado", "Não foi possível encontrar cliente com esse nome.");
-                            System.out.println("Nenhum cliente encontrado com o nome: " + nomeCliente);
-                        });
-                    }
-                }
-
-                @Override
-                public void onCancelled(DatabaseError error) {
-
-                    Platform.runLater(() -> {
-                        mostrarAlerta(AlertType.ERROR, "Erro", "Erro na consulta: " + error.getMessage());
-                        System.err.println("Erro ao consultar cliente: " + error.getMessage());
-                    });
-                }
-            });
         });
 
 

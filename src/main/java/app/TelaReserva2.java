@@ -18,6 +18,8 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.geometry.*;
 
+import java.time.LocalDate;
+
 public class TelaReserva2 {
     private Stage stage;
 
@@ -68,7 +70,8 @@ public class TelaReserva2 {
         tabela.getColumns().addAll(nomeColuna, dataColuna, timeColuna, qtdColuna, choferColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        Cliente test1 = new Cliente("Maria", "24/2/2003", "Samambaia Norte q.2", "maria", "maria@gmail.com");
+        LocalDate date = LocalDate.of(2003,2,24);
+        Cliente test1 = new Cliente("Maria", date, "Samambaia Norte q.2", "maria", "maria@gmail.com");
         Pagamento test2 = new Pagamento(300, "pizzas", "Dinheiro", 100);
         Reserva test = new Reserva("12/7/2025", "19:30", test1, 5, false, test2);
 
