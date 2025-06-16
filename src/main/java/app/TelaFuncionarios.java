@@ -98,8 +98,8 @@ public class TelaFuncionarios extends Tela {
         tabela.getColumns().addAll(nomeColuna, cargoColuna, contratoColuna, promoverColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        // Dados de exemplo
-        Funcionario test = new Funcionario("Carlos", "24/2/1980", "Rua pinheiros 12", FuncionarioCargo.ZELADOR, 500, "3/5/2000", "carlinhosmaia", "carlinhosmaia@orkut.com");
+        LocalDate data = LocalDate.of(2003,2,24);    // Dados de exemplo
+        Funcionario test = new Funcionario("Carlos", data, "Rua pinheiros 12", FuncionarioCargo.ZELADOR, 500, "3/5/2000", "carlinhosmaia", "carlinhosmaia@orkut.com");
         funcionarioList.add(test);
         tabela.setItems(funcionarioList);
 
@@ -178,7 +178,7 @@ public class TelaFuncionarios extends Tela {
         confirm.getStyleClass().add("button");
         confirm.setOnMouseClicked(mouseEvent -> {
             String nome = tfNome.getText();
-            String dataNascimento = dpData.getValue().toString();
+            LocalDate dataNascimento = dpData.getValue();
             LocalDate hoje = LocalDate.now();
             String[] dataContrato = (hoje.toString()).split("-");
             String date = dataContrato[2] + "/" + dataContrato[1] + "/" + dataContrato[0];

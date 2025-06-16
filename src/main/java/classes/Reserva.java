@@ -3,14 +3,27 @@ package classes;
 import java.time.LocalDate;
 import java.time.DayOfWeek;
 import classes.Pagamento;
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "reservas")
     public class Reserva{
+        @Id
+        @GeneratedValue(strategy = GenerationType.IDENTITY)
         private String id;
+        @Column
         private String data;
+        @Column
         private String horario;
+        @Column
         private boolean chofer;
-        private Cliente cliente;
+        @Column
         private int qtdPessoas;
+        @ManyToOne(fetch = FetchType.LAZY) // Muitos (Reservas) para Um (Cliente)
+        @JoinColumn(name = "id_cliente", nullable = false) // Define a chave estrangeira
+        private Cliente cliente;
+
+        @Embedded
         private Pagamento pagamento;
 
         public Reserva(){}

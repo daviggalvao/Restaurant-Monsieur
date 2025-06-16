@@ -1,6 +1,8 @@
 package classes;
 
+import jakarta.persistence.Embeddable;
 
+@Embeddable
 public class Pagamento{
     private float preco;
     private String nome;

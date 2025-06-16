@@ -1,12 +1,10 @@
 package classes;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 
 @Entity
 @Table(name = "cliente")
@@ -16,6 +14,14 @@ public class Cliente extends Pessoa {
 
     @Column(name = "fidelidade")
     private int fidelidade = 0;
+
+    @OneToMany(
+            mappedBy = "cliente",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    private ArrayList<Reserva> reservas = new ArrayList<>();
 
 
     public Cliente() {}
@@ -29,9 +35,11 @@ public class Cliente extends Pessoa {
 
     public int getFidelidade() {return fidelidade;}
     public int getNumeroReservas() {return numeroReservas;}
+    public ArrayList<Reserva> getReservas() {return reservas;}
 
     public void setNumeroReservas(int numeroReservas) {this.numeroReservas += numeroReservas;}
     public void setFidelidade(int fidelidade) {this.fidelidade = fidelidade;}
+    public void setReservas(ArrayList<Reserva> reservas) {this.reservas = reservas;}
 
     @Transient
     public float descontoIdade(float valor){
@@ -42,18 +50,14 @@ public class Cliente extends Pessoa {
         return valor;
     }
     @Override
+    @Transient
     public boolean ehAniversario() {
-        int dia,mes,ano;
-        String[] Partes = super.getDataAniversario().split("/");
-        dia = Integer.parseInt(Partes[0]);
-        mes = Integer.parseInt(Partes[1]);
-        ano = Integer.parseInt(Partes[2]);
-        LocalDate data = LocalDate.of(ano,mes,dia);
+        LocalDate dataAniversario = getDataAniversario();
         LocalDate hoje = LocalDate.now();
-        if (data.getDayOfMonth() == hoje.getDayOfMonth() && data.getMonthValue() == hoje.getMonthValue()){
-            return true;
-        } else {
-            return false;
-        }
+        if (dataAniversario == null) {return false;}
+        if(dataAniversario.getDayOfMonth() == hoje.getDayOfMonth() &&
+                dataAniversario.getMonthValue() == hoje.getMonthValue()){
+            return true;}
+        return false;
     }
 }

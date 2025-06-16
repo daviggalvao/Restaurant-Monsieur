@@ -4,7 +4,9 @@ import classes.Cliente;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
@@ -12,8 +14,10 @@ import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import database.JpaUtil;
+import javafx.util.Pair;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 public class TelaCriarConta {
     private Stage stage;
@@ -42,6 +46,109 @@ public class TelaCriarConta {
         alert.setHeaderText(null);
         alert.setContentText(mensagem);
         alert.showAndWait();
+    }
+
+    /**
+     * Mostra um diálogo modal para o usuário redefinir sua senha.
+     */
+    private void mostrarDialogoResetSenha() {
+        // 1. Criar o diálogo. Usamos Pair para retornar dois valores: email e nova senha.
+        Dialog<Pair<String, String>> dialog = new Dialog<>();
+        dialog.setTitle("Redefinir Senha");
+        dialog.setHeaderText("Por favor, insira seu e-mail e a nova senha desejada.");
+
+        // 2. Definir os tipos de botão (Confirmar e Cancelar)
+        ButtonType confirmarButtonType = new ButtonType("Confirmar", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmarButtonType, ButtonType.CANCEL);
+
+        // 3. Criar o layout para os campos de texto. GridPane é ótimo para isso.
+        GridPane grid = new GridPane();
+        grid.setHgap(10);
+        grid.setVgap(10);
+        grid.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField emailField = new TextField();
+        emailField.setPromptText("seu.email@exemplo.com");
+        PasswordField novaSenhaField = new PasswordField();
+        novaSenhaField.setPromptText("Digite a nova senha");
+        PasswordField confirmarSenhaField = new PasswordField();
+        confirmarSenhaField.setPromptText("Confirme a nova senha");
+
+        grid.add(new Label("E-mail:"), 0, 0);
+        grid.add(emailField, 1, 0);
+        grid.add(new Label("Nova Senha:"), 0, 1);
+        grid.add(novaSenhaField, 1, 1);
+        grid.add(new Label("Confirmar Senha:"), 0, 2);
+        grid.add(confirmarSenhaField, 1, 2);
+
+        // Adiciona o layout ao painel do diálogo.
+        dialog.getDialogPane().setContent(grid);
+
+        // 4. Desabilitar o botão "Confirmar" até que os dados sejam válidos.
+        Node confirmarButton = dialog.getDialogPane().lookupButton(confirmarButtonType);
+        confirmarButton.setDisable(true);
+
+        // Listener para validar os campos em tempo real.
+        Runnable validacao = () -> {
+            boolean emailValido = !emailField.getText().trim().isEmpty() && emailField.getText().contains("@");
+            boolean senhasValidas = !novaSenhaField.getText().isEmpty()
+                    && novaSenhaField.getText().equals(confirmarSenhaField.getText());
+            confirmarButton.setDisable(!(emailValido && senhasValidas));
+        };
+
+        emailField.textProperty().addListener((observable, oldValue, newValue) -> validacao.run());
+        novaSenhaField.textProperty().addListener((observable, oldValue, newValue) -> validacao.run());
+        confirmarSenhaField.textProperty().addListener((observable, oldValue, newValue) -> validacao.run());
+
+        // 5. Converter o resultado para um par (email, senha) quando o botão Confirmar for clicado.
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == confirmarButtonType) {
+                return new Pair<>(emailField.getText(), novaSenhaField.getText());
+            }
+            return null;
+        });
+
+        // 6. Mostrar o diálogo e esperar pela resposta do usuário.
+        Optional<Pair<String, String>> result = dialog.showAndWait();
+
+        // 7. Processar o resultado.
+        result.ifPresent(dados -> {
+            String email = dados.getKey();
+            String novaSenha = dados.getValue();
+
+            EntityManager em = JpaUtil.getFactory().createEntityManager();
+            try {
+                em.getTransaction().begin();
+
+                // Busca o cliente pelo e-mail
+                TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c WHERE c.email = :email", Cliente.class);
+                query.setParameter("email", email);
+
+                Cliente cliente = query.getSingleResult(); // Lança NoResultException se não encontrar
+
+                // Se encontrou, atualiza a senha
+                cliente.setSenha(novaSenha);
+                em.merge(cliente); // Salva a alteração
+
+                em.getTransaction().commit();
+
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Sua senha foi alterada com sucesso!");
+
+            } catch (NoResultException e) {
+                mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Nenhum cliente encontrado com o e-mail: " + email);
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                mostrarAlerta(Alert.AlertType.ERROR, "Erro de Atualização", "Ocorreu um erro inesperado ao tentar alterar a senha.");
+                if (em.getTransaction().isActive()) {
+                    em.getTransaction().rollback();
+                }
+            } finally {
+                em.close();
+            }
+        });
     }
 
     public void mostrarTelaCriarConta(){
@@ -227,6 +334,7 @@ public class TelaCriarConta {
 
         CheckBox lembrarCb = new CheckBox("Lembrar de mim");
         Hyperlink esqueceuLink = new Hyperlink("Esqueceu a senha?");
+        esqueceuLink.setOnAction(event -> mostrarDialogoResetSenha());
         Region spacer = new Region(); // Espaçador para empurrar os itens
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox lembrarHbox = new HBox(lembrarCb, spacer, esqueceuLink);

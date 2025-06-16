@@ -58,17 +58,12 @@ public class Funcionario extends Pessoa {
 
     @Override
     public boolean ehAniversario() {
-        int dia,mes,ano;
-        String[] Partes = super.getDataAniversario().split("/");
-        dia = Integer.parseInt(Partes[0]);
-        mes = Integer.parseInt(Partes[1]);
-        ano = Integer.parseInt(Partes[2]);
-        LocalDate data = LocalDate.of(ano,mes,dia);
+        LocalDate dataAniversario = super.getDataAniversario();
         LocalDate hoje = LocalDate.now();
-        if (data.getMonthValue() == hoje.getMonthValue()){
-            return true;
-        } else {
-            return false;
-        }
+        if (dataAniversario == null) {return false;}
+        if(dataAniversario.getDayOfMonth() == hoje.getDayOfMonth() &&
+                dataAniversario.getMonthValue() == hoje.getMonthValue()){
+            return true;}
+        return false;
     }
 }
