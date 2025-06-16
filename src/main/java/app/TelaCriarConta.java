@@ -2,6 +2,7 @@ package app;
 
 import classes.Cliente;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -56,6 +57,9 @@ public class TelaCriarConta {
                 "    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 1);";
 
         String estiloFundoVinho = " -fx-background-color: linear-gradient(to right, #30000C, #800020)";
+        String estiloPainelBranco = "-fx-background-color: white; " +
+                "-fx-background-radius: 10; " +
+                "-fx-padding: 30;";
 
         Label title = new Label("Criar Conta");
         title.setFont(playfairFont);
@@ -185,13 +189,106 @@ public class TelaCriarConta {
 
         VBox Main = new VBox(20,titulos,nomes,datas,enderecos,emails,senhas,confirmar);
         Main.setAlignment(Pos.TOP_CENTER);
-
-        Main.setMaxWidth(500);
+        Main.setMaxWidth(400);
         Main.setMaxHeight(625);
-        Main.setStyle("-fx-background-color: white; " +
-                "-fx-background-radius: 10; " + // Adiciona cantos arredondados
-                "-fx-padding: 30;");
-        StackPane root = new StackPane(Main);
+        Main.setStyle(estiloPainelBranco);
+
+        VBox vboxLogin = new VBox(20);
+        vboxLogin.setAlignment(Pos.TOP_CENTER);
+        vboxLogin.setMaxWidth(400);
+        vboxLogin.setMaxHeight(625); // Mesma altura para alinhar
+        vboxLogin.setStyle(estiloPainelBranco);
+
+        Label loginTitle = new Label("Entrar");
+        loginTitle.setFont(playfairFont);
+        loginTitle.setStyle("-fx-text-fill: #FFC300");
+        Label loginSubtitle = new Label("Acesse sua conta");
+        loginSubtitle.setFont(interfont1);
+        VBox loginTitulos = new VBox(5, loginTitle, loginSubtitle);
+        loginTitulos.setAlignment(Pos.CENTER);
+
+        Label emailLoginLabel = new Label("E-mail");
+        TextField emailTFLogin = new TextField();
+        emailTFLogin.setPromptText("Digite seu e-mail");
+        emailTFLogin.setStyle(inputStyle);
+        emailTFLogin.setPrefHeight(40);
+        WebView emailLoginWebView = criarWebview("/svg/email-svgrepo-com.svg");
+        HBox emailLoginHbox = new HBox(5, emailLoginWebView, emailLoginLabel);
+        VBox emailLoginVbox = new VBox(5, emailLoginHbox, emailTFLogin);
+
+        Label senhaLoginLabel = new Label("Senha");
+        PasswordField senhaTFLogin = new PasswordField();
+        senhaTFLogin.setPromptText("Digite sua senha");
+        senhaTFLogin.setStyle(inputStyle);
+        senhaTFLogin.setPrefHeight(40);
+        WebView senhaLoginWebView = criarWebview("/svg/padlock-svgrepo-com.svg");
+        HBox senhaLoginHbox = new HBox(5, senhaLoginWebView, senhaLoginLabel);
+        VBox senhaLoginVbox = new VBox(5, senhaLoginHbox, senhaTFLogin);
+
+        CheckBox lembrarCb = new CheckBox("Lembrar de mim");
+        Hyperlink esqueceuLink = new Hyperlink("Esqueceu a senha?");
+        Region spacer = new Region(); // Espaçador para empurrar os itens
+        HBox.setHgrow(spacer, Priority.ALWAYS);
+        HBox lembrarHbox = new HBox(lembrarCb, spacer, esqueceuLink);
+        lembrarHbox.setAlignment(Pos.CENTER_LEFT);
+
+        Button btnEntrar = new Button("Entrar");
+        btnEntrar.getStyleClass().add("button");
+        btnEntrar.setPrefWidth(460); // Largura máxima para preencher
+        btnEntrar.setOnAction(event -> {
+            String email = emailTFLogin.getText();
+            String senha = senhaTFLogin.getText();
+
+            if (email.trim().isEmpty() || senha.trim().isEmpty()) {
+                mostrarAlerta(Alert.AlertType.WARNING, "Campos Vazios", "Por favor, digite seu e-mail e senha.");
+                return;
+            }
+
+            EntityManager em = JpaUtil.getFactory().createEntityManager();
+            try {
+                TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c WHERE c.email = :email AND c.senha = :senha", Cliente.class);
+                query.setParameter("email", email);
+                query.setParameter("senha", senha);
+
+                Cliente cliente = query.getSingleResult();
+                // Login bem-sucedido!
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Login Bem-sucedido", "Bem-vindo(a) de volta, " + cliente.getNome() + "!");
+                // Aqui você pode redirecionar para a próxima tela do seu aplicativo
+                // Ex: new TelaPrincipal(stage).mostrar();
+
+            } catch (NoResultException e) {
+                // Login falhou
+                mostrarAlerta(Alert.AlertType.ERROR, "Erro de Login", "E-mail ou senha incorretos. Tente novamente.");
+            } catch (Exception e) {
+                e.printStackTrace();
+                mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Ocorreu um erro inesperado ao tentar fazer login.");
+            } finally {
+                em.close();
+            }
+        });
+
+        Region linha1 = new Region();
+        linha1.setStyle("-fx-background-color: #ddd; -fx-pref-height: 1;");
+        HBox.setHgrow(linha1, Priority.ALWAYS);
+        Label ouLabel = new Label("ou");
+        Region linha2 = new Region();
+        linha2.setStyle("-fx-background-color: #ddd; -fx-pref-height: 1;");
+        HBox.setHgrow(linha2, Priority.ALWAYS);
+        HBox separador = new HBox(linha1, ouLabel, linha2);
+        separador.setAlignment(Pos.CENTER);
+        separador.setSpacing(10);
+
+
+        Region separadorCustomizado = new Region();
+        separadorCustomizado.setPrefWidth(3);
+        separadorCustomizado.setMaxHeight(550);
+        separadorCustomizado.setStyle("-fx-background-color: #FFC300;");
+        vboxLogin.getChildren().addAll(loginTitulos, emailLoginVbox, senhaLoginVbox, lembrarHbox, btnEntrar);
+        HBox painelPrincipal = new HBox(40); // HBox para colocar as duas VBox lado a lado com espaçamento de 50px
+        painelPrincipal.setAlignment(Pos.CENTER);
+        painelPrincipal.getChildren().addAll(Main,separadorCustomizado,vboxLogin);
+
+        StackPane root = new StackPane(painelPrincipal);
         root.setAlignment(Pos.CENTER);
         root.setStyle(estiloFundoVinho);
 
