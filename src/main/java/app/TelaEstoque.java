@@ -24,14 +24,14 @@ import java.nio.charset.StandardCharsets;
  * Tela para exibir e gerenciar o estoque de ingredientes,
  * com um layout e estilo baseados na TelaClientes.
  */
-public class TelaEstoque {
-    private Stage stage;
+public class TelaEstoque extends Tela {
 
     public TelaEstoque(Stage stage) {
-        this.stage = stage;
+        super(stage);
     }
 
-    public void mostrarTelaEstoque() {
+    @Override
+    public void mostrarTela() {
         // Carregamento de fontes, igual à TelaClientes
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
@@ -119,11 +119,11 @@ public class TelaEstoque {
 
         Scene scene = new Scene(scrollPane); //
 
-        stage.setTitle("Estoque"); //
-        stage.setMaximized(true); //
-        stage.setScene(scene); //
-        stage.setMinWidth(800); //
-        stage.setMinHeight(600); //
-        stage.show(); //
+        super.getStage().setTitle("Estoque"); //
+        super.getStage().setMaximized(true); //
+        super.getStage().setScene(scene); //
+        super.getStage().setMinWidth(800); //
+        super.getStage().setMinHeight(600); //
+        super.getStage().show(); //
     }
 }

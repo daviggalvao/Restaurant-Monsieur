@@ -183,11 +183,11 @@ public class TelaServicos{
         });
 
         cardConta.setOnMouseClicked(e->{
-            new TelaConta(new Stage()).mostrarTelaConta();
+            new TelaConta(new Stage()).mostrarTela();
         });
 
         cardReserva.setOnMouseClicked(mouseEvent -> {
-            new TelaReserva2(new Stage()).mostrarReservas();
+            new TelaReserva2(new Stage()).mostrarTela();
         });
 
         cardPedido.setOnMouseClicked(mouseEvent->{

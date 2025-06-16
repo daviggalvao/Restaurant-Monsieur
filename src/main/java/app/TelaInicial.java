@@ -18,8 +18,7 @@ import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-public class TelaInicial {
-    private Stage stage;
+public class TelaInicial extends Tela {
     private boolean emFrances = false;
     private WebView webView;
     private String txtNomeRest = "Restaurant";
@@ -38,7 +37,7 @@ public class TelaInicial {
     private VBox card1, card2, parent;
 
     public TelaInicial(Stage stage) {
-        this.stage = stage;
+        super(stage);
     }
 
     private void traduzirParaFrances(Button botaoTraduzir){
@@ -241,7 +240,8 @@ public class TelaInicial {
         return vbox;
     }
 
-    public void mostrar() {
+    @Override
+    public void mostrarTela() {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
         Font playfairFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 46);
         Font playfairFont3 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 24);
@@ -361,8 +361,8 @@ public class TelaInicial {
          card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#F0F0F0","#000000");
          card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#F0F0F0","#000000");
 
-        card1.setOnMouseClicked(mouseEvent->{ new TelaReserva(new Stage()).mostrarReserva();});
-        card2.setOnMouseClicked(mouseEvent->{ new TelaCardapio(new Stage()).mostrarTelaCardapio();});
+        card1.setOnMouseClicked(mouseEvent->{ new TelaReserva(new Stage()).mostrarTela();});
+        card2.setOnMouseClicked(mouseEvent->{ new TelaCardapio(new Stage()).mostrarTela();});
 
         HBox cardBox = new HBox(20, card1, card2);
         cardBox.setAlignment(Pos.CENTER);
@@ -437,11 +437,11 @@ public class TelaInicial {
             }
         });
 
-        stage.setScene(scene);
-        stage.setMinWidth(800);
-        stage.setMinHeight(600);
-        stage.setMaximized(true);
-        stage.show();
+        super.getStage().setScene(scene);
+        super.getStage().setMinWidth(800);
+        super.getStage().setMinHeight(600);
+        super.getStage().setMaximized(true);
+        super.getStage().show();
 
     }
 }

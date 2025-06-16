@@ -41,4 +41,19 @@ public class Cliente extends Pessoa {
         if (idade >= 60) { return valor * 0.9f; }
         return valor;
     }
+    @Override
+    public boolean ehAniversario() {
+        int dia,mes,ano;
+        String[] Partes = super.getDataAniversario().split("/");
+        dia = Integer.parseInt(Partes[0]);
+        mes = Integer.parseInt(Partes[1]);
+        ano = Integer.parseInt(Partes[2]);
+        LocalDate data = LocalDate.of(ano,mes,dia);
+        LocalDate hoje = LocalDate.now();
+        if (data.getDayOfMonth() == hoje.getDayOfMonth() && data.getMonthValue() == hoje.getMonthValue()){
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

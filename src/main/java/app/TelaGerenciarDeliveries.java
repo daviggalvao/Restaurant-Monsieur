@@ -24,9 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TelaGerenciarDeliveries {
+public class TelaGerenciarDeliveries extends Tela {
 
-    private Stage stage;
     private List<Pedido> listaDePedidos; // Recebe os pedidos prontos
     private TableView<Pedido> tabelaPedidos;
     private ListView<String> detalhesListView;
@@ -56,13 +55,14 @@ public class TelaGerenciarDeliveries {
 
 
     public TelaGerenciarDeliveries(Stage stage, List<Pedido> pedidosConcluidos) {
-        this.stage = stage;
+        super(stage);
         this.listaDePedidos = pedidosConcluidos;
         // Inicializa todos os pedidos com um status padrão "Recebido".
         this.listaDePedidos.forEach(p -> statusDosPedidos.putIfAbsent(p, "Recebido"));
     }
 
-    public void mostrar() {
+    @Override
+    public void mostrarTela() {
         BorderPane layoutPrincipal = new BorderPane();
         layoutPrincipal.setPadding(new Insets(20));
         layoutPrincipal.setStyle("-fx-background-color: " + DARK_BACKGROUND_COLOR + ";");
@@ -102,9 +102,9 @@ public class TelaGerenciarDeliveries {
             e.printStackTrace();
         }
 
-        stage.setScene(scene);
-        stage.setTitle("Gerenciamento de Deliveries - Monsieur-José");
-        stage.show();
+        super.getStage().setScene(scene);
+        super.getStage().setTitle("Gerenciamento de Deliveries - Monsieur-José");
+        super.getStage().show();
     }
 
     private TableView<Pedido> criarTabelaPedidos() {

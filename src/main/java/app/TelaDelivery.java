@@ -26,9 +26,8 @@ import javafx.stage.Stage;
 import java.util.ArrayList;
 import java.util.Optional;
 
-public class TelaDelivery {
+public class TelaDelivery extends Tela {
 
-    private Stage stage;
     private ObservableList<Prato> pratosDisponiveisNoMenu; // Pratos carregados para exibir no menu
 
     // Carrinho da Interface Gráfica: lista de ItemCarrinhoUI
@@ -59,7 +58,7 @@ public class TelaDelivery {
     // --- END STYLE CONSTANTS ---
 
     public TelaDelivery(Stage stage) {
-        this.stage = stage;
+        super(stage);
         Prato pratosDoMenu = null;
         this.pratosDisponiveisNoMenu = FXCollections.observableArrayList(pratosDoMenu);
         this.carrinhoDaUI = FXCollections.observableArrayList(item ->
@@ -69,7 +68,8 @@ public class TelaDelivery {
                 });
     }
 
-    public void mostrar() {
+    @Override
+    public void mostrarTela() {
         BorderPane layoutPrincipal = new BorderPane();
         layoutPrincipal.setPadding(new Insets(20)); // Increased padding
         layoutPrincipal.setStyle("-fx-background-color: " + DARK_BACKGROUND_COLOR + ";");
@@ -104,11 +104,11 @@ public class TelaDelivery {
         layoutPrincipal.setBottom(statusLabelUI);
 
         Scene scene = new Scene(layoutPrincipal, 1024, 768); // Slightly larger default size
-        stage.setScene(scene);
-        stage.setTitle("Sistema de Delivery - Cardápio Monsieur-José");
-        stage.setMinWidth(900); // Increased min width
-        stage.setMinHeight(700); // Increased min height
-        stage.show();
+        super.getStage().setScene(scene);
+        super.getStage().setTitle("Sistema de Delivery - Cardápio Monsieur-José");
+        super.getStage().setMinWidth(900); // Increased min width
+        super.getStage().setMinHeight(700); // Increased min height
+        super.getStage().show();
     }
 
     // Helper to slightly darken a hex color

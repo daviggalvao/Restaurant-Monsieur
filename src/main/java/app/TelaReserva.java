@@ -22,11 +22,10 @@ import javafx.stage.Stage;
 
 import java.time.LocalDate;
 
-public class TelaReserva {
-    private Stage stage;
+public class TelaReserva extends Tela {
 
     public TelaReserva(Stage stage) {
-        this.stage = stage;
+        super(stage);
     }
 
     private void mostrarAlerta(AlertType tipo, String titulo, String mensagem) {
@@ -37,7 +36,8 @@ public class TelaReserva {
         alerta.showAndWait();
     }
 
-    public void mostrarReserva() {
+    @Override
+    public void mostrarTela() {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 52);
         Font playfairFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 26);
         Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 20);
@@ -181,9 +181,9 @@ public class TelaReserva {
 
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
-        stage.setScene(scene);
-        stage.setMaximized(true);
-        stage.show();
+        super.getStage().setScene(scene);
+        super.getStage().setMaximized(true);
+        super.getStage().show();
     }
 
 

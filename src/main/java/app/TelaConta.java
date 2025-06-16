@@ -17,9 +17,7 @@ import javafx.stage.Stage;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public class TelaConta {
-
-    private Stage stage;
+public class TelaConta extends Tela {
 
     private final String[] NOMES_DOS_MESES = {
             "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
@@ -27,10 +25,11 @@ public class TelaConta {
     };
 
     public TelaConta(Stage stage) {
-        this.stage = stage;
+        super(stage);
     }
 
-    public void mostrarTelaConta() {
+    @Override
+    public void mostrarTela() {
         double[] lucrosArray = {1500.0, 2200.0, 1800.0, 2500.0, 1950.0, 3000.0, 800.0, 1200.0, 950.0, 1300.0, 1000.0, 1500.0};
         double[] custosArray = {800.0, 1200.0, 950.0, 1300.0, 1000.0, 1500.0, 800.0, 1200.0, 950.0, 1300.0, 1000.0, 1500.0};
         Font playfairFontTituloPagina = null;
@@ -149,8 +148,8 @@ public class TelaConta {
             System.err.println("Erro ao adicionar CSS interno à cena: " + e.getMessage());
         }
 
-        this.stage.setTitle("Conta Bancária");
-        this.stage.setScene(scene);
-        this.stage.show();
+        super.getStage().setTitle("Conta Bancária");
+        super.getStage().setScene(scene);
+        super.getStage().show();
     }
 }
