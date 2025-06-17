@@ -20,15 +20,15 @@ public class App extends Application{
         TelaEstoque estoque = new TelaEstoque(primaryStage);
         TelaCriarConta telacriar = new TelaCriarConta(primaryStage);
         //estoque.mostrarTelaEstoque();
-        //tela.mostrar();
-        //telaaa.mostrarReserva();
+        //tela.mostrarTela();
+       telaaa.mostrarTela();
         //telaa.mostrarTelaServicos();
-       // telaaaa.mostrarTelaGerente();
+       //telaaaa.mostrarTelaGerente();
         //cardapio.mostrarTelaCardapio();
         //delivery.mostrar();
         //conta.mostrarTelaConta();
         //telaPagamento.mostrarPagamento();
-        telacriar.mostrarTelaCriarConta();
+        //telacriar.mostrarTelaCriarConta();
 
     }
 

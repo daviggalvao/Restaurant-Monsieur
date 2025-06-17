@@ -61,9 +61,7 @@ public class Funcionario extends Pessoa {
         LocalDate dataAniversario = super.getDataAniversario();
         LocalDate hoje = LocalDate.now();
         if (dataAniversario == null) {return false;}
-        if(dataAniversario.getDayOfMonth() == hoje.getDayOfMonth() &&
-                dataAniversario.getMonthValue() == hoje.getMonthValue()){
-            return true;}
-        return false;
+        return dataAniversario.getDayOfMonth() == hoje.getDayOfMonth() &&
+                dataAniversario.getMonthValue() == hoje.getMonthValue();
     }
 }

@@ -276,7 +276,6 @@ public class TelaCriarConta {
                     em.getTransaction().commit();
 
                     mostrarAlerta(Alert.AlertType.INFORMATION, "Cadastro Realizado", "Cliente '" + nome + "' cadastrado com sucesso!");
-
                 }
 
             } catch (Exception e) {

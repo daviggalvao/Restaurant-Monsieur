@@ -72,7 +72,8 @@ public class TelaReserva2 extends Tela {
         LocalDate data = LocalDate.of(2003,2,24);
         Cliente test1 = new Cliente("Maria", data, "Samambaia Norte q.2", "maria", "maria@gmail.com");
         Pagamento test2 = new Pagamento(300, "pizzas", "Dinheiro", 100);
-        Reserva test = new Reserva("12/7/2025", "19:30", test1, 5, false, test2);
+        LocalDate datas= LocalDate.of(2025,7,12);
+        Reserva test = new Reserva(datas, "19:30", test1, 5, false, test2);
 
         ObservableList<Reserva> ReservaList = FXCollections.observableArrayList(test);
 

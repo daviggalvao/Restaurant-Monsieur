@@ -1,16 +1,14 @@
 
 package app;
 
-import javafx.application.Platform;
+import database.JpaUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import classes.Cliente;
 import classes.Pagamento;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
-import database.FirebaseReserva;
 import classes.Reserva;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -113,6 +111,13 @@ public class TelaReserva extends Tela {
         tfNome.setPromptText("Seu nome completo");
         tfNome.setStyle(inputStyle);
 
+        Label lblemail = new Label("\uD83D\uDC64 Email Completo *");
+        lblemail.setStyle("-fx-text-fill: #FFC300;");
+        TextField tfEmail = new TextField();
+        tfEmail.setPrefHeight(40);
+        tfEmail.setPromptText("Seu e-mail completo");
+        tfEmail.setStyle(inputStyle);
+
         Label lblData = new Label("\uD83D\uDCC5 Data *");
         lblData.setStyle("-fx-text-fill: #FFC300;");
         DatePicker dpData = new DatePicker();
@@ -151,7 +156,10 @@ public class TelaReserva extends Tela {
         cbPagamento.setStyle(inputStyle);
 
         inputs.add(lblNome, 0, 0);
-        inputs.add(tfNome, 0, 1, 5, 1); // Ajuste o span conforme necessário
+        inputs.add(tfNome, 0, 1, 3, 1);
+
+        inputs.add(lblemail,3,0);
+        inputs.add(tfEmail,3,1,2,1);
 
         inputs.add(lblHorario, 0, 2, 2, 1);
         inputs.add(cbHorario, 0, 3, 2, 1);
@@ -159,8 +167,8 @@ public class TelaReserva extends Tela {
         inputs.add(lblData, 2, 2);
         inputs.add(dpData, 2, 3);
 
-        inputs.add(lblChofer, 4, 2);  // Antes estava na coluna 6
-        inputs.add(checkSim, 4, 3);
+        inputs.add(lblChofer, 3, 2);  // Antes estava na coluna 6
+        inputs.add(checkSim, 3, 3);
 
         inputs.add(lblPessoas, 0, 4);  // Alinhado com Horário acima
         inputs.add(cbPessoas, 0, 5);
@@ -171,7 +179,50 @@ public class TelaReserva extends Tela {
         Button confirmar = new Button("Confirmar reserva");
         confirmar.getStyleClass().add("button");
 
-        confirmar.setOnMouseClicked(e -> {
+        confirmar.setOnAction(event -> {
+            String name = tfNome.getText();
+            String hora = cbHorario.getValue();
+            LocalDate data = dpData.getValue();
+            String pagamento = cbPagamento.getValue();
+            Integer qtdpessoas = cbPessoas.getValue();
+            Boolean chofer = checkSim.isSelected();
+            String email = tfEmail.getText();
+
+
+            if (name.trim().isEmpty() || email.trim().isEmpty() || hora.trim().isEmpty()
+                    || data == null || qtdpessoas == null || pagamento == null) {
+
+                mostrarAlerta(Alert.AlertType.WARNING,
+                        "Campos Obrigatórios",
+                        "Por favor, preencha todos os campos para continuar.");
+                return;
+            }
+
+            EntityManager em = JpaUtil.getFactory().createEntityManager();
+
+            try {
+                TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Pessoa c WHERE c.email = :email", Cliente.class);
+                query.setParameter("email", email);
+
+                Cliente cliente = query.getSingleResult();
+
+                Pagamento pagamentoReserva = new Pagamento(20.0f, name, pagamento, 1);
+                Reserva reservation = new Reserva(data, hora, cliente, qtdpessoas, chofer, pagamentoReserva);
+                em.getTransaction().begin();
+                em.persist(reservation);
+                em.getTransaction().commit();
+                mostrarAlerta(Alert.AlertType.INFORMATION, "Reserva Realizada", "Reserva feita para o cliente" + name + " com sucesso!");
+
+            }catch (NoResultException e) {
+                mostrarAlerta(Alert.AlertType.WARNING, "Busca retornou erro","Nenhuma conta com o" + email + " foi encontrada");
+            }catch (Exception e) {
+                if (em.getTransaction().isActive()) {em.getTransaction().rollback();}
+                e.printStackTrace();
+                mostrarAlerta(Alert.AlertType.WARNING, "Erro","Erro ao cadastrar a conta");
+            } finally {
+                if(em != null){em.close();}
+            }
+
         });
 
 
@@ -185,7 +236,5 @@ public class TelaReserva extends Tela {
         super.getStage().setMaximized(true);
         super.getStage().show();
     }
-
-
 }
 
