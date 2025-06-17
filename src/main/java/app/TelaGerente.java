@@ -121,7 +121,7 @@ public class TelaGerente {
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17); //
 
         // --- Título Principal ---
-        Label tituloPrincipal = new Label("Contas/Cadastros"); //
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Comptes/Inscriptions" : "Contas/Cadastros"); //
         tituloPrincipal.setFont(playfairFontTitulo); //
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;"); // Cor do título: amarelo
 
@@ -138,8 +138,8 @@ public class TelaGerente {
         String corTextoCard = "black"; // Texto dos cards: PRETO
 
         // Nomes e SVGs dos cards conforme o arquivo fornecido
-        VBox cardCliente = createCard("/svg/client-profile-svgrepo-com.svg", "Clientes", "Gerenciar contas dos clientes", corBordaCard, corTextoCard); //
-        VBox cardPromocao = createCard("/svg/promotion-svgrepo-com.svg", "Funcionários", "Promover/Contratar funcionários", corBordaCard, corTextoCard); //
+        VBox cardCliente = createCard("/svg/client-profile-svgrepo-com.svg", Tela.emFrances ? "Clients" : "Clientes", Tela.emFrances ? "Gérer les comptes clients" : "Gerenciar contas dos clientes", corBordaCard, corTextoCard); //
+        VBox cardPromocao = createCard("/svg/promotion-svgrepo-com.svg", Tela.emFrances ? "Employés" : "Funcionários", Tela.emFrances ? "Promouvoir/embaucher des employés" : "Promover/Contratar funcionários", corBordaCard, corTextoCard); //
 
         HBox linha1Cards = new HBox(20, cardCliente, cardPromocao); //
         linha1Cards.setAlignment(Pos.CENTER); //
@@ -156,9 +156,9 @@ public class TelaGerente {
         ImageView imageView = new ImageView(img);
 
         // --- Rodapé ---
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
+        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
         desc1.setFont(interfontRodape1); //
-        Label desc2 = new Label("Projetado para a excelência culinária francesa"); //
+        Label desc2 = new Label(Tela.emFrances ? "Conçu pour l'excellence culinaire française" : "Projetado para a excelência culinária francesa"); //
         desc2.setFont(interfontRodape2); //
         // MODIFICAÇÃO: Cor do texto do rodapé alterada para BRANCO
         String corTextoRodape = "white";

@@ -163,11 +163,11 @@ public class TelaCardapio extends Tela{
                 "Um clássico atemporal com um toque de genialidade. Lagosta grelhada com manteiga de ervas finas.",
                 corBordaCardRequintado, corTextoCard);
 
-        VBox pratoDembele = createPratoCard("Ousmane Dembélé", "78,79",
+        VBox pratoDembele = createPratoCard("Ousmane Dembélé", "78,79", (TelaInicial.emFrances) ? "Des notes déconcertantes d'agrumes et de saveurs épicées. Ceviche de bar aux fruits de la passion et au piment." :
                 "Dribles desconcertantes de sabores cítricos e picantes. Ceviche de robalo com maracujá e pimenta dedo-de-moça.",
                 corBordaCardRequintado, corTextoCard);
 
-        VBox pratoPayet = createPratoCard("Dimitri Payet", "85,49",
+        VBox pratoPayet = createPratoCard("Dimitri Payet", "85,49", (TelaInicial.emFrances) ? "Précision et créativité dans un plat qui enchante. Risotto au safran, Saint-Jacques sautées et une touche de magie." :
                 "Precisão e criatividade em um prato que encanta. Risoto de açafrão com vieiras salteadas e um toque de magia.",
                 corBordaCardRequintado, corTextoCard);
 

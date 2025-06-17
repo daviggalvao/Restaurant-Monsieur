@@ -35,7 +35,7 @@ public class TelaReserva2 extends Tela {
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17); //
 
         // --- Título Principal ---
-        Label tituloPrincipal = new Label("Reservas"); //
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Réservations" : "Reservas"); //
         tituloPrincipal.setFont(playfairFontTitulo); //
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;"); // Cor do título: amarelo
 
@@ -50,20 +50,20 @@ public class TelaReserva2 extends Tela {
         TableView<Reserva> tabela= new TableView<Reserva>();
 
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        TableColumn<Reserva, String> nomeColuna = new TableColumn<>("Cliente");
+        TableColumn<Reserva, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Client" : "Cliente");
         nomeColuna.setCellValueFactory(cellData-> new SimpleStringProperty(cellData.getValue().getCliente().getNome()));
 
-        TableColumn<Reserva, String>dataColuna = new TableColumn<>("Data");
+        TableColumn<Reserva, String>dataColuna = new TableColumn<>(Tela.emFrances ? "Date" : "Data");
         dataColuna.setCellValueFactory(new PropertyValueFactory<>("data"));
 
-        TableColumn<Reserva, String> timeColuna = new TableColumn<>("Horário");
+        TableColumn<Reserva, String> timeColuna = new TableColumn<>(Tela.emFrances ? "Temps" : "Horário");
         timeColuna.setCellValueFactory(new PropertyValueFactory<>("horario"));
 
-        TableColumn<Reserva, String> qtdColuna = new TableColumn<>("N°Pessoas");
+        TableColumn<Reserva, String> qtdColuna = new TableColumn<>(Tela.emFrances ? "N° Personnes" : "N°Pessoas");
         qtdColuna.setCellValueFactory(cellNum -> new SimpleStringProperty(String.valueOf(cellNum.getValue().getQuantidadePessoas())));
 
-        TableColumn<Reserva, String> choferColuna = new TableColumn<>("Chofer");
-        choferColuna.setCellValueFactory(value-> new SimpleStringProperty(value.getValue().getChofer() ? "Sim" : "Não"));
+        TableColumn<Reserva, String> choferColuna = new TableColumn<>(Tela.emFrances ? "Chauffeur" : "Chofer");
+        choferColuna.setCellValueFactory(value-> new SimpleStringProperty(value.getValue().getChofer() ? (Tela.emFrances ? "Oui" : "Sim") : (Tela.emFrances ? "Non" : "Não")));
 
 
         tabela.getColumns().addAll(nomeColuna, dataColuna, timeColuna, qtdColuna, choferColuna);
@@ -80,9 +80,9 @@ public class TelaReserva2 extends Tela {
         tabela.setItems(ReservaList);
 
         // --- Rodapé ---
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
+        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
         desc1.setFont(interfontRodape1); //
-        Label desc2 = new Label("Projetado para a excelência culinária francesa"); //
+        Label desc2 = new Label(Tela.emFrances ? "Conçu pour l'excellence culinaire française" : "Projetado para a excelência culinária francesa"); //
         desc2.setFont(interfontRodape2); //
         // MODIFICAÇÃO: Cor do texto do rodapé alterada para BRANCO
         String corTextoRodape = "white";

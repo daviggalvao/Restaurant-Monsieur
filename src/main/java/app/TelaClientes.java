@@ -30,7 +30,7 @@ public class TelaClientes extends Tela {
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17); //
 
         // --- Título Principal ---
-        Label tituloPrincipal = new Label("Clientes"); //
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Clients" : "Clientes"); //
         tituloPrincipal.setFont(playfairFontTitulo); //
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;"); // Cor do título: amarelo
 
@@ -45,19 +45,19 @@ public class TelaClientes extends Tela {
         TableView<Cliente> tabela= new TableView<Cliente>();
 
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        TableColumn<Cliente, String> nomeColuna = new TableColumn<>("Nome");
+        TableColumn<Cliente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
         TableColumn<Cliente, String>idColuna = new TableColumn<>("ID");
         idColuna.setCellValueFactory(new PropertyValueFactory<>("Id"));
 
-        TableColumn<Cliente, String> fidelidadeColuna = new TableColumn<>("Fidelidade");
+        TableColumn<Cliente, String> fidelidadeColuna = new TableColumn<>(Tela.emFrances ? "Fidelité" : "Fidelidade");
         fidelidadeColuna.setCellValueFactory(new PropertyValueFactory<>("fidelidade"));
 
-        TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>("Aniversário");
+        TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>(Tela.emFrances ? "Anniversaire" : "Aniversário");
         aniversarioColuna.setCellValueFactory(new PropertyValueFactory<>("dataAniversario"));
 
-        TableColumn<Cliente, String> enderecoColuna = new TableColumn<>("Endereço");
+        TableColumn<Cliente, String> enderecoColuna = new TableColumn<>(Tela.emFrances ? "Adresse" : "Endereço");
         enderecoColuna.setCellValueFactory(new PropertyValueFactory<>("endereco"));
         
 
@@ -72,9 +72,9 @@ public class TelaClientes extends Tela {
         tabela.setItems(ClienteList);
 
         // --- Rodapé ---
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
+        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
         desc1.setFont(interfontRodape1); //
-        Label desc2 = new Label("Projetado para a excelência culinária francesa"); //
+        Label desc2 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
         desc2.setFont(interfontRodape2); //
         // MODIFICAÇÃO: Cor do texto do rodapé alterada para BRANCO
         String corTextoRodape = "white";

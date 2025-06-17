@@ -38,7 +38,7 @@ public class TelaEstoque extends Tela {
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
 
         // --- Título Principal ---
-        Label tituloPrincipal = new Label("Estoque"); // Título da nova tela
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Stock" : "Estoque"); // Título da nova tela
         tituloPrincipal.setFont(playfairFontTitulo); //
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;"); //
 
@@ -58,16 +58,16 @@ public class TelaEstoque extends Tela {
         TableColumn<Ingrediente, String> idColuna = new TableColumn<>("ID");
         idColuna.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-        TableColumn<Ingrediente, String> nomeColuna = new TableColumn<>("Ingrediente");
+        TableColumn<Ingrediente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Ingredient" : "Ingrediente");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
-        TableColumn<Ingrediente, Float> precoColuna = new TableColumn<>("Preço (R$)");
+        TableColumn<Ingrediente, Float> precoColuna = new TableColumn<>(Tela.emFrances ? "Prix (R$)" : "Preço (R$)");
         precoColuna.setCellValueFactory(new PropertyValueFactory<>("preco"));
 
-        TableColumn<Ingrediente, Integer> quantidadeColuna = new TableColumn<>("Quantidade");
+        TableColumn<Ingrediente, Integer> quantidadeColuna = new TableColumn<>(Tela.emFrances ? "Montant" : "Quantidade");
         quantidadeColuna.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
 
-        TableColumn<Ingrediente, String> validadeColuna = new TableColumn<>("Validade");
+        TableColumn<Ingrediente, String> validadeColuna = new TableColumn<>(Tela.emFrances ? "Validité" : "Validade");
         validadeColuna.setCellValueFactory(new PropertyValueFactory<>("validade"));
 
         tabela.getColumns().addAll(idColuna, nomeColuna, precoColuna, quantidadeColuna, validadeColuna);
@@ -85,9 +85,9 @@ public class TelaEstoque extends Tela {
         tabela.setItems(dados);
 
         // --- Rodapé (igual ao da TelaClientes) ---
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
+        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
         desc1.setFont(interfontRodape1); //
-        Label desc2 = new Label("Projetado para a excelência culinária francesa"); //
+        Label desc2 = new Label(Tela.emFrances ? "Conçu pour l'excellence culinaire française" : "Projetado para a excelência culinária francesa"); //
         desc2.setFont(interfontRodape2); //
         String corTextoRodape = "white"; //
         desc1.setStyle("-fx-text-fill: " + corTextoRodape + ";"); //
