@@ -1,12 +1,17 @@
 package classes;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Pagamento{
+    @Column(name = "pagamento_preco") // Nome da coluna na tabela da entidade que incorporar Pagamento
     private float preco;
+    @Column(name = "pagamento_nome") // Nome da coluna
     private String nome;
+    @Column(name = "pagamento_tipo") // Nome da coluna
     private String tipo;
+    @Column(name = "pagamento_parcelas") // Nome da coluna
     private int parcelas;
 
     public Pagamento(){}

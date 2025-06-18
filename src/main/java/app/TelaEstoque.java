@@ -75,12 +75,12 @@ public class TelaEstoque extends Tela {
 
         // --- Dados de Exemplo para a Tabela ---
         ObservableList<Ingrediente> dados = FXCollections.observableArrayList(
-                new Ingrediente("1", "Tomate Italiano", 8.50f, 20, "15/06/2025"),
-                new Ingrediente("2", "Queijo Mussarela", 45.00f, 15, "30/07/2025"),
-                new Ingrediente("3", "Farinha de Trigo", 5.20f, 50, "01/12/2026"),
-                new Ingrediente("4", "Filé Mignon (kg)", 95.80f, 30, "10/06/2025"),
-                new Ingrediente("5", "Vinho Tinto Seco", 75.00f, 40, "N/A"),
-                new Ingrediente("6", "Manjericão Fresco", 15.00f, 5, "09/06/2025")
+                new Ingrediente(1L, "Tomate Italiano", 8.50f, 20, "15/06/2025"),
+                new Ingrediente(2L, "Queijo Mussarela", 45.00f, 15, "30/07/2025"),
+                new Ingrediente(3L, "Farinha de Trigo", 5.20f, 50, "01/12/2026"),
+                new Ingrediente(4L, "Filé Mignon (kg)", 95.80f, 30, "10/06/2025"),
+                new Ingrediente(5L, "Vinho Tinto Seco", 75.00f, 40, "N/A"),
+                new Ingrediente(6L, "Manjericão Fresco", 15.00f, 5, "09/06/2025")
         );
         tabela.setItems(dados);
 

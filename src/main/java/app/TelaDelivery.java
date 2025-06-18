@@ -2,10 +2,8 @@ package app;
 
 import classes.Pedido;
 import classes.Prato;
-// Removido: import classes.Pedido; // Não usaremos o Pedido do usuário para o estado interno da UI do carrinho
-// As classes Pagamento e Cliente não são usadas diretamente na construção desta tela de menu/carrinho
-// mas seriam necessárias para popular completamente o 'classes.Pedido' no final.
 
+import database.JpaUtil; // Importa sua classe utilitária JpaUtil
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -23,12 +21,19 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import jakarta.persistence.EntityManager; // Importa EntityManager do Jakarta Persistence
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class TelaDelivery extends Tela {
 
-    private ObservableList<Prato> pratosDisponiveisNoMenu; // Pratos carregados para exibir no menu
+    private ObservableList<Prato> pratosDisponiveisNoMenu;
+
+    // O EntityManager é declarado como um atributo de classe e inicializado
+    // na criação da instância de TelaDelivery, usando JpaUtil.
+    private EntityManager em = JpaUtil.getFactory().createEntityManager();
 
     // Carrinho da Interface Gráfica: lista de ItemCarrinhoUI
     private ObservableList<ItemCarrinhoUI> carrinhoDaUI;
@@ -59,13 +64,65 @@ public class TelaDelivery extends Tela {
 
     public TelaDelivery(Stage stage) {
         super(stage);
-        Prato pratosDoMenu = null;
-        this.pratosDisponiveisNoMenu = FXCollections.observableArrayList(pratosDoMenu);
+
+        this.pratosDisponiveisNoMenu = FXCollections.observableArrayList();
+        // Carrega os pratos do banco de dados ao inicializar a tela
+        carregarPratosDoBancoDeDados();
+
         this.carrinhoDaUI = FXCollections.observableArrayList(item ->
-                new Observable[]{ // Para que a ListView observe mudanças
+                new Observable[]{ // Para que a ListView observe mudanças na quantidade ou no prato
                         item.quantidadeNoCarrinhoProperty(),
                         item.pratoProperty()
                 });
+    }
+
+    /**
+     * Carrega os pratos disponíveis do banco de dados usando JPA/Hibernate.
+     * Adiciona os pratos carregados à lista observável `pratosDisponiveisNoMenu`.
+     * Esta função também serve como uma "checagem" da conexão com o banco de dados
+     * e da disponibilidade dos dados.
+     *
+     * O EntityManager 'em' é um atributo de classe e é reutilizado aqui.
+     */
+    private void carregarPratosDoBancoDeDados() {
+        if (em == null || !em.isOpen()) {
+            Platform.runLater(() -> statusLabelUI.setText("Erro: EntityManager não está ativo ou inicializado. Não foi possível carregar o cardápio."));
+            return;
+        }
+
+        try {
+            // Inicia uma transação
+            em.getTransaction().begin();
+
+            // Executa uma query JPQL para buscar todos os objetos Prato
+            List<Prato> pratosDoBanco = em.createQuery("SELECT p FROM Prato p", Prato.class).getResultList();
+
+            // Limpa a lista atual e adiciona todos os pratos encontrados
+            pratosDisponiveisNoMenu.clear();
+            pratosDisponiveisNoMenu.addAll(pratosDoBanco);
+
+            // Confirma a transação
+            em.getTransaction().commit();
+
+            Platform.runLater(() -> {
+                if (pratosDisponiveisNoMenu.isEmpty()) {
+                    statusLabelUI.setText("Nenhum prato disponível no cardápio.");
+                } else {
+                    statusLabelUI.setText("Cardápio carregado com " + pratosDisponiveisNoMenu.size() + " pratos.");
+                }
+            });
+
+        } catch (Exception e) {
+            // Em caso de erro, faz rollback da transação se estiver ativa
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("Erro ao carregar pratos do banco de dados: " + e.getMessage());
+            e.printStackTrace();
+            Platform.runLater(() -> statusLabelUI.setText("Erro ao carregar cardápio: " + e.getMessage()));
+        }
+        // Não é necessário fechar o EntityManager aqui, pois ele é um atributo de classe
+        // e será fechado no método fecharRecursosJPA() ao encerrar a aplicação.
     }
 
     @Override
@@ -76,7 +133,7 @@ public class TelaDelivery extends Tela {
 
         // Main Title for the Delivery Screen
         Label screenTitle = new Label("Restaurante Monsieur-José - Delivery");
-        screenTitle.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        screenTitle.setFont(FONT_TITLE);
         screenTitle.setTextFill(Color.web(ACCENT_COLOR_GOLD));
         screenTitle.setPadding(new Insets(0, 0, 20, 5)); // Add some bottom padding
         layoutPrincipal.setTop(screenTitle);
@@ -108,8 +165,23 @@ public class TelaDelivery extends Tela {
         super.getStage().setTitle("Sistema de Delivery - Cardápio Monsieur-José");
         super.getStage().setMinWidth(900); // Increased min width
         super.getStage().setMinHeight(700); // Increased min height
+        super.getStage().setMaximized(true);
         super.getStage().show();
     }
+
+    /**
+     * Fecha os recursos do JPA.
+     * O EntityManager 'em' da classe é fechado e, em seguida, a fábrica de entidades via JpaUtil.
+     * Deve ser chamado ao encerrar a aplicação (ex: no método 'stop()' da sua classe Application principal).
+     */
+    public void fecharRecursosJPA() {
+        if (em != null && em.isOpen()) {
+            em.close();
+            System.out.println("EntityManager da TelaDelivery fechado.");
+        }
+        JpaUtil.close(); // Chama o método para fechar a fábrica de entidades
+    }
+
 
     // Helper to slightly darken a hex color
     private String darkenSlightly(String hexColor, double factor) {
