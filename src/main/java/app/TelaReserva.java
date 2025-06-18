@@ -41,21 +41,22 @@ public class TelaReserva extends Tela {
         Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 20);
         Font interfont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 14);
 
-        Label Nome = new Label("Reserve Sua Mesa");
+        Label Nome = new Label(Tela.emFrances ? "Réservez votre table" : "Reserve Sua Mesa");
         Nome.setFont(playfairFont);
         Nome.setStyle("-fx-text-fill: #FFC300;");
-        Label desc = new Label("Desfrute de uma experiência única em nosso restaurante. \n" +
+        Label desc = new Label(Tela.emFrances ? "Vivez une expérience unique dans notre restaurant. \n" +
+                "Réservez votre table et laissez - nous nous occuper de tous les détails." : "Desfrute de uma experiência única em nosso restaurante. \n" +
                 "Reserve sua mesa e deixe-nos cuidar de todo os detalhes");
         desc.setFont(interfont2);
         desc.setStyle("-fx-text-fill: #FFC300;");
-        Label infores = new Label("Informações da Reserva");
+        Label infores = new Label(Tela.emFrances ? "Informations de réservation" : "Informações da Reserva");
         infores.setFont(playfairFont2);
         infores.setStyle("-fx-text-fill: #FFC300;");
-        Label inforesdesc = new Label("Preencha os Dados abaixo para garantir sua mesa");
+        Label inforesdesc = new Label(Tela.emFrances ? "Remplissez les détails ci-dessous pour garantir votre table" : "Preencha os Dados abaixo para garantir sua mesa");
         inforesdesc.setFont(interfont2);
         inforesdesc.setStyle("-fx-text-fill: #FFC300;");
 
-        TextField nome = new TextField("Seu Nome Completo");
+        TextField nome = new TextField(Tela.emFrances ? "Votre nom complet" : "Seu Nome Completo");
         nome.setStyle("-fx-text-fill: #FFC300;");
         VBox titulo = new VBox(Nome, desc);
         VBox informacoes = new VBox(infores, inforesdesc);
@@ -104,54 +105,54 @@ public class TelaReserva extends Tela {
                         "-mark-color: #4CAF50; " +
                         "-mark-shape: 'M 5 10 L 8 13 L 13 5'; ";
 
-        Label lblNome = new Label("\uD83D\uDC64 Nome Completo *");
+        Label lblNome = new Label(Tela.emFrances ? "\uD83D\uDC64 Nom Complet *" : "\uD83D\uDC64 Nome Completo *");
         lblNome.setStyle("-fx-text-fill: #FFC300;");
         TextField tfNome = new TextField();
         tfNome.setPrefHeight(40);
-        tfNome.setPromptText("Seu nome completo");
+        tfNome.setPromptText(Tela.emFrances ? "Votre nom complet" : "Seu nome completo");
         tfNome.setStyle(inputStyle);
 
-        Label lblemail = new Label("\uD83D\uDC64 Email Completo *");
+        Label lblemail = new Label("\uD83D\uDC64 Email *");
         lblemail.setStyle("-fx-text-fill: #FFC300;");
         TextField tfEmail = new TextField();
         tfEmail.setPrefHeight(40);
-        tfEmail.setPromptText("Seu e-mail completo");
+        tfEmail.setPromptText(Tela.emFrances ? "Votre e-mail complet" : "Seu e-mail completo");
         tfEmail.setStyle(inputStyle);
 
-        Label lblData = new Label("\uD83D\uDCC5 Data *");
+        Label lblData = new Label(Tela.emFrances ? "\uD83D\uDCC5 Date *" : "\uD83D\uDCC5 Data *");
         lblData.setStyle("-fx-text-fill: #FFC300;");
         DatePicker dpData = new DatePicker();
         dpData.setPrefHeight(40);
 
-        Label lblHorario = new Label("\u23F0 Horário *");
+        Label lblHorario = new Label(Tela.emFrances ? "\uD83D\uDCC5 Temps *" : "\u23F0 Horário *");
         lblHorario.setStyle("-fx-text-fill: #FFC300;");
         ComboBox<String> cbHorario = new ComboBox<>();
         cbHorario.getItems().addAll("12:00", "12:30", "13:00", "13:30", "14:00","14:30","15:00",
                 "19:00","19:30","20:00","20:30","21:00","21:30","22:00","22:30");
-        cbHorario.setPromptText("Selecione o horário");
+        cbHorario.setPromptText(Tela.emFrances ? "Sélectionnez l'heure" : "Selecione o horário");
         cbHorario.setPrefHeight(40);
         cbHorario.setStyle(inputStyle);
 
-        Label lblChofer = new Label("\uD83D\uDC64 Chofer *");
+        Label lblChofer = new Label(Tela.emFrances ?"\uD83D\uDC64 Chauffeur *" : "\uD83D\uDC64 Chofer *");
         lblChofer.setStyle("-fx-text-fill: #FFC300;");
-        CheckBox checkSim = new CheckBox("Quer Chofer?");
+        CheckBox checkSim = new CheckBox(Tela.emFrances ? "Je veux devenir chauffeur" : "Quer Chofer?");
         checkSim.setPrefHeight(40);
         checkSim.setStyle(checkBoxStyle);
 
-        Label lblPessoas = new Label("\uD83D\uDC65 Pessoas *");
+        Label lblPessoas = new Label(Tela.emFrances ? "\uD83D\uDC65 Personnes *" : "\uD83D\uDC65 Pessoas *");
         lblPessoas.setStyle("-fx-text-fill: #FFC300");
         ComboBox<Integer> cbPessoas = new ComboBox<>();
         cbPessoas.getItems().addAll(1, 2, 3, 4, 5, 6, 7, 8);
-        cbPessoas.setPromptText("Quantas pessoas?");
+        cbPessoas.setPromptText(Tela.emFrances ? "Combien de personnes?" : "Quantas pessoas?");
         cbPessoas.setPrefHeight(40);
         cbPessoas.setStyle(inputStyle);
 
-        Label lblPagamento = new Label("\uD83D\uDC64 Tipo de Pagamento *");
+        Label lblPagamento = new Label(Tela.emFrances ? "\uD83D\uDC64 Type de paiwment *" : "\uD83D\uDC64 Tipo de Pagamento *");
         lblPagamento.setStyle("-fx-text-fill: #FFC300;");
         ComboBox<String> cbPagamento = new ComboBox<>();
-        cbPagamento.getItems().addAll("Pix","Cartão De Crédito","Cartão De Débito",
-                "Talão de Cheque","Dinheiro Físico","Pagar Fiado");
-        cbPagamento.setPromptText("Selecione o Método de Pagamento");
+        cbPagamento.getItems().addAll("Pix",Tela.emFrances ? "Carte de crédit" : "Cartão De Crédito",Tela.emFrances ? "Carte de débit" : "Cartão De Débito",
+                Tela.emFrances ? "Chéquier" : "Talão de Cheque",Tela.emFrances ? "Argent physique": "Dinheiro Físico",Tela.emFrances ? "Payer à crédit" : "Pagar Fiado");
+        cbPagamento.setPromptText(Tela.emFrances ? "Sélectionnez le mode de paiement" : "Selecione o Método de Pagamento");
         cbPagamento.setPrefHeight(40);
         cbPagamento.setStyle(inputStyle);
 
@@ -176,7 +177,7 @@ public class TelaReserva extends Tela {
         inputs.add(lblPagamento, 2, 4);  // Alinhado com Data acima
         inputs.add(cbPagamento, 2, 5, 2, 1);  // Reduzi o span para 2
 
-        Button confirmar = new Button("Confirmar reserva");
+        Button confirmar = new Button(Tela.emFrances ? "Confirmer la réservation" : "Confirmar reserva");
         confirmar.getStyleClass().add("button");
 
         confirmar.setOnAction(event -> {
@@ -193,8 +194,8 @@ public class TelaReserva extends Tela {
                     || data == null || qtdpessoas == null || pagamento == null) {
 
                 mostrarAlerta(Alert.AlertType.WARNING,
-                        "Campos Obrigatórios",
-                        "Por favor, preencha todos os campos para continuar.");
+                        Tela.emFrances ? "Champs obligatoires" : "Campos Obrigatórios",
+                        Tela.emFrances ? "Veuillez remplir tous les champs pour continuer." : "Por favor, preencha todos os campos para continuar.");
                 return;
             }
 
@@ -211,14 +212,14 @@ public class TelaReserva extends Tela {
                 em.getTransaction().begin();
                 em.persist(reservation);
                 em.getTransaction().commit();
-                mostrarAlerta(Alert.AlertType.INFORMATION, "Reserva Realizada", "Reserva feita para o cliente" + name + " com sucesso!");
+                mostrarAlerta(Alert.AlertType.INFORMATION, Tela.emFrances ? "Réservation effectuée" : "Reserva Realizada", Tela.emFrances ? "Réservation effectuée pour le client "+ name +" avec succès !" : "Reserva feita para o cliente" + name + " com sucesso!");
 
             }catch (NoResultException e) {
-                mostrarAlerta(Alert.AlertType.WARNING, "Busca retornou erro","Nenhuma conta com o" + email + " foi encontrada");
+                mostrarAlerta(Alert.AlertType.WARNING, Tela.emFrances ? "La recherche a renvoyé une erreur" : "Busca retornou erro", Tela.emFrances ? "Aucun compte avec" + email + " n'a été trouvé" : "Nenhuma conta com o" + email + " foi encontrada");
             }catch (Exception e) {
                 if (em.getTransaction().isActive()) {em.getTransaction().rollback();}
                 e.printStackTrace();
-                mostrarAlerta(Alert.AlertType.WARNING, "Erro","Erro ao cadastrar a conta");
+                mostrarAlerta(Alert.AlertType.WARNING, Tela.emFrances ? "Erreur" : "Erro", Tela.emFrances ? "Erreur lors de l'enregistrement du compte" : "Erro ao cadastrar a conta");
             } finally {
                 if(em != null){em.close();}
             }

@@ -146,7 +146,7 @@ public class TelaServicos{
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17); //
 
         // --- Título Principal ---
-        Label tituloPrincipal = new Label("Serviços"); //
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Services" : "Serviços"); //
         tituloPrincipal.setFont(playfairFontTitulo); //
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;"); // Cor do título: amarelo
 
@@ -163,12 +163,12 @@ public class TelaServicos{
         String corTextoCard = "black"; // Texto dos cards: PRETO
 
         // Nomes e SVGs dos cards conforme o arquivo fornecido
-        VBox cardCadastro = createCard("/svg/contacts-svgrepo-com.svg", "Cadastros", "Gerenciar Cadastros", corBordaCard, corTextoCard); //
-        VBox cardPedido = createCard("/svg/shopping-cart-svgrepo-com.svg", "Pedidos", "Gerenciar Pedidos", corBordaCard, corTextoCard); //
-        VBox cardReserva = createCard("/svg/calendar-big-svgrepo-com.svg", "Reservas", "Gerenciar Reservas", corBordaCard, corTextoCard); //
-        VBox cardEstoque = createCard("/svg/box-svgrepo-com.svg", "Estoque", "Gerenciar Estoque", corBordaCard, corTextoCard); //
-        VBox cardMenu = createCard("/svg/diary-svgrepo-com.svg", "Cardápio", "Gerenciar Cardápio", corBordaCard, corTextoCard); //
-        VBox cardConta = createCard("/svg/bank-svgrepo-com.svg", "Conta", "Gerenciar Conta", corBordaCard, corTextoCard); //
+        VBox cardCadastro = createCard("/svg/contacts-svgrepo-com.svg", Tela.emFrances ? "Inscriptions" : "Cadastros", Tela.emFrances ? "Gérer les inscriptions" : "Gerenciar Cadastros", corBordaCard, corTextoCard); //
+        VBox cardPedido = createCard("/svg/shopping-cart-svgrepo-com.svg", Tela.emFrances ? "Ordres" : "Pedidos", Tela.emFrances ? "Gérer les commandes" : "Gerenciar Pedidos", corBordaCard, corTextoCard); //
+        VBox cardReserva = createCard("/svg/calendar-big-svgrepo-com.svg", Tela.emFrances ? "Réservations" : "Reservas", Tela.emFrances ? "Gérer les réservations" : "Gerenciar Reservas", corBordaCard, corTextoCard); //
+        VBox cardEstoque = createCard("/svg/box-svgrepo-com.svg", Tela.emFrances ? "Action" : "Estoque", Tela.emFrances ? "Gérer l'inventaire" : "Gerenciar Estoque", corBordaCard, corTextoCard); //
+        VBox cardMenu = createCard("/svg/diary-svgrepo-com.svg", Tela.emFrances ? "Menu" : "Cardápio", Tela.emFrances ? "Gérer le menu" : "Gerenciar Cardápio", corBordaCard, corTextoCard); //
+        VBox cardConta = createCard("/svg/bank-svgrepo-com.svg", Tela.emFrances ? "Compte" : "Conta", Tela.emFrances ? "Gérer le compte" : "Gerenciar Conta", corBordaCard, corTextoCard); //
 
         HBox linha1Cards = new HBox(20, cardCadastro, cardPedido, cardReserva); //
         linha1Cards.setAlignment(Pos.CENTER); //
@@ -190,14 +190,18 @@ public class TelaServicos{
             new TelaReserva2(new Stage()).mostrarTela();
         });
 
+        cardEstoque.setOnMouseClicked(mouseEvent -> {
+            new TelaEstoque(new Stage()).mostrarTela();
+        });
+
         cardPedido.setOnMouseClicked(mouseEvent->{
             //new TelaGerenciarDeliveries(new Stage(), App.fixed).mostrar();
         });
 
         // --- Rodapé ---
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
+        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
         desc1.setFont(interfontRodape1); //
-        Label desc2 = new Label("Projetado para a excelência culinária francesa"); //
+        Label desc2 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
         desc2.setFont(interfontRodape2); //
         // MODIFICAÇÃO: Cor do texto do rodapé alterada para BRANCO
         String corTextoRodape = "white";

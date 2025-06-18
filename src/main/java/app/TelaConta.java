@@ -43,7 +43,7 @@ public class TelaConta extends Tela {
             interFontParaEixos = Font.font("Arial", 14);
         }
 
-        Label tituloPagina = new Label("Conta Bancária");
+        Label tituloPagina = new Label(TelaInicial.emFrances ? "Compte Bancaire" : "Conta Bancária");
         tituloPagina.setFont(playfairFontTituloPagina);
         tituloPagina.setStyle("-fx-text-fill: #FFC300;");
 

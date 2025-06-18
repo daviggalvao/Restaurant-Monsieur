@@ -19,7 +19,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class TelaInicial extends Tela {
-    private boolean emFrances = false;
     private WebView webView;
     private String txtNomeRest = "Restaurant";
     private String txtNomeRest2 = "Monsieur-José";
@@ -41,7 +40,7 @@ public class TelaInicial extends Tela {
     }
 
     private void traduzirParaFrances(Button botaoTraduzir){
-        if (!emFrances) {
+        if (!Tela.emFrances) {
             // Traduz para francês
             txtNomeRest = "Restaurant";
             txtNomeRest2 = "Monsieur-José";
@@ -55,7 +54,7 @@ public class TelaInicial extends Tela {
             txtCard2Title = "Livraison";
             txtCard2Desc = "Gérer les demandes de livraison";
 
-            emFrances = true;
+            Tela.emFrances = true;
 
             WebView brasil = new WebView();
             brasil.setPrefSize(15,15);
@@ -83,7 +82,7 @@ public class TelaInicial extends Tela {
             txtCard2Title = "Delivery";
             txtCard2Desc = "Gerenciar Pedidos de Delivery";
 
-            emFrances = false;
+            Tela.emFrances = false;
 
             WebView france = new WebView();
             france.setPrefSize(15,15);
@@ -304,14 +303,14 @@ public class TelaInicial extends Tela {
 
             vbox.setBackground(new Background(new BackgroundFill(Color.web("#F0F0F0"), CornerRadii.EMPTY, Insets.EMPTY)));
             TextField senha = new TextField();
-            senha.setPromptText("Senha do gerente");
-            String msg = "Senha do Gerente: ";
+            senha.setPromptText(Tela.emFrances ? "Passe gestionnaire" : "Senha do gerente");
+            String msg = Tela.emFrances ? "Passe gestionnaire" : "Senha do Gerente: ";
             Label label = new Label(msg);
             label.setFont(playfairFont3);
             label.setTextFill(Color.web("#30000C"));
             label.setWrapText(true);
 
-            String msg2 = "Senha incorreta!";
+            String msg2 = Tela.emFrances ? "Passe incorrect!" : "Senha incorreta!";
             Label error = new Label(msg2);
             error.setFont(interfont2);
             error.setTextFill(Color.web("#30000C"));
@@ -320,7 +319,7 @@ public class TelaInicial extends Tela {
             Rectangle under = new Rectangle(150, 2);
             under.setFill(Color.web("#30000C"));
 
-            Button confirm = new Button("Confirmar");
+            Button confirm = new Button(Tela.emFrances? "Confirmer" : "Confirmar");
             VBox.setMargin(under, new Insets(0, 0, 23, 0));
             VBox.setMargin(senha, new Insets(0, 0, 15, 0));
 

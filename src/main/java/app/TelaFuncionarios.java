@@ -36,7 +36,7 @@ public class TelaFuncionarios extends Tela {
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
 
         // --- Título Principal ---
-        Label tituloPrincipal = new Label("Funcionários");
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Employés" : "Funcionários");
         tituloPrincipal.setFont(playfairFontTitulo);
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
 
@@ -54,27 +54,27 @@ public class TelaFuncionarios extends Tela {
         divide.setFill(Color.web("#FFC300"));
 
         // --- Seção de Promoção (Esquerda) ---
-        Label promotion = new Label("Promoção");
+        Label promotion = new Label(Tela.emFrances ? "Promotion " : "Promoção");
         promotion.setFont(playfairFontSubs);
         promotion.setStyle("-fx-text-fill: #FFC300;");
 
         TableView<Funcionario> tabela = new TableView<>();
         ObservableList<Funcionario> funcionarioList = FXCollections.observableArrayList();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        TableColumn<Funcionario, String> nomeColuna = new TableColumn<>("Nome");
+        TableColumn<Funcionario, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
-        TableColumn<Funcionario, FuncionarioCargo> cargoColuna = new TableColumn<>("Cargo");
+        TableColumn<Funcionario, FuncionarioCargo> cargoColuna = new TableColumn<>(Tela.emFrances ? "Position" : "Cargo");
         cargoColuna.setCellValueFactory(celldata ->
             celldata.getValue().getCargo()
         );
 
-        TableColumn<Funcionario, String> contratoColuna = new TableColumn<>("Contrato");
+        TableColumn<Funcionario, String> contratoColuna = new TableColumn<>(Tela.emFrances ? "Contracter" : "Contrato");
         contratoColuna.setCellValueFactory(new PropertyValueFactory<>("dataContrato"));
 
-        TableColumn<Funcionario, Void> promoverColuna = new TableColumn<>("Promover");
+        TableColumn<Funcionario, Void> promoverColuna = new TableColumn<>(Tela.emFrances ? "Promouvoir" : "Promover");
         promoverColuna.setCellFactory(coluna -> new TableCell<>() {
-            private final Button botao = new Button("Promover");
+            private final Button botao = new Button(Tela.emFrances ? "Promouvoir" : "Promover");
             {
                 // Estilo do botão pode ser adicionado aqui, se desejado
                 botao.setOnAction(event -> {
@@ -109,7 +109,7 @@ public class TelaFuncionarios extends Tela {
 
 
         // --- Seção de Contratação (Direita) ---
-        Label register = new Label("Contratar");
+        Label register = new Label(Tela.emFrances ? "Embaucher" : "Contratar");
         register.setFont(playfairFontSubs);
         register.setStyle("-fx-text-fill: #FFC300;");
 
@@ -120,38 +120,38 @@ public class TelaFuncionarios extends Tela {
 
         String inputStyle = "-fx-background-color: white; -fx-background-radius: 5; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-border-width: 1; -fx-font-size: 14px;";
 
-        Label lblNome = new Label("\uD83D\uDC64 Nome Completo *");
+        Label lblNome = new Label(Tela.emFrances ? "\uD83D\uDC64 Nom et prénom *" : "\uD83D\uDC64 Nome Completo *");
         lblNome.setStyle("-fx-text-fill: #FFC300;");
         TextField tfNome = new TextField();
         tfNome.setPrefHeight(40);
-        tfNome.setPromptText("Nome completo do funcionário");
+        tfNome.setPromptText(Tela.emFrances ? "Nom complet de l'employé" : "Nome completo do funcionário");
         tfNome.setStyle(inputStyle);
 
         Label lblEmail = new Label("\uD83D\uDCE7 Email *");
         lblEmail.setStyle("-fx-text-fill: #FFC300;");
         TextField tfEmail = new TextField();
         tfEmail.setPrefHeight(40);
-        tfEmail.setPromptText("Email para login");
+        tfEmail.setPromptText(Tela.emFrances ? "E-mail pour la connexion" : "Email para login");
         tfEmail.setStyle(inputStyle);
 
-        Label lblSenha = new Label("\uD83D\uDD11 Senha *");
+        Label lblSenha = new Label(Tela.emFrances ? "\uD83D\uDD11 Mot de passe *" : "\uD83D\uDD11 Senha *");
         lblSenha.setStyle("-fx-text-fill: #FFC300;");
         PasswordField tfSenha = new PasswordField(); // ALTERAÇÃO: Usar PasswordField para senhas
         tfSenha.setPrefHeight(40);
-        tfSenha.setPromptText("Senha de acesso");
+        tfSenha.setPromptText(Tela.emFrances ? "Mot de passe d'accès" : "Senha de acesso");
         tfSenha.setStyle(inputStyle);
 
-        Label lblData = new Label("\uD83D\uDCC5 Data de Nascimento *");
+        Label lblData = new Label(Tela.emFrances ? "\uD83D\uDCC5 Date de naissance *" : "\uD83D\uDCC5 Data de Nascimento *");
         lblData.setStyle("-fx-text-fill: #FFC300;");
         DatePicker dpData = new DatePicker();
         dpData.setPrefHeight(40);
         dpData.setMinWidth(200); // Garante que o DatePicker tenha um tamanho mínimo
 
-        Label lblCargo = new Label("\uD83D\uDCBC Cargo *");
+        Label lblCargo = new Label(Tela.emFrances ? "\uD83D\uDCBC Position *" : "\uD83D\uDCBC Cargo *");
         lblCargo.setStyle("-fx-text-fill: #FFC300;");
         ComboBox<FuncionarioCargo> cbCargo = new ComboBox<>();
         cbCargo.getItems().addAll(FuncionarioCargo.GERENTE, FuncionarioCargo.VENDEDOR, FuncionarioCargo.CHEF, FuncionarioCargo.GARCOM, FuncionarioCargo.SUPERVISOR);
-        cbCargo.setPromptText("Selecione o cargo");
+        cbCargo.setPromptText(Tela.emFrances ? "Sélectionnez le poste" : "Selecione o cargo");
         cbCargo.setPrefHeight(40);
         cbCargo.setMinWidth(200); // Garante que o ComboBox tenha um tamanho mínimo
         cbCargo.setStyle(inputStyle);
@@ -174,7 +174,7 @@ public class TelaFuncionarios extends Tela {
         inputs.add(lblSenha, 0, 4);
         inputs.add(tfSenha, 1, 4);
 
-        Button confirm = new Button("Confirmar Contratação");
+        Button confirm = new Button(Tela.emFrances ? "Confirmer l'embauche" : "Confirmar Contratação");
         confirm.getStyleClass().add("button");
         confirm.setOnMouseClicked(mouseEvent -> {
             String nome = tfNome.getText();
@@ -239,9 +239,9 @@ public class TelaFuncionarios extends Tela {
         HBox.setHgrow(contrato, Priority.ALWAYS);
 
         // --- Rodapé ---
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
+        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
-        Label desc2 = new Label("Projetado para a excelência culinária francesa");
+        Label desc2 = new Label(Tela.emFrances ? "Conçu pour l'excellence culinaire française" : "Projetado para a excelência culinária francesa");
         desc2.setFont(interfontRodape2);
         String corTextoRodape = "white";
         desc1.setStyle("-fx-text-fill: " + corTextoRodape + ";");
