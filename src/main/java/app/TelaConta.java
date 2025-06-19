@@ -1,4 +1,4 @@
-package app; // Assumindo que está no mesmo pacote 'app'
+package app;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -12,12 +12,12 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.stage.Stage;
+import javafx.stage.Stage; // Necessário para o construtor, mas não para o criarScene
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.net.MalformedURLException; // Manter se usado
+import java.net.URL; // Manter se usado
 
-public class TelaConta extends Tela {
+public class TelaConta extends Tela { // Já estende Tela
 
     private final String[] NOMES_DOS_MESES = {
             "Jan", "Fev", "Mar", "Abr", "Mai", "Jun",
@@ -29,8 +29,8 @@ public class TelaConta extends Tela {
     }
 
     @Override
-    public void mostrarTela() {
-        double[] lucrosArray = {1500.0, 2200.0, 1800.0, 2500.0, 1950.0, 3000.0, 800.0, 1200.0, 950.0, 1300.0, 1000.0, 1500.0};
+    public Scene criarScene() { // MUDANÇA AQUI: de void mostrarTela() para Scene criarScene()
+        double[] lucrosArray = {1500.0, 2200.0, 1800.0, 2500.0, 1950.0, 3000.0, 600.0, 1800.0, 1950.0, 1560.0, 1000.0, 1500.0};
         double[] custosArray = {800.0, 1200.0, 950.0, 1300.0, 1000.0, 1500.0, 800.0, 1200.0, 950.0, 1300.0, 1000.0, 1500.0};
         Font playfairFontTituloPagina = null;
         Font interFontParaEixos = null;
@@ -43,7 +43,7 @@ public class TelaConta extends Tela {
             interFontParaEixos = Font.font("Arial", 14);
         }
 
-        Label tituloPagina = new Label(TelaInicial.emFrances ? "Compte Bancaire" : "Conta Bancária");
+        Label tituloPagina = new Label(Tela.emFrances ? "Compte Bancaire" : "Conta Bancária"); // Usa Tela.emFrances
         tituloPagina.setFont(playfairFontTituloPagina);
         tituloPagina.setStyle("-fx-text-fill: #FFC300;");
 
@@ -56,11 +56,8 @@ public class TelaConta extends Tela {
 
         // --- 1. Definição dos Eixos ---
         CategoryAxis xAxis = new CategoryAxis();
-        xAxis.setLabel(null); // Remove o rótulo "Mês" do eixo X
+        xAxis.setLabel(null);
         xAxis.setTickLabelFill(Color.WHITE);
-        // A estilização do rótulo do eixo (-fx-text-fill, etc.) no setStyle não terá efeito visível
-        // pois o rótulo em si foi removido, mas manter o estilo não causa erro.
-        // Se quiser, pode remover a parte do -fx-text-fill: white; do setStyle do xAxis.
         if (interFontParaEixos != null) {
             xAxis.setStyle("-fx-font-family: '" + interFontParaEixos.getFamily() + "'; -fx-font-size: " + interFontParaEixos.getSize() + "px;");
         } else {
@@ -68,10 +65,9 @@ public class TelaConta extends Tela {
         }
 
         NumberAxis yAxis = new NumberAxis();
-        yAxis.setLabel(null); // Remove o rótulo "Valor (R$)" do eixo Y
+        yAxis.setLabel(null);
         yAxis.setTickUnit(50);
         yAxis.setTickLabelFill(Color.WHITE);
-        // Mesma observação para o setStyle do yAxis.
         if (interFontParaEixos != null) {
             yAxis.setStyle("-fx-font-family: '" + interFontParaEixos.getFamily() + "'; -fx-font-size: " + interFontParaEixos.getSize() + "px;");
         } else {
@@ -119,7 +115,6 @@ public class TelaConta extends Tela {
         Scene scene = new Scene(rootPane, 800, 700);
         scene.setFill(Color.web("#30000C"));
 
-        // CSS Interno: Removida a regra .axis-label, pois os rótulos foram removidos
         String cssInterno = """
             .default-color0.chart-bar { /* Lucros */
                 -fx-bar-fill: green;
@@ -148,8 +143,11 @@ public class TelaConta extends Tela {
             System.err.println("Erro ao adicionar CSS interno à cena: " + e.getMessage());
         }
 
-        super.getStage().setTitle("Conta Bancária");
-        super.getStage().setScene(scene);
-        super.getStage().show();
+        // REMOVIDO: stage.setTitle, stage.setScene, stage.show.
+        // super.getStage().setTitle("Conta Bancária");
+        // super.getStage().setScene(scene);
+        // super.getStage().show();
+
+        return scene; // RETORNA A SCENE
     }
 }

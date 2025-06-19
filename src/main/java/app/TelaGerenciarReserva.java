@@ -1,6 +1,9 @@
 package app;
 
 import classes.Cliente;
+import classes.Pagamento;
+import classes.Reserva;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.Scene;
@@ -10,29 +13,30 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.stage.Stage; // Necessário para o construtor, mas não para o criarScene
+import javafx.stage.Stage;
 import javafx.geometry.*;
 
 import java.time.LocalDate;
 
-public class TelaClientes extends Tela { // Já estende Tela
+// Classe renomeada de TelaReserva2 para TelaGerenciarReserva e herda de Tela
+public class TelaGerenciarReserva extends Tela {
 
     /**
-     * Construtor da TelaCliente.
+     * Construtor da TelaGerenciarReserva.
      * @param stage O palco principal da aplicação.
      */
-    public TelaClientes(Stage stage) {
+    public TelaGerenciarReserva(Stage stage) {
         super(stage);
     }
 
-    @Override // 1. Implementar o método abstrato criarScene()
+    @Override // Implementa o método abstrato criarScene()
     public Scene criarScene() { // MUDANÇA AQUI: de void mostrarTela() para Scene criarScene()
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
 
         // --- Título Principal ---
-        Label tituloPrincipal = new Label(Tela.emFrances ? "Clients" : "Clientes"); // Usar Tela.emFrances
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Réservations" : "Reservas");
         tituloPrincipal.setFont(playfairFontTitulo);
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
 
@@ -41,40 +45,44 @@ public class TelaClientes extends Tela { // Já estende Tela
 
         VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
         blocoTitulo.setAlignment(Pos.CENTER);
+        VBox.setMargin(tituloPrincipal, new Insets(0, 0, 0, 0));
         VBox.setMargin(blocoTitulo, new Insets(20, 0, 30, 0));
 
-        TableView<Cliente> tabela = new TableView<>();
+        TableView<Reserva> tabela= new TableView<Reserva>();
 
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        TableColumn<Cliente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome"); // Usar Tela.emFrances
-        nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        TableColumn<Reserva, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Client" : "Cliente");
+        nomeColuna.setCellValueFactory(cellData-> new SimpleStringProperty(cellData.getValue().getCliente().getNome()));
 
-        TableColumn<Cliente, String> idColuna = new TableColumn<>("ID");
-        idColuna.setCellValueFactory(new PropertyValueFactory<>("Id"));
+        TableColumn<Reserva, String>dataColuna = new TableColumn<>(Tela.emFrances ? "Date" : "Data");
+        dataColuna.setCellValueFactory(new PropertyValueFactory<>("data"));
 
-        TableColumn<Cliente, String> fidelidadeColuna = new TableColumn<>(Tela.emFrances ? "Fidelité" : "Fidelidade"); // Usar Tela.emFrances
-        fidelidadeColuna.setCellValueFactory(new PropertyValueFactory<>("fidelidade"));
+        TableColumn<Reserva, String> timeColuna = new TableColumn<>(Tela.emFrances ? "Temps" : "Horário");
+        timeColuna.setCellValueFactory(new PropertyValueFactory<>("horario"));
 
-        TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>(Tela.emFrances ? "Anniversaire" : "Aniversário"); // Usar Tela.emFrances
-        aniversarioColuna.setCellValueFactory(new PropertyValueFactory<>("dataAniversario"));
+        TableColumn<Reserva, String> qtdColuna = new TableColumn<>(Tela.emFrances ? "N° Personnes" : "N°Pessoas");
+        qtdColuna.setCellValueFactory(cellNum -> new SimpleStringProperty(String.valueOf(cellNum.getValue().getQuantidadePessoas())));
 
-        TableColumn<Cliente, String> enderecoColuna = new TableColumn<>(Tela.emFrances ? "Adresse" : "Endereço"); // Usar Tela.emFrances
-        enderecoColuna.setCellValueFactory(new PropertyValueFactory<>("endereco"));
+        TableColumn<Reserva, String> choferColuna = new TableColumn<>(Tela.emFrances ? "Chauffeur" : "Chofer");
+        choferColuna.setCellValueFactory(value-> new SimpleStringProperty(value.getValue().getChofer() ? (Tela.emFrances ? "Oui" : "Sim") : (Tela.emFrances ? "Non" : "Não")));
 
-        tabela.getColumns().addAll(nomeColuna, idColuna, fidelidadeColuna, aniversarioColuna, enderecoColuna);
+        tabela.getColumns().addAll(nomeColuna, dataColuna, timeColuna, qtdColuna, choferColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        LocalDate data = LocalDate.of(2003, 2, 24);
-        Cliente test = new Cliente("Maria", data, "Samambaia Norte q.2", "interdelixao", "mariazinha@outlook.com");
+        LocalDate data = LocalDate.of(2003,2,24);
+        Cliente test1 = new Cliente("Maria", data, "Samambaia Norte q.2", "maria", "maria@gmail.com");
+        Pagamento test2 = new Pagamento(300, "pizzas", "Dinheiro", 100);
+        LocalDate datas= LocalDate.of(2025,7,12);
+        Reserva test = new Reserva(datas, "19:30", test1, 5, false, test2);
 
-        ObservableList<Cliente> ClienteList = FXCollections.observableArrayList(test);
+        ObservableList<Reserva> ReservaList = FXCollections.observableArrayList(test);
 
-        tabela.setItems(ClienteList);
+        tabela.setItems(ReservaList);
 
         // --- Rodapé ---
         Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
-        Label desc2 = new Label(Tela.emFrances ? "Projetado para a excelência culinária francesa" : "Projetado para a excelência culinária francesa"); // Corrigida tradução
+        Label desc2 = new Label(Tela.emFrances ? "Conçu pour l'excellence culinaire française" : "Projetado para a excelência culinária francesa");
         desc2.setFont(interfontRodape2);
         String corTextoRodape = "white";
         desc1.setStyle("-fx-text-fill: " + corTextoRodape + ";");
@@ -120,8 +128,8 @@ public class TelaClientes extends Tela { // Já estende Tela
             }
         });
 
-        // 2. Removidos os comandos de Stage.setScene, Stage.setTitle, Stage.setMinWidth, etc.
-        // super.getStage().setTitle("Clientes");
+        // Removidos os comandos de Stage.setScene, Stage.setTitle, Stage.setMinWidth, etc.
+        // super.getStage().setTitle("Reservas");
         // super.getStage().setMaximized(true);
         // super.getStage().setScene(scene);
         // super.getStage().setMinWidth(800);

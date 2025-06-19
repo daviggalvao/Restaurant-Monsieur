@@ -1,10 +1,10 @@
 package app;
 
-import javafx.animation.ScaleTransition;      // Import ADICIONADO
-import javafx.animation.TranslateTransition;  // Import ADICIONADO
+import javafx.animation.ScaleTransition;
+import javafx.animation.TranslateTransition;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Cursor;                  // Import ADICIONADO (ou usar nome qualificado)
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -17,10 +17,10 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
-import javafx.stage.Stage;
-import javafx.util.Duration;                 // Import ADICIONADO
+import javafx.stage.Stage; // Necessário para o construtor, mas não para o criarScene
+import javafx.util.Duration;
 
-public class TelaCardapio extends Tela{
+public class TelaCardapio extends Tela{ // Já estende Tela
 
     public TelaCardapio(Stage stage) {
         super(stage);
@@ -62,7 +62,6 @@ public class TelaCardapio extends Tela{
         String baseBorderStyle = "-fx-border-radius: 6;" +
                 "-fx-border-width: 1.0;";
         String normalBorderColorStyle = "-fx-border-color: " + borderColor + ";";
-        // String hoverBorderColorStyle = "-fx-border-color: #FFC300;"; // Não é mais usado para este hover
 
         String normalStyle = "-fx-background-color: " + cardBackgroundColor + ";" +
                 normalBorderColorStyle +
@@ -75,56 +74,42 @@ public class TelaCardapio extends Tela{
         dropShadow.setOffsetX(1.0);
         dropShadow.setOffsetY(2.0);
         dropShadow.setColor(Color.color(0, 0, 0, 0.12));
-        pratoCard.setEffect(dropShadow); // Sombra base aplicada
+        pratoCard.setEffect(dropShadow);
 
-        // DropShadow hoverShadow = new DropShadow(); // Não é mais usado para este hover
-        // ... definições de hoverShadow removidas
-
-        // MODIFICAÇÃO DO EFEITO DE HOVER
         pratoCard.setOnMouseEntered(e -> {
-            pratoCard.setCursor(Cursor.HAND); // Mantém o cursor de mão
+            pratoCard.setCursor(Cursor.HAND);
 
-            // Efeito de translação sutil para cima
             TranslateTransition translate = new TranslateTransition(Duration.millis(150), pratoCard);
-            translate.setToY(-4); // Ajuste o valor para mais ou menos sutil
+            translate.setToY(-4);
             translate.play();
 
-            // Efeito de escala sutil
             ScaleTransition scale = new ScaleTransition(Duration.millis(150), pratoCard);
-            scale.setToX(1.008); // Aumento de 0.8%
+            scale.setToX(1.008);
             scale.setToY(1.008);
             scale.play();
-
-            // As linhas abaixo que mudavam a sombra e o estilo da borda foram removidas:
-            // pratoCard.setEffect(hoverShadow);
-            // pratoCard.setStyle(hoverStyle);
         });
 
         pratoCard.setOnMouseExited(e ->{
-            pratoCard.setCursor(Cursor.DEFAULT); // Restaura o cursor padrão
+            pratoCard.setCursor(Cursor.DEFAULT);
 
-            // Reverte a translação
             TranslateTransition translate = new TranslateTransition(Duration.millis(150), pratoCard);
             translate.setToY(0);
             translate.play();
 
-            // Reverte a escala
             ScaleTransition scale = new ScaleTransition(Duration.millis(150), pratoCard);
             scale.setToX(1.0);
             scale.setToY(1.0);
             scale.play();
-
-            // As linhas abaixo que restauravam a sombra e o estilo da borda foram removidas,
-            // pois a sombra base não foi alterada e o estilo base também não.
-            // pratoCard.setEffect(dropShadow);
-            // pratoCard.setStyle(normalStyle);
         });
+
+        // Removida a lógica de abrirNovaJanela, pois não será mais usada.
+        // pratoCard.setOnMouseClicked(e -> { abrirNovaJanela(nomePrato); });
 
         return pratoCard;
     }
 
     @Override
-    public void mostrarTela() {
+    public Scene criarScene() { // MUDANÇA AQUI: de void mostrarTela() para Scene criarScene()
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12);
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 10);
@@ -163,12 +148,12 @@ public class TelaCardapio extends Tela{
                 "Um clássico atemporal com um toque de genialidade. Lagosta grelhada com manteiga de ervas finas.",
                 corBordaCardRequintado, corTextoCard);
 
-        VBox pratoDembele = createPratoCard("Ousmane Dembélé", "78,79", (TelaInicial.emFrances) ? "Des notes déconcertantes d'agrumes et de saveurs épicées. Ceviche de bar aux fruits de la passion et au piment." :
-                "Dribles desconcertantes de sabores cítricos e picantes. Ceviche de robalo com maracujá e pimenta dedo-de-moça.",
+        VBox pratoDembele = createPratoCard("Ousmane Dembélé", "78,79", (Tela.emFrances) ? "Des notes déconcertantes d'agrumes et de saveurs épicées. Ceviche de bar aux fruits de la passion et au piment." :
+                        "Dribles desconcertantes de sabores cítricos e picantes. Ceviche de robalo com maracujá e pimenta dedo-de-moça.",
                 corBordaCardRequintado, corTextoCard);
 
-        VBox pratoPayet = createPratoCard("Dimitri Payet", "85,49", (TelaInicial.emFrances) ? "Précision et créativité dans un plat qui enchante. Risotto au safran, Saint-Jacques sautées et une touche de magie." :
-                "Precisão e criatividade em um prato que encanta. Risoto de açafrão com vieiras salteadas e um toque de magia.",
+        VBox pratoPayet = createPratoCard("Dimitri Payet", "85,49", (Tela.emFrances) ? "Précision et créativité dans un plat qui enchante. Risotto au safran, Saint-Jacques sautées et une touche de magie." :
+                        "Precisão e criatividade em um prato que encanta. Risoto de açafrão com vieiras salteadas e um toque de magia.",
                 corBordaCardRequintado, corTextoCard);
 
         pratosContainer.getChildren().addAll(pratoMbappe, pratoGriezmann, pratoTchouameni, pratoHenry, pratoDembele, pratoPayet);
@@ -196,11 +181,9 @@ public class TelaCardapio extends Tela{
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";"); // Mantém o fundo do ScrollPane
+        scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
         Scene scene = new Scene(scrollPane);
-        // Se a barra branca persistir, as soluções anteriores como scene.setFill(null);
-        // e zerar padding/border/insets do scrollPane podem precisar ser reintroduzidas aqui.
 
         scene.widthProperty().addListener((obs, oldVal, newVal) -> {
             double paddingLateralBase = 120;
@@ -221,11 +204,14 @@ public class TelaCardapio extends Tela{
             }
         });
 
-        super.getStage().setTitle("Cardápio - Restaurant Monsieur-José");
-        super.getStage().setScene(scene);
-        super.getStage().setMinWidth(700);
-        super.getStage().setMinHeight(600);
-        super.getStage().setMaximized(true);
-        super.getStage().show();
+        // REMOVIDO: stage.setTitle, stage.setScene, stage.setMinWidth, etc.
+        // super.getStage().setTitle("Cardápio - Restaurant Monsieur-José");
+        // super.getStage().setScene(scene);
+        // super.getStage().setMinWidth(700);
+        // super.getStage().setMinHeight(600);
+        // super.getStage().setMaximized(true);
+        // super.getStage().show();
+
+        return scene; // RETORNA A SCENE
     }
 }

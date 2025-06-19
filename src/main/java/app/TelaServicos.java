@@ -13,20 +13,17 @@ import javafx.geometry.*;
 import javafx.animation.*;
 import javafx.util.Duration;
 
-public class TelaServicos{
-    private Stage stage;
+import java.util.ArrayList; // Import para ArrayList
+import classes.Pedido;     // Import para a classe Pedido
 
-    /**
-     * Construtor da TelaServicos.
-     * @param stage O palco principal da aplicação.
-     */
-    public TelaServicos(Stage stage) {this.stage = stage;}
+public class TelaServicos extends Tela { // 1. Herdar da classe Tela
 
-    /**
-     * Abre uma nova janela maximizada com um título e um conteúdo simples.
-     * Este método é chamado quando um card é clicado.
-     * @param titulo O título da nova janela e parte do conteúdo exibido.
-     */
+    public TelaServicos(Stage stage) {
+        super(stage);
+    }
+
+    // REMOVIDO: O método abrirNovaJanela, pois não será mais usado para mudar de tela.
+    /*
     private void abrirNovaJanela(String titulo) {
         Stage novaJanela = new Stage();
         novaJanela.setTitle(titulo);
@@ -42,6 +39,7 @@ public class TelaServicos{
         novaJanela.setScene(scene);
         novaJanela.show();
     }
+    */
 
     /**
      * Cria um VBox estilizado como um card.
@@ -68,18 +66,18 @@ public class TelaServicos{
         webView.getEngine().loadContent(html); //
 
         Circle circle = new Circle(40); //
-        circle.setFill(Color.WHITE); // Círculo de hover permanece BRANCO
+        circle.setFill(Color.WHITE); //
         circle.setVisible(false); //
         StackPane iconStack = new StackPane(circle, webView); //
         iconStack.setAlignment(Pos.CENTER); //
 
         Label title = new Label(titleText); //
-        title.setTextFill(Color.web(textColor)); // Texto do card PRETO
+        title.setTextFill(Color.web(textColor)); //
         title.setFont(playfairFont); //
         title.setAlignment(Pos.CENTER); //
 
         Label desc = new Label(descText); //
-        desc.setTextFill(Color.web(textColor)); // Texto do card PRETO
+        desc.setTextFill(Color.web(textColor)); //
         desc.setWrapText(true); //
         desc.setMaxWidth(200); //
         desc.setFont(interfont); //
@@ -90,7 +88,7 @@ public class TelaServicos{
         vbox.setPadding(new Insets(40)); //
         vbox.setPrefSize(300, 250); //
 
-        String cardBackgroundColor = "#F0F0F0"; // Fundo do card: Cinza Claro
+        String cardBackgroundColor = "#F0F0F0"; //
         String normalStyle = "-fx-border-color: " + borderColor + ";" + //
                 "-fx-border-radius: 10;" + //
                 "-fx-border-width: 2.0;" + //
@@ -130,17 +128,20 @@ public class TelaServicos{
             vbox.setStyle(normalStyle); //
         });
 
-        vbox.setOnMouseClicked(e -> { //
-            abrirNovaJanela(titleText); //
+        // Removida a chamada a abrirNovaJanela. A navegação será feita no criarScene.
+        /*
+        vbox.setOnMouseClicked(e -> {
+            abrirNovaJanela(titleText);
         });
-
+        */
         return vbox; //
     }
 
     /**
-     * Configura e exibe a tela de Serviços.
+     * Configura e retorna a cena da tela de Serviços.
      */
-    public void mostrarTelaServicos() { //
+    @Override // Indica que este método está implementando o método abstrato da classe base
+    public Scene criarScene() { // MUDANÇA AQUI: de void mostrarTelaServicos() para Scene criarScene()
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62); //
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15); //
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17); //
@@ -148,10 +149,10 @@ public class TelaServicos{
         // --- Título Principal ---
         Label tituloPrincipal = new Label(Tela.emFrances ? "Services" : "Serviços"); //
         tituloPrincipal.setFont(playfairFontTitulo); //
-        tituloPrincipal.setStyle("-fx-text-fill: #FFC300;"); // Cor do título: amarelo
+        tituloPrincipal.setStyle("-fx-text-fill: #FFC300;"); //
 
         Rectangle sublinhado = new Rectangle(230, 3); //
-        sublinhado.setFill(Color.web("#FFC300")); // Cor do sublinhado: amarelo
+        sublinhado.setFill(Color.web("#FFC300")); //
 
         VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado); //
         blocoTitulo.setAlignment(Pos.CENTER); //
@@ -160,9 +161,8 @@ public class TelaServicos{
 
         // --- Cards ---
         String corBordaCard = "#E4E9F0"; //
-        String corTextoCard = "black"; // Texto dos cards: PRETO
+        String corTextoCard = "black"; //
 
-        // Nomes e SVGs dos cards conforme o arquivo fornecido
         VBox cardCadastro = createCard("/svg/contacts-svgrepo-com.svg", Tela.emFrances ? "Inscriptions" : "Cadastros", Tela.emFrances ? "Gérer les inscriptions" : "Gerenciar Cadastros", corBordaCard, corTextoCard); //
         VBox cardPedido = createCard("/svg/shopping-cart-svgrepo-com.svg", Tela.emFrances ? "Ordres" : "Pedidos", Tela.emFrances ? "Gérer les commandes" : "Gerenciar Pedidos", corBordaCard, corTextoCard); //
         VBox cardReserva = createCard("/svg/calendar-big-svgrepo-com.svg", Tela.emFrances ? "Réservations" : "Reservas", Tela.emFrances ? "Gérer les réservations" : "Gerenciar Reservas", corBordaCard, corTextoCard); //
@@ -178,33 +178,40 @@ public class TelaServicos{
         cardBoxContainer.setAlignment(Pos.CENTER); //
         cardBoxContainer.setPadding(new Insets(20, 0, 0, 50)); //
 
-        cardCadastro.setOnMouseClicked(e->{
-            new TelaGerente(this.stage).mostrarTelaGerente();
+        cardCadastro.setOnMouseClicked(e->{ //
+            new TelaGerente(super.getStage()).mostrarTela(); //
         });
 
-        cardConta.setOnMouseClicked(e->{
-            new TelaConta(this.stage).mostrarTela();
+        cardConta.setOnMouseClicked(e->{ //
+            new TelaConta(super.getStage()).mostrarTela(); //
         });
 
-        cardReserva.setOnMouseClicked(mouseEvent -> {
-            new TelaReserva2(this.stage).mostrarTela();
+        cardReserva.setOnMouseClicked(mouseEvent -> { //
+            // Chamada para a nova TelaGerenciarReserva
+            new TelaGerenciarReserva(super.getStage()).mostrarTela(); //
         });
 
-        cardEstoque.setOnMouseClicked(mouseEvent -> {
-            new TelaEstoque(this.stage).mostrarTela();
+        cardEstoque.setOnMouseClicked(mouseEvent -> { //
+            new TelaEstoque(super.getStage()).mostrarTela(); //
         });
 
-        cardPedido.setOnMouseClicked(mouseEvent->{
-            //new TelaGerenciarDeliveries(new Stage(), App.fixed).mostrar();
+        // *** ADICIONANDO NAVEGABILIDADE PARA TelaGerenciarDelivery ***
+        cardPedido.setOnMouseClicked(mouseEvent->{ //
+            // O construtor de TelaGerenciarDelivery agora aceita apenas a Stage.
+            // A lista de pedidos será gerada internamente ou carregada pela própria tela.
+            new TelaGerenciarDelivery(super.getStage()).mostrarTela(); //
+        });
+
+        cardMenu.setOnMouseClicked(mouseEvent -> { //
+            new TelaCardapio(super.getStage()).mostrarTela(); //
         });
 
         // --- Rodapé ---
         Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
         desc1.setFont(interfontRodape1); //
-        Label desc2 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
+        Label desc2 = new Label(Tela.emFrances ? "Projetado para a excelência culinária francesa" : "Projetado para a excelência culinária francesa"); //
         desc2.setFont(interfontRodape2); //
-        // MODIFICAÇÃO: Cor do texto do rodapé alterada para BRANCO
-        String corTextoRodape = "white";
+        String corTextoRodape = "white"; //
         desc1.setStyle("-fx-text-fill: " + corTextoRodape + ";"); //
         desc2.setStyle("-fx-text-fill: " + corTextoRodape + ";"); //
 
@@ -226,7 +233,6 @@ public class TelaServicos{
         grid.getColumnConstraints().add(new ColumnConstraints(1000)); //
         grid.add(root, 0, 0); //
 
-        // Fundo da tela: vinho
         String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)"; //
         grid.setStyle("-fx-background-color: " + estiloFundoVinho + ";"); //
 
@@ -234,7 +240,7 @@ public class TelaServicos{
         scrollPane.setFitToWidth(true); //
         scrollPane.setFitToHeight(true); //
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); //
-        scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";"); // Fundo do ScrollPane vinho
+        scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";"); //
 
         Scene scene = new Scene(scrollPane); //
 
@@ -271,11 +277,25 @@ public class TelaServicos{
             }
         });
 
-        stage.setTitle("Serviços"); //
-        stage.setScene(scene); //
-        stage.setMinWidth(800); //
-        stage.setMinHeight(600); //
-        stage.setMaximized(true); //
-        stage.show(); //
+        // Removidos os comandos de Stage.setScene, Stage.setTitle, Stage.setMinWidth, etc.
+        // Eles já estão sendo chamados pelo método mostrarTela() da classe base Tela.
+        /*
+        super.getStage().setTitle("Serviços");
+        super.getStage().setScene(scene);
+        super.getStage().setMinWidth(800);
+        super.getStage().setMinHeight(600);
+        super.getStage().setMaximized(true);
+        super.getStage().show();
+        */
+
+        return scene; // Retorna a Scene construída
+    }
+
+    private void mostrarAlerta(Alert.AlertType type, String title, String content) { //
+        Alert alert = new Alert(type); //
+        alert.setTitle(title); //
+        alert.setHeaderText(null); //
+        alert.setContentText(content); //
+        alert.showAndWait(); //
     }
 }

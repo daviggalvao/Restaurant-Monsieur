@@ -17,11 +17,11 @@ import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 
-public class TelaPagamento extends Tela {
+public class TelaPagamento extends Tela { // A classe já estende Tela
+
     private String tituloDesc;
     private String tituloDesc2;
     private String p1 = "1x de R$ 117.30(à vista)";
-
     private String p2 = "2x de R$ 58.65";
     private String p3 = "3x de R$ 39.10";
     private String p4 = "4x de R$ 29.32";
@@ -33,7 +33,6 @@ public class TelaPagamento extends Tela {
     }
 
     private void updateContent(String selectedItem, VBox contentBox) {
-
         contentBox.getChildren().clear();
 
         if (selectedItem.equals("Pedidos")) {
@@ -63,8 +62,8 @@ public class TelaPagamento extends Tela {
             preco.setAlignment(Pos.CENTER_RIGHT);
 
             HBox subtotalPrecoBox = new HBox(170, subtotal, preco);
-            subtotalPrecoBox.setAlignment(Pos.CENTER_LEFT); // Alinha os itens no HBox à esquerda
-            HBox.setHgrow(preco, Priority.ALWAYS); // Garante que o preço ficará alinhado à direita
+            subtotalPrecoBox.setAlignment(Pos.CENTER_LEFT);
+            HBox.setHgrow(preco, Priority.ALWAYS);
 
 
             contentBox.getChildren().addAll(pedido, pizza, refrigerante, sobremesa, sublinhado, taxaEntrega, sublinhado2, subtotalPrecoBox);
@@ -99,8 +98,8 @@ public class TelaPagamento extends Tela {
             precoTotal.setAlignment(Pos.CENTER_RIGHT);
 
             HBox subtotalPrecoBox = new HBox(162, subtotal, precoTotal);
-            subtotalPrecoBox.setAlignment(Pos.CENTER_LEFT); // Alinha os itens no HBox à esquerda
-            HBox.setHgrow(precoTotal, Priority.ALWAYS); // Garante que o preço ficará alinhado à direita
+            subtotalPrecoBox.setAlignment(Pos.CENTER_LEFT);
+            HBox.setHgrow(precoTotal, Priority.ALWAYS);
 
             contentBox.getChildren().addAll(reserva, data, local, preco , sublinhado, taxaServico, sublinhado2, subtotalPrecoBox);
             contentBox.setAlignment(Pos.BASELINE_LEFT);
@@ -113,8 +112,8 @@ public class TelaPagamento extends Tela {
 
         String[] Partes = selectedItem.split(" ");
         if(Partes[0].equals("1x")){
-             contentBox.setPadding(new Insets(20));
-             contentBox.setStyle("-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;");
+            contentBox.setPadding(new Insets(20));
+            contentBox.setStyle("-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;");
 
             Label titulo = new Label("Resumo do Pagamento:");
             titulo.setFont(Font.font("System", FontWeight.BOLD, 16));
@@ -211,22 +210,22 @@ public class TelaPagamento extends Tela {
 
 
     private VBox createCard(String svgPath, String titleText, String TipoCard, String borderColor, String textColor) {
-        Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 25); //
-        Font interfont = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12); //
+        Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 25);
+        Font interfont = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12);
 
-        WebView webView = new WebView(); //
-        webView.setMinSize(10, 10); //
-        webView.setPrefSize(25, 25); //
-        webView.setMaxSize(30, 30); //
+        WebView webView = new WebView();
+        webView.setMinSize(10, 10);
+        webView.setPrefSize(25, 25);
+        webView.setMaxSize(30, 30);
 
-        String svgUrl = getClass().getResource(svgPath).toExternalForm(); //
-        String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" + //
-                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" + //
-                "</body></html>"; //
-        webView.getEngine().loadContent(html); //
+        String svgUrl = getClass().getResource(svgPath).toExternalForm();
+        String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
+                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                "</body></html>";
+        webView.getEngine().loadContent(html);
 
-        Label title = new Label(titleText); //
-        title.setTextFill(Color.web(textColor)); // Texto do card PRETO
+        Label title = new Label(titleText);
+        title.setTextFill(Color.web(textColor));
         title.setStyle("-fx-font-size: 25px; -fx-font-weight: 600;");
         HBox titulos = new HBox(7, webView, title);
         titulos.setAlignment(Pos.TOP_LEFT);
@@ -258,7 +257,6 @@ public class TelaPagamento extends Tela {
 
             types.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    // Use o valor selecionado
                     selectedItem[0] = newValue;
                     updateContent(selectedItem[0],contentBox);
                 }
@@ -274,7 +272,7 @@ public class TelaPagamento extends Tela {
             vbox.setPrefSize(420, 450);
             vbox.setMaxSize(420, 950);
 
-            String cardBackgroundColor = "White"; // Fundo do card: Cinza Claro
+            String cardBackgroundColor = "White";
             String normalStyle = "-fx-border-color: " + borderColor + ";" +
                     "-fx-border-radius: 10;" +
                     "-fx-border-width: 2.0;" +
@@ -283,8 +281,6 @@ public class TelaPagamento extends Tela {
             vbox.setStyle(normalStyle);
 
             return vbox;
-
-            //-----------------------Criacao Card Pagamento ----------------------//
 
         }else if(TipoCard.equals("Pagamento")){
             String inputStyle = "-fx-background-color: white;\n" +
@@ -309,7 +305,6 @@ public class TelaPagamento extends Tela {
 
             types.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
-                    // Use o valor selecionado
                     selectedItem[0] = newValue;
                     updateContent2(selectedItem[0],contentBox);
                 }
@@ -322,11 +317,11 @@ public class TelaPagamento extends Tela {
             finalizarPagamento.setPrefWidth(400);
             finalizarPagamento.setFont(Font.font("System", FontWeight.BOLD, 16));
             finalizarPagamento.setStyle(
-                    "-fx-background-color: #0C1120;" +  // cor escura
+                    "-fx-background-color: #0C1120;" +
                             "-fx-text-fill: white;" +
-                            "-fx-padding: 15 50 15 50;" +  // padding grande
-                            "-fx-background-radius: 10;" + // canto arredondado
-                            "-fx-cursor: hand;"  // cursor de mão
+                            "-fx-padding: 15 50 15 50;" +
+                            "-fx-background-radius: 10;" +
+                            "-fx-cursor: hand;"
             );
 
             Label mensagemSeguranca = new Label("Pagamento seguro • Seus dados estão protegidos");
@@ -339,38 +334,38 @@ public class TelaPagamento extends Tela {
             botao.setAlignment(Pos.CENTER);
 
             VBox vbox = new VBox(20, titulos,tipos,contentBox,botao);
-            vbox.setAlignment(Pos.TOP_CENTER); //
-            vbox.setPadding(new Insets(40)); //
-            vbox.setPrefSize(420, 450); //
+            vbox.setAlignment(Pos.TOP_CENTER);
+            vbox.setPadding(new Insets(40));
+            vbox.setPrefSize(420, 450);
 
-            String cardBackgroundColor = "White"; // Fundo do card: Cinza Claro
-            String normalStyle = "-fx-border-color: " + borderColor + ";" + //
-                    "-fx-border-radius: 10;" + //
-                    "-fx-border-width: 2.0;" + //
-                    "-fx-background-radius: 10;" + //
-                    "-fx-background-color: " + cardBackgroundColor + ";"; //
+            String cardBackgroundColor = "White";
+            String normalStyle = "-fx-border-color: " + borderColor + ";" +
+                    "-fx-border-radius: 10;" +
+                    "-fx-border-width: 2.0;" +
+                    "-fx-background-radius: 10;" +
+                    "-fx-background-color: " + cardBackgroundColor + ";";
             vbox.setStyle(normalStyle);
 
             return vbox;
         }
         VBox vbox = new VBox(20, titulos);
-        vbox.setAlignment(Pos.TOP_CENTER); //
-        vbox.setPadding(new Insets(40)); //
-        vbox.setPrefSize(420, 450); //
+        vbox.setAlignment(Pos.TOP_CENTER);
+        vbox.setPadding(new Insets(40));
+        vbox.setPrefSize(420, 450);
 
-        String cardBackgroundColor = "White"; // Fundo do card: Cinza Claro
-        String normalStyle = "-fx-border-color: " + borderColor + ";" + //
-                "-fx-border-radius: 10;" + //
-                "-fx-border-width: 2.0;" + //
-                "-fx-background-radius: 10;" + //
-                "-fx-background-color: " + cardBackgroundColor + ";"; //
+        String cardBackgroundColor = "White";
+        String normalStyle = "-fx-border-color: " + borderColor + ";" +
+                "-fx-border-radius: 10;" +
+                "-fx-border-width: 2.0;" +
+                "-fx-background-radius: 10;" +
+                "-fx-background-color: " + cardBackgroundColor + ";";
         vbox.setStyle(normalStyle);
 
         return vbox;
     }
 
-    @Override
-    public void mostrarTela() {
+    @Override // ADICIONAR @Override e mudar de 'void mostrarTela()' para 'public Scene criarScene()'
+    public Scene criarScene() {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Label titulo = new Label("Finalizar Pagamento");
         titulo.setFont(playfairFont);
@@ -386,11 +381,11 @@ public class TelaPagamento extends Tela {
         VBox cardInfo = createCard("/svg/package-svgrepo-com.svg", tituloDesc, "Informacoes", corBordaCard, corTextoCard);
         VBox cardPagamento = createCard("/svg/credit-card-svgrepo-com.svg", tituloDesc2, "Pagamento", corBordaCard, corTextoCard);
 
-        HBox cardsContainer = new HBox(20); // 10 é o espaçamento entre os cartões
+        HBox cardsContainer = new HBox(20);
         cardsContainer.getChildren().addAll(cardInfo, cardPagamento);
         cardsContainer.setAlignment(Pos.CENTER);
 
-        VBox contenedor = new VBox(25); // Espaçamento entre o título e os cards
+        VBox contenedor = new VBox(25);
         contenedor.getChildren().addAll(titulo, cardsContainer);
         contenedor.setAlignment(Pos.CENTER);
 
@@ -405,11 +400,14 @@ public class TelaPagamento extends Tela {
 
         Scene scene = new Scene(pane);
 
-        super.getStage().setTitle("Pagamento");
-        super.getStage().setScene(scene);
-        super.getStage().setMinWidth(800); // Largura mínima
-        super.getStage().setMinHeight(600); // Altura mínima
-        super.getStage().setMaximized(true); // Maximizar a janela
-        super.getStage().show(); // Exibir a tela
+        // REMOVIDO: stage.setTitle, stage.setScene, stage.setMinWidth, etc.
+        // super.getStage().setTitle("Pagamento");
+        // super.getStage().setScene(scene);
+        // super.getStage().setMinWidth(800);
+        // super.getStage().setMinHeight(600);
+        // super.getStage().setMaximized(true);
+        // super.getStage().show();
+
+        return scene; // RETORNA a Scene
     }
 }

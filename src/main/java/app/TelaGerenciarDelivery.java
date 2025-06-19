@@ -2,6 +2,9 @@ package app;
 
 import classes.Pedido;
 import classes.Prato;
+import classes.Cliente;
+import classes.Pagamento;
+import classes.Ingrediente;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -20,23 +23,25 @@ import javafx.stage.Stage;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class TelaGerenciarDeliveries extends Tela {
+public class TelaGerenciarDelivery extends Tela {
 
-    private List<Pedido> listaDePedidos; // Recebe os pedidos prontos
+    private List<Pedido> listaDePedidos;
     private TableView<Pedido> tabelaPedidos;
     private ListView<String> detalhesListView;
     private Label clienteLabel, totalLabel, statusAtualLabel;
     private ComboBox<String> statusComboBox;
     private Button salvarStatusButton;
 
-    // Mapa para armazenar o status de cada pedido, já que a classe Pedido original não tem esse campo.
     private Map<Pedido, String> statusDosPedidos = new HashMap<>();
 
-    // --- BEGIN STYLE CONSTANTS (Mesma paleta da tela de Delivery) ---
+    // --- BEGIN STYLE CONSTANTS ---
     private static final String DARK_BACKGROUND_COLOR = "#4B3832";
     private static final String PANEL_BACKGROUND_COLOR = "#FAF0E6";
     private static final String ACCENT_COLOR_GOLD = "#DAA520";
@@ -53,22 +58,47 @@ public class TelaGerenciarDeliveries extends Tela {
     private static final Font FONT_BUTTON = Font.font("Arial", FontWeight.BOLD, 14);
     // --- END STYLE CONSTANTS ---
 
-
-    public TelaGerenciarDeliveries(Stage stage, List<Pedido> pedidosConcluidos) {
+    public TelaGerenciarDelivery(Stage stage) {
         super(stage);
-        this.listaDePedidos = pedidosConcluidos;
-        // Inicializa todos os pedidos com um status padrão "Recebido".
+        this.listaDePedidos = criarPedidosFicticios();
         this.listaDePedidos.forEach(p -> statusDosPedidos.putIfAbsent(p, "Recebido"));
     }
 
+    private List<Pedido> criarPedidosFicticios() {
+        List<Pedido> pedidos = new ArrayList<>();
+
+        List<Ingrediente> ingredientesVazios = new ArrayList<>();
+
+        Cliente cliente1 = new Cliente("João Silva", LocalDate.of(1990, 5, 15), "Rua A, 123", "senha123", "joao@email.com");
+        Prato prato1 = new Prato(45.00f, ingredientesVazios, "Pizza de Calabresa", "Pizza com calabresa e queijo", 10);
+        Prato prato2 = new Prato(10.00f, ingredientesVazios, "Coca-Cola 2L", "Refrigerante", 20);
+        Pagamento pag1 = new Pagamento(65.00f, "Dinheiro", "Dinheiro", 1);
+
+        // CORREÇÃO AQUI: A ordem dos argumentos no construtor de Pedido
+        // Construtor: Pedido(Pagamento pagamento, ArrayList<Prato> pratos, ArrayList<Integer> quantidades, Cliente consumidor)
+        Pedido pedido1 = new Pedido(pag1, new ArrayList<>(Arrays.asList(prato1, prato2)), new ArrayList<>(Arrays.asList(1, 2)), cliente1);
+        pedidos.add(pedido1);
+
+        Cliente cliente2 = new Cliente("Maria Oliveira", LocalDate.of(1988, 10, 20), "Av. B, 456", "senha456", "maria@email.com");
+        Prato prato3 = new Prato(35.00f, ingredientesVazios, "Salada Caesar", "Salada com frango grelhado e molho caesar", 15);
+        Pagamento pag2 = new Pagamento(35.00f, "Cartão de Crédito", "Crédito", 1);
+
+        // CORREÇÃO AQUI: A ordem dos argumentos no construtor de Pedido
+        // Construtor: Pedido(Pagamento pagamento, ArrayList<Prato> pratos, ArrayList<Integer> quantidades, Cliente consumidor)
+        Pedido pedido2 = new Pedido(pag2, new ArrayList<>(Arrays.asList(prato3)), new ArrayList<>(Arrays.asList(1)), cliente2);
+        pedidos.add(pedido2);
+
+        return pedidos;
+    }
+
     @Override
-    public void mostrarTela() {
+    public Scene criarScene() {
         BorderPane layoutPrincipal = new BorderPane();
         layoutPrincipal.setPadding(new Insets(20));
         layoutPrincipal.setStyle("-fx-background-color: " + DARK_BACKGROUND_COLOR + ";");
 
         Label titulo = new Label("Gerenciamento de Deliveries");
-        titulo.setFont(Font.font("Arial", FontWeight.BOLD, 28));
+        titulo.setFont(FONT_TITLE);
         titulo.setTextFill(Color.web(ACCENT_COLOR_GOLD));
         titulo.setPadding(new Insets(0, 0, 20, 0));
         layoutPrincipal.setTop(titulo);
@@ -93,7 +123,6 @@ public class TelaGerenciarDeliveries extends Tela {
         carregarPedidosNaTabela();
 
         Scene scene = new Scene(layoutPrincipal, 1200, 700);
-        // Aplica o stylesheet da TableView na cena
         try {
             String css = getTableViewStylesheet();
             String dataUri = "data:text/css," + URLEncoder.encode(css, StandardCharsets.UTF_8.name());
@@ -102,17 +131,14 @@ public class TelaGerenciarDeliveries extends Tela {
             e.printStackTrace();
         }
 
-        super.getStage().setScene(scene);
-        super.getStage().setTitle("Gerenciamento de Deliveries - Monsieur-José");
-        super.getStage().show();
+        return scene;
     }
 
     private TableView<Pedido> criarTabelaPedidos() {
         TableView<Pedido> tabela = new TableView<>();
-        tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN); // Política de redimensionamento
+        tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         tabela.setPlaceholder(new Label("Nenhum pedido para exibir."));
 
-        // Coluna Cliente
         TableColumn<Pedido, String> colunaCliente = new TableColumn<>("Cliente");
         colunaCliente.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getConsumidor() != null ?
@@ -120,13 +146,11 @@ public class TelaGerenciarDeliveries extends Tela {
         );
         colunaCliente.setPrefWidth(250);
 
-        // Coluna Total
         TableColumn<Pedido, Float> colunaTotal = new TableColumn<>("Valor Total");
         colunaTotal.setCellValueFactory(cellData ->
                 new SimpleFloatProperty(cellData.getValue().getPagamento() != null ?
                         cellData.getValue().getPagamento().getPreco() : 0.0f).asObject()
         );
-        // A formatação da célula será feita via CSS/TableCell, mas um fallback pode ser útil.
         colunaTotal.setCellFactory(column -> new TableCell<>() {
             @Override
             protected void updateItem(Float item, boolean empty) {
@@ -137,7 +161,6 @@ public class TelaGerenciarDeliveries extends Tela {
         });
         colunaTotal.setPrefWidth(150);
 
-        // Coluna Status
         TableColumn<Pedido, String> colunaStatus = new TableColumn<>("Status");
         colunaStatus.setCellValueFactory(cellData ->
                 new SimpleStringProperty(statusDosPedidos.getOrDefault(cellData.getValue(), "N/A"))
@@ -174,7 +197,7 @@ public class TelaGerenciarDeliveries extends Tela {
         totalLabel.setFont(FONT_LABEL);
         totalLabel.setTextFill(Color.web(TEXT_COLOR_ON_PANEL));
         statusAtualLabel = new Label("Status Atual: -");
-        statusAtualLabel.setFont(FONT_LABEL_BOLD); // Destaque para o status
+        statusAtualLabel.setFont(FONT_LABEL_BOLD);
         statusAtualLabel.setTextFill(Color.web(ACCENT_COLOR_DARK_GOLD));
         infoBox.getChildren().addAll(clienteLabel, totalLabel, statusAtualLabel);
 
@@ -271,8 +294,6 @@ public class TelaGerenciarDeliveries extends Tela {
         }
     }
 
-    // --- BEGIN HELPER METHODS ---
-
     private String getTableViewStylesheet() {
         return " .table-view { " +
                 "    -fx-background-color: " + PANEL_BACKGROUND_COLOR + "; " +
@@ -362,6 +383,4 @@ public class TelaGerenciarDeliveries extends Tela {
             }
         });
     }
-
-    // --- END HELPER METHODS ---
 }

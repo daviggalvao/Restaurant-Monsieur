@@ -1,4 +1,3 @@
-
 package app;
 
 import database.JpaUtil;
@@ -20,7 +19,7 @@ import javafx.stage.Stage;
 
 import java.time.LocalDate;
 
-public class TelaReserva extends Tela {
+public class TelaReserva extends Tela { // 1. Garante que herda de Tela
 
     public TelaReserva(Stage stage) {
         super(stage);
@@ -34,8 +33,8 @@ public class TelaReserva extends Tela {
         alerta.showAndWait();
     }
 
-    @Override
-    public void mostrarTela() {
+    @Override // 2. Implementa o método abstrato criarScene()
+    public Scene criarScene() { // MUDANÇA AQUI: de void mostrarTela() para Scene criarScene()
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 52);
         Font playfairFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 26);
         Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 20);
@@ -67,8 +66,8 @@ public class TelaReserva extends Tela {
         gridtitulo.add(titulo, 0, 0);
         gridtitulo.add(informacoes, 0, 1);
         gridtitulo.setVgap(35);
-        gridtitulo.setAlignment(Pos.TOP_CENTER); // Centraliza o GridPane na cena
-        gridtitulo.getColumnConstraints().add(new ColumnConstraints(1000));;
+        gridtitulo.setAlignment(Pos.TOP_CENTER);
+        gridtitulo.getColumnConstraints().add(new ColumnConstraints(1000));
         String estiloFundoVinho = "-fx-background-color: linear-gradient(to right, #30000C, #800020)";
         gridtitulo.setStyle(estiloFundoVinho);
 
@@ -77,7 +76,7 @@ public class TelaReserva extends Tela {
         inputs.setVgap(15);
         inputs.setPadding(new Insets(20, 20, 20, 20));
         inputs.setAlignment(Pos.CENTER);
-       inputs.setStyle(estiloFundoVinho);
+        inputs.setStyle(estiloFundoVinho);
 
 
         String inputStyle = "-fx-background-color: white;\n" +
@@ -168,14 +167,14 @@ public class TelaReserva extends Tela {
         inputs.add(lblData, 2, 2);
         inputs.add(dpData, 2, 3);
 
-        inputs.add(lblChofer, 3, 2);  // Antes estava na coluna 6
+        inputs.add(lblChofer, 3, 2);
         inputs.add(checkSim, 3, 3);
 
-        inputs.add(lblPessoas, 0, 4);  // Alinhado com Horário acima
+        inputs.add(lblPessoas, 0, 4);
         inputs.add(cbPessoas, 0, 5);
 
-        inputs.add(lblPagamento, 2, 4);  // Alinhado com Data acima
-        inputs.add(cbPagamento, 2, 5, 2, 1);  // Reduzi o span para 2
+        inputs.add(lblPagamento, 2, 4);
+        inputs.add(cbPagamento, 2, 5, 2, 1);
 
         Button confirmar = new Button(Tela.emFrances ? "Confirmer la réservation" : "Confirmar reserva");
         confirmar.getStyleClass().add("button");
@@ -188,7 +187,6 @@ public class TelaReserva extends Tela {
             Integer qtdpessoas = cbPessoas.getValue();
             Boolean chofer = checkSim.isSelected();
             String email = tfEmail.getText();
-
 
             if (name.trim().isEmpty() || email.trim().isEmpty() || hora.trim().isEmpty()
                     || data == null || qtdpessoas == null || pagamento == null) {
@@ -214,6 +212,9 @@ public class TelaReserva extends Tela {
                 em.getTransaction().commit();
                 mostrarAlerta(Alert.AlertType.INFORMATION, Tela.emFrances ? "Réservation effectuée" : "Reserva Realizada", Tela.emFrances ? "Réservation effectuée pour le client "+ name +" avec succès !" : "Reserva feita para o cliente" + name + " com sucesso!");
 
+                // Opcional: Voltar para Tela Inicial ou para a tela de serviços após a reserva
+                new TelaInicial(super.getStage()).mostrarTela(); // Exemplo de retorno
+
             }catch (NoResultException e) {
                 mostrarAlerta(Alert.AlertType.WARNING, Tela.emFrances ? "La recherche a renvoyé une erreur" : "Busca retornou erro", Tela.emFrances ? "Aucun compte avec" + email + " n'a été trouvé" : "Nenhuma conta com o" + email + " foi encontrada");
             }catch (Exception e) {
@@ -233,9 +234,13 @@ public class TelaReserva extends Tela {
 
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
-        super.getStage().setScene(scene);
-        super.getStage().setMaximized(true);
-        super.getStage().show();
+
+        // 3. Removidos os comandos de Stage.setScene, Stage.setTitle, Stage.setMinWidth, etc.
+        // Isso será feito pelo método mostrarTela() da classe base Tela.
+        // super.getStage().setScene(scene);
+        // super.getStage().setMaximized(true);
+        // super.getStage().show();
+
+        return scene; // Retorna a Scene
     }
 }
-

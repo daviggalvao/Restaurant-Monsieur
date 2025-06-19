@@ -1,35 +1,19 @@
 package app;
-import classes.*;
-import database.*;
+
 import javafx.application.Application;
 import javafx.stage.Stage;
-import app.*;
 
 public class App extends Application{
 
     @Override
     public void start(Stage primaryStage) {
-        TelaInicial tela = new TelaInicial(primaryStage);
-        TelaServicos telaa = new TelaServicos(primaryStage);
-        TelaReserva telaaa = new TelaReserva(primaryStage);
-        TelaGerente telaaaa = new TelaGerente(primaryStage);
-        TelaCardapio cardapio = new TelaCardapio(primaryStage);
-        TelaDelivery delivery = new TelaDelivery(primaryStage);
-        TelaConta conta = new TelaConta(primaryStage);
-        TelaPagamento telaPagamento = new TelaPagamento(primaryStage);
-        TelaEstoque estoque = new TelaEstoque(primaryStage);
-        TelaCriarConta telacriar = new TelaCriarConta(primaryStage);
-        //estoque.mostrarTelaEstoque();
-        tela.mostrarTela();
-        //telaaa.mostrarTela();
-        //telaa.mostrarTelaServicos();
-       //telaaaa.mostrarTelaGerente();
-        //cardapio.mostrarTelaCardapio();
-        //delivery.mostrarTela();
-        //conta.mostrarTelaConta();
-        //telaPagamento.mostrarPagamento();
-        //telacriar.mostrarTelaCriarConta();
+        primaryStage.setTitle("Restaurant Monsieur-José - Sistema de Gestão"); // Define o título uma vez
 
+        // Cria a primeira tela (TelaInicial) e a exibe na Stage principal
+        // Nenhuma outra tela é instanciada aqui
+        TelaInicial tela = new TelaInicial(primaryStage);
+        tela.mostrarTela(); // Chama o método mostrarTela() da base Tela
+        primaryStage.show();
     }
 
     public static void main(String[] args) {

@@ -19,23 +19,23 @@ import javafx.util.Pair;
 import java.time.LocalDate;
 import java.util.Optional;
 
-public class TelaCriarConta {
-    private Stage stage;
+// 1. Herdar da classe Tela
+public class TelaCriarConta extends Tela {
 
     public TelaCriarConta(Stage stage) {
-        this.stage = stage;
+        super(stage);
     }
 
     public WebView criarWebview(String svgPath){
-        WebView webView = new WebView(); //
-        webView.setMinSize(10, 10); //
-        webView.setPrefSize(20, 20); //
-        webView.setMaxSize(30, 30); //
+        WebView webView = new WebView();
+        webView.setMinSize(10, 10);
+        webView.setPrefSize(20, 20);
+        webView.setMaxSize(30, 30);
 
-        String svgUrl = getClass().getResource(svgPath).toExternalForm(); //
-        String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" + //
-                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" + //
-                "</body></html>"; //
+        String svgUrl = getClass().getResource(svgPath).toExternalForm();
+        String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
+                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+                "</body></html>";
         webView.getEngine().loadContent(html);
         return webView;
     }
@@ -50,18 +50,16 @@ public class TelaCriarConta {
 
     /**
      * Mostra um diálogo modal para o usuário redefinir sua senha.
+     * Este ainda abre uma nova Stage, pois é um diálogo modal.
      */
     private void mostrarDialogoResetSenha() {
-        // 1. Criar o diálogo. Usamos Pair para retornar dois valores: email e nova senha.
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Redefinir Senha");
         dialog.setHeaderText("Por favor, insira seu e-mail e a nova senha desejada.");
 
-        // 2. Definir os tipos de botão (Confirmar e Cancelar)
         ButtonType confirmarButtonType = new ButtonType("Confirmar", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(confirmarButtonType, ButtonType.CANCEL);
 
-        // 3. Criar o layout para os campos de texto. GridPane é ótimo para isso.
         GridPane grid = new GridPane();
         grid.setHgap(10);
         grid.setVgap(10);
@@ -81,14 +79,11 @@ public class TelaCriarConta {
         grid.add(new Label("Confirmar Senha:"), 0, 2);
         grid.add(confirmarSenhaField, 1, 2);
 
-        // Adiciona o layout ao painel do diálogo.
         dialog.getDialogPane().setContent(grid);
 
-        // 4. Desabilitar o botão "Confirmar" até que os dados sejam válidos.
         Node confirmarButton = dialog.getDialogPane().lookupButton(confirmarButtonType);
         confirmarButton.setDisable(true);
 
-        // Listener para validar os campos em tempo real.
         Runnable validacao = () -> {
             boolean emailValido = !emailField.getText().trim().isEmpty() && emailField.getText().contains("@");
             boolean senhasValidas = !novaSenhaField.getText().isEmpty()
@@ -100,7 +95,6 @@ public class TelaCriarConta {
         novaSenhaField.textProperty().addListener((observable, oldValue, newValue) -> validacao.run());
         confirmarSenhaField.textProperty().addListener((observable, oldValue, newValue) -> validacao.run());
 
-        // 5. Converter o resultado para um par (email, senha) quando o botão Confirmar for clicado.
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == confirmarButtonType) {
                 return new Pair<>(emailField.getText(), novaSenhaField.getText());
@@ -108,10 +102,8 @@ public class TelaCriarConta {
             return null;
         });
 
-        // 6. Mostrar o diálogo e esperar pela resposta do usuário.
         Optional<Pair<String, String>> result = dialog.showAndWait();
 
-        // 7. Processar o resultado.
         result.ifPresent(dados -> {
             String email = dados.getKey();
             String novaSenha = dados.getValue();
@@ -120,15 +112,13 @@ public class TelaCriarConta {
             try {
                 em.getTransaction().begin();
 
-                // Busca o cliente pelo e-mail
                 TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c WHERE c.email = :email", Cliente.class);
                 query.setParameter("email", email);
 
-                Cliente cliente = query.getSingleResult(); // Lança NoResultException se não encontrar
+                Cliente cliente = query.getSingleResult();
 
-                // Se encontrou, atualiza a senha
                 cliente.setSenha(novaSenha);
-                em.merge(cliente); // Salva a alteração
+                em.merge(cliente);
 
                 em.getTransaction().commit();
 
@@ -151,7 +141,8 @@ public class TelaCriarConta {
         });
     }
 
-    public void mostrarTelaCriarConta(){
+    @Override
+    public Scene criarScene(){ // Já era Scene criarScene()
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 40);
         Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 13);
 
@@ -260,7 +251,6 @@ public class TelaCriarConta {
             EntityManager em = JpaUtil.getFactory().createEntityManager();
 
             try {
-                // Verifique se o cliente já existe usando o CPF
                 TypedQuery<Long> query = em.createQuery("SELECT COUNT(c) FROM Cliente c WHERE c.email = :email", Long.class);
                 query.setParameter("email", email);
 
@@ -276,10 +266,19 @@ public class TelaCriarConta {
                     em.getTransaction().commit();
 
                     mostrarAlerta(Alert.AlertType.INFORMATION, "Cadastro Realizado", "Cliente '" + nome + "' cadastrado com sucesso!");
+
+                    // *** Redirecionamento após criação de conta ***
+                    if ("Reserva".equals(Tela.proximaTelaAposLogin)) {
+                        new TelaReserva(super.getStage()).mostrarTela();
+                    } else if ("Delivery".equals(Tela.proximaTelaAposLogin)) {
+                        new TelaDelivery(super.getStage()).mostrarTela();
+                    } else {
+                        new TelaInicial(super.getStage()).mostrarTela(); // Default para Tela Inicial
+                    }
+                    Tela.proximaTelaAposLogin = null; // Limpa o estado após o redirecionamento
                 }
 
             } catch (Exception e) {
-                // Se a transação estiver ativa, desfaça (rollback)
                 if (em.getTransaction().isActive()) {
                     em.getTransaction().rollback();
                 }
@@ -289,7 +288,6 @@ public class TelaCriarConta {
                 if (em != null) {
                     em.close();
                 }
-
             }
         });
 
@@ -302,7 +300,7 @@ public class TelaCriarConta {
         VBox vboxLogin = new VBox(20);
         vboxLogin.setAlignment(Pos.TOP_CENTER);
         vboxLogin.setMaxWidth(400);
-        vboxLogin.setMaxHeight(625); // Mesma altura para alinhar
+        vboxLogin.setMaxHeight(625);
         vboxLogin.setStyle(estiloPainelBranco);
 
         Label loginTitle = new Label("Entrar");
@@ -334,14 +332,14 @@ public class TelaCriarConta {
         CheckBox lembrarCb = new CheckBox("Lembrar de mim");
         Hyperlink esqueceuLink = new Hyperlink("Esqueceu a senha?");
         esqueceuLink.setOnAction(event -> mostrarDialogoResetSenha());
-        Region spacer = new Region(); // Espaçador para empurrar os itens
+        Region spacer = new Region();
         HBox.setHgrow(spacer, Priority.ALWAYS);
         HBox lembrarHbox = new HBox(lembrarCb, spacer, esqueceuLink);
         lembrarHbox.setAlignment(Pos.CENTER_LEFT);
 
         Button btnEntrar = new Button("Entrar");
         btnEntrar.getStyleClass().add("button");
-        btnEntrar.setPrefWidth(460); // Largura máxima para preencher
+        btnEntrar.setPrefWidth(460);
         btnEntrar.setOnAction(event -> {
             String email = emailTFLogin.getText();
             String senha = senhaTFLogin.getText();
@@ -358,13 +356,19 @@ public class TelaCriarConta {
                 query.setParameter("senha", senha);
 
                 Cliente cliente = query.getSingleResult();
-                // Login bem-sucedido!
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Login Bem-sucedido", "Bem-vindo(a) de volta, " + cliente.getNome() + "!");
-                // Aqui você pode redirecionar para a próxima tela do seu aplicativo
-                // Ex: new TelaPrincipal(stage).mostrar();
+
+                // *** Redirecionamento após login bem-sucedido ***
+                if ("Reserva".equals(Tela.proximaTelaAposLogin)) {
+                    new TelaReserva(super.getStage()).mostrarTela();
+                } else if ("Delivery".equals(Tela.proximaTelaAposLogin)) {
+                    new TelaDelivery(super.getStage()).mostrarTela();
+                } else {
+                    new TelaInicial(super.getStage()).mostrarTela(); // Default para Tela Inicial
+                }
+                Tela.proximaTelaAposLogin = null; // Limpa o estado após o redirecionamento
 
             } catch (NoResultException e) {
-                // Login falhou
                 mostrarAlerta(Alert.AlertType.ERROR, "Erro de Login", "E-mail ou senha incorretos. Tente novamente.");
             } catch (Exception e) {
                 e.printStackTrace();
@@ -385,13 +389,12 @@ public class TelaCriarConta {
         separador.setAlignment(Pos.CENTER);
         separador.setSpacing(10);
 
-
         Region separadorCustomizado = new Region();
         separadorCustomizado.setPrefWidth(3);
         separadorCustomizado.setMaxHeight(550);
         separadorCustomizado.setStyle("-fx-background-color: #FFC300;");
         vboxLogin.getChildren().addAll(loginTitulos, emailLoginVbox, senhaLoginVbox, lembrarHbox, btnEntrar);
-        HBox painelPrincipal = new HBox(40); // HBox para colocar as duas VBox lado a lado com espaçamento de 50px
+        HBox painelPrincipal = new HBox(40);
         painelPrincipal.setAlignment(Pos.CENTER);
         painelPrincipal.getChildren().addAll(Main,separadorCustomizado,vboxLogin);
 
@@ -401,12 +404,10 @@ public class TelaCriarConta {
 
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
-        stage.setTitle("Criar Conta");
-        stage.setScene(scene);
-        stage.setMinWidth(800);
-        stage.setMinHeight(600);
-        stage.setMaximized(true);
-        stage.show();
-    }
 
+        // Removidos os comandos de Stage.setScene, Stage.setTitle, Stage.setMinWidth, etc.
+        // Isso será feito pelo método mostrarTela() da classe base Tela.
+
+        return scene;
+    }
 }
