@@ -179,19 +179,19 @@ public class TelaServicos{
         cardBoxContainer.setPadding(new Insets(20, 0, 0, 50)); //
 
         cardCadastro.setOnMouseClicked(e->{
-            new TelaGerente(new Stage()).mostrarTelaGerente();
+            new TelaGerente(this.stage).mostrarTelaGerente();
         });
 
         cardConta.setOnMouseClicked(e->{
-            new TelaConta(new Stage()).mostrarTela();
+            new TelaConta(this.stage).mostrarTela();
         });
 
         cardReserva.setOnMouseClicked(mouseEvent -> {
-            new TelaReserva2(new Stage()).mostrarTela();
+            new TelaReserva2(this.stage).mostrarTela();
         });
 
         cardEstoque.setOnMouseClicked(mouseEvent -> {
-            new TelaEstoque(new Stage()).mostrarTela();
+            new TelaEstoque(this.stage).mostrarTela();
         });
 
         cardPedido.setOnMouseClicked(mouseEvent->{

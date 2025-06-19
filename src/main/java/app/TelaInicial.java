@@ -336,7 +336,7 @@ public class TelaInicial extends Tela {
                 String password = senha.getText();
                 if (password.equals("PSG5-0")){
                     stage.close();
-                    new TelaServicos(new Stage()).mostrarTelaServicos();}
+                    new TelaServicos(super.getStage()).mostrarTelaServicos();}
                 else{error.setVisible(true);}});
         });
 
@@ -360,8 +360,10 @@ public class TelaInicial extends Tela {
          card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#F0F0F0","#000000");
          card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#F0F0F0","#000000");
 
-        card1.setOnMouseClicked(mouseEvent->{ new TelaReserva(new Stage()).mostrarTela();});
-        card2.setOnMouseClicked(mouseEvent->{ new TelaCardapio(new Stage()).mostrarTela();});
+        card1.setOnMouseClicked(mouseEvent -> {
+            new TelaReserva(super.getStage()).mostrarTela();
+        });
+        card2.setOnMouseClicked(mouseEvent->{ new TelaCardapio(super.getStage()).mostrarTela();});
 
         HBox cardBox = new HBox(20, card1, card2);
         cardBox.setAlignment(Pos.CENTER);

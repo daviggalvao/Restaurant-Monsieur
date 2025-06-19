@@ -145,11 +145,11 @@ public class TelaGerente {
         linha1Cards.setAlignment(Pos.CENTER); //
 
         cardCliente.setOnMouseClicked(mouseEvent -> {
-            new TelaClientes(new Stage()).mostrarTela();
+            new TelaClientes(this.stage).mostrarTela();
         });
 
         cardPromocao.setOnMouseClicked(mouseEvent -> {
-            new TelaFuncionarios(new Stage()).mostrarTela();
+            new TelaFuncionarios(this.stage).mostrarTela();
         });
 
         Image img = new Image(getClass().getResource("/svg/bank-svgrepo-com.svg").toExternalForm());
