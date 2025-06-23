@@ -113,25 +113,6 @@ public class TelaInicial extends Tela {
         descricao.setText(novaDescricao);
     }
 
-    // REMOVIDO: O método abrirNovaJanela, pois não será mais usado para mudar de tela.
-    /*
-    private void abrirNovaJanela(String titulo) {
-        Stage novaJanela = new Stage();
-        novaJanela.setTitle(titulo);
-
-        Label label = new Label("Conteúdo da janela: " + titulo);
-        label.setStyle("-fx-font-size: 20px; -fx-padding: 20px;");
-
-        StackPane pane = new StackPane(label);
-        pane.setPadding(new Insets(20));
-        Scene scene = new Scene(pane, 400, 300);
-
-        novaJanela.setMaximized(true);
-        novaJanela.setScene(scene);
-        novaJanela.show();
-    }
-    */
-
     protected VBox createCard(String svgPath, String titleText, String descText, String color, String cortexto) {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30);
         Font interfont = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"),12);

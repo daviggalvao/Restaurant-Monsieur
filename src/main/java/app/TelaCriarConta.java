@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.scene.web.WebView;
+import javafx.scene.web.WebView; // Manter este import se criarWebview for usado para outros elementos
 import javafx.stage.Stage;
 import database.JpaUtil;
 import javafx.util.Pair;
@@ -19,18 +19,20 @@ import javafx.util.Pair;
 import java.time.LocalDate;
 import java.util.Optional;
 
-// 1. Herdar da classe Tela
 public class TelaCriarConta extends Tela {
 
     public TelaCriarConta(Stage stage) {
         super(stage);
     }
 
+    // Mover ou remover este criarWebview se ele for exclusivo para o BotaoVoltar
+    // Se você usa criarWebview para outros elementos na TelaCriarConta, mantenha-o ou mova-o para uma classe utilitária
     public WebView criarWebview(String svgPath){
         WebView webView = new WebView();
-        webView.setMinSize(10, 10);
-        webView.setPrefSize(20, 20);
-        webView.setMaxSize(30, 30);
+        webView.setMinSize(25, 25);
+        webView.setPrefSize(25, 25);
+        webView.setMaxSize(25, 25);
+        webView.setMouseTransparent(true);
 
         String svgUrl = getClass().getResource(svgPath).toExternalForm();
         String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
@@ -129,20 +131,23 @@ public class TelaCriarConta extends Tela {
                 if (em.getTransaction().isActive()) {
                     em.getTransaction().rollback();
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
                 mostrarAlerta(Alert.AlertType.ERROR, "Erro de Atualização", "Ocorreu um erro inesperado ao tentar alterar a senha.");
                 if (em.getTransaction().isActive()) {
                     em.getTransaction().rollback();
                 }
             } finally {
-                em.close();
+                if (em != null) {
+                    em.close();
+                }
             }
         });
     }
 
     @Override
-    public Scene criarScene(){ // Já era Scene criarScene()
+    public Scene criarScene(){
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 40);
         Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 13);
 
@@ -226,7 +231,7 @@ public class TelaCriarConta extends Tela {
         senhas.getChildren().addAll(senhahbox,senhaTF);
         senhas.setAlignment(Pos.CENTER);
 
-        Button confirmar = new Button("Criar Conta!");
+        Button confirmar = new Button("Criar Conta");
         confirmar.getStyleClass().add("button");
 
         confirmar.setOnAction(event -> {
@@ -267,15 +272,14 @@ public class TelaCriarConta extends Tela {
 
                     mostrarAlerta(Alert.AlertType.INFORMATION, "Cadastro Realizado", "Cliente '" + nome + "' cadastrado com sucesso!");
 
-                    // *** Redirecionamento após criação de conta ***
                     if ("Reserva".equals(Tela.proximaTelaAposLogin)) {
                         new TelaReserva(super.getStage()).mostrarTela();
                     } else if ("Delivery".equals(Tela.proximaTelaAposLogin)) {
                         new TelaDelivery(super.getStage(),novoCliente.getEmail()).mostrarTela();
                     } else {
-                        new TelaInicial(super.getStage()).mostrarTela(); // Default para Tela Inicial
+                        new TelaInicial(super.getStage()).mostrarTela();
                     }
-                    Tela.proximaTelaAposLogin = null; // Limpa o estado após o redirecionamento
+                    Tela.proximaTelaAposLogin = null;
                 }
 
             } catch (Exception e) {
@@ -358,15 +362,14 @@ public class TelaCriarConta extends Tela {
                 Cliente cliente = query.getSingleResult();
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Login Bem-sucedido", "Bem-vindo(a) de volta, " + cliente.getNome() + "!");
 
-                // *** Redirecionamento após login bem-sucedido ***
                 if ("Reserva".equals(Tela.proximaTelaAposLogin)) {
                     new TelaReserva(super.getStage()).mostrarTela();
                 } else if ("Delivery".equals(Tela.proximaTelaAposLogin)) {
                     new TelaDelivery(super.getStage(), cliente.getEmail()).mostrarTela();
                 } else {
-                    new TelaInicial(super.getStage()).mostrarTela(); // Default para Tela Inicial
+                    new TelaInicial(super.getStage()).mostrarTela();
                 }
-                Tela.proximaTelaAposLogin = null; // Limpa o estado após o redirecionamento
+                Tela.proximaTelaAposLogin = null;
 
             } catch (NoResultException e) {
                 mostrarAlerta(Alert.AlertType.ERROR, "Erro de Login", "E-mail ou senha incorretos. Tente novamente.");
@@ -374,7 +377,9 @@ public class TelaCriarConta extends Tela {
                 e.printStackTrace();
                 mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Ocorreu um erro inesperado ao tentar fazer login.");
             } finally {
-                em.close();
+                if (em != null) {
+                    em.close();
+                }
             }
         });
 
@@ -405,8 +410,8 @@ public class TelaCriarConta extends Tela {
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
 
-        // Removidos os comandos de Stage.setScene, Stage.setTitle, Stage.setMinWidth, etc.
-        // Isso será feito pelo método mostrarTela() da classe base Tela.
+        // --- Substituir por BotaoVoltar ---
+        BotaoVoltar.criarEPosicionar(root, super.getStage());
 
         return scene;
     }
