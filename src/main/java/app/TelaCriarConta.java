@@ -271,7 +271,7 @@ public class TelaCriarConta extends Tela {
                     if ("Reserva".equals(Tela.proximaTelaAposLogin)) {
                         new TelaReserva(super.getStage()).mostrarTela();
                     } else if ("Delivery".equals(Tela.proximaTelaAposLogin)) {
-                        new TelaDelivery(super.getStage()).mostrarTela();
+                        new TelaDelivery(super.getStage(),novoCliente.getEmail()).mostrarTela();
                     } else {
                         new TelaInicial(super.getStage()).mostrarTela(); // Default para Tela Inicial
                     }
@@ -362,7 +362,7 @@ public class TelaCriarConta extends Tela {
                 if ("Reserva".equals(Tela.proximaTelaAposLogin)) {
                     new TelaReserva(super.getStage()).mostrarTela();
                 } else if ("Delivery".equals(Tela.proximaTelaAposLogin)) {
-                    new TelaDelivery(super.getStage()).mostrarTela();
+                    new TelaDelivery(super.getStage(), cliente.getEmail()).mostrarTela();
                 } else {
                     new TelaInicial(super.getStage()).mostrarTela(); // Default para Tela Inicial
                 }

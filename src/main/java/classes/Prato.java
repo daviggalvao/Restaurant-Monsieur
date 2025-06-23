@@ -3,9 +3,10 @@ package classes;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.io.Serializable;
 @Entity
 @Table(name = "pratos")
-public class Prato {
+public class Prato implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

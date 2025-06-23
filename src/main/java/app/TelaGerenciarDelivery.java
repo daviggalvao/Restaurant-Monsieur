@@ -1,10 +1,6 @@
 package app;
 
-import classes.Pedido;
-import classes.Prato;
-import classes.Cliente;
-import classes.Pagamento;
-import classes.Ingrediente;
+import classes.*;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -76,16 +72,27 @@ public class TelaGerenciarDelivery extends Tela {
 
         // CORREÇÃO AQUI: A ordem dos argumentos no construtor de Pedido
         // Construtor: Pedido(Pagamento pagamento, ArrayList<Prato> pratos, ArrayList<Integer> quantidades, Cliente consumidor)
-        Pedido pedido1 = new Pedido(pag1, new ArrayList<>(Arrays.asList(prato1, prato2)), new ArrayList<>(Arrays.asList(1, 2)), cliente1);
+        Pedido pedido1 = new Pedido();
+        List<PedidoItem> pedidoItems = new ArrayList<>();
+        pedidoItems.add(new PedidoItem(pedido1,prato1,1));
+        pedidoItems.add(new PedidoItem(pedido1,prato2,2));
+        pedido1.setConsumidor(cliente1);
+        pedido1.setItensPedido(pedidoItems);
+        pedido1.setPagamento(pag1);
+
         pedidos.add(pedido1);
 
         Cliente cliente2 = new Cliente("Maria Oliveira", LocalDate.of(1988, 10, 20), "Av. B, 456", "senha456", "maria@email.com");
         Prato prato3 = new Prato(35.00f, ingredientesVazios, "Salada Caesar", "Salada com frango grelhado e molho caesar", 15);
         Pagamento pag2 = new Pagamento(35.00f, "Cartão de Crédito", "Crédito", 1);
 
-        // CORREÇÃO AQUI: A ordem dos argumentos no construtor de Pedido
-        // Construtor: Pedido(Pagamento pagamento, ArrayList<Prato> pratos, ArrayList<Integer> quantidades, Cliente consumidor)
-        Pedido pedido2 = new Pedido(pag2, new ArrayList<>(Arrays.asList(prato3)), new ArrayList<>(Arrays.asList(1)), cliente2);
+        Pedido pedido2 = new Pedido();
+        List<PedidoItem> pedidoItems2 = new ArrayList<>();
+        pedidoItems2.add(new PedidoItem(pedido2,prato3,1));
+        pedidoItems2.add(new PedidoItem(pedido2,prato3,2));
+        pedido1.setConsumidor(cliente2);
+        pedido1.setItensPedido(pedidoItems2);
+        pedido1.setPagamento(pag2);
         pedidos.add(pedido2);
 
         return pedidos;
@@ -246,10 +253,10 @@ public class TelaGerenciarDelivery extends Tela {
         statusComboBox.setValue(statusAtual);
 
         detalhesListView.getItems().clear();
-        if (pedido.getPratos() != null && pedido.getQuantidades() != null) {
-            for (int i = 0; i < pedido.getPratos().size(); i++) {
-                Prato prato = pedido.getPratos().get(i);
-                Integer quantidade = pedido.getQuantidades().get(i);
+        if (pedido.getItensPedido() != null) {
+            for (int i = 0; i < pedido.getItensPedido().size(); i++) {
+                Prato prato = pedido.getItensPedido().get(i).getPrato();
+                Integer quantidade = pedido.getItensPedido().get(i).getQuantidade();
                 detalhesListView.getItems().add(String.format("%dx %s (R$ %.2f)", quantidade, prato.getNome(), prato.getPreco()));
             }
         }
