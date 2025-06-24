@@ -42,11 +42,11 @@ public class Ingrediente {
         return this.quantidade < 10;
     }
     @Transient
-    boolean encomendaIngrediente(ContaBancariaJose conta, int quantidade){
+    boolean encomendaIngrediente(int quantidade){
         float precoEncomenda = quantidade * this.preco;
-        if(conta.getSaldo() > precoEncomenda){
-            conta.setSaida(conta.getSaida() + precoEncomenda);
-            conta.setSaldo(conta.getSaldo() - precoEncomenda);
+        if(ContaBancariaJose.getSaldo() > precoEncomenda){
+            ContaBancariaJose.setSaida(conta.getSaida() + precoEncomenda);
+            ContaBancariaJose.setSaldo(conta.getSaldo() - precoEncomenda);
             this.quantidade += quantidade;
             return true;
         }
