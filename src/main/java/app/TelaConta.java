@@ -17,7 +17,7 @@ import javafx.stage.Stage;
 
 public class TelaConta extends Tela {
 
-    private final String[] NOMES_DOS_MESES = { "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez" };
+    private final String[] NOMES_DOS_MESES = Tela.emFrances ? { "Jan", "Fév", "Mar", "Avr", "Mai", "Jui", "Jui", "Aoû", "Sep", "Oct", "Nov", "Déc" } : { "Jan", "Fev", "Mar", "Abr", "Mai", "Jun", "Jul", "Ago", "Set", "Out", "Nov", "Dez" };
 
     public TelaConta(Stage stage) {
         super(stage);
