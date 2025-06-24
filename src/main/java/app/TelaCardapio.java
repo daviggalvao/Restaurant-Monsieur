@@ -114,7 +114,7 @@ public class TelaCardapio extends Tela{ // Já estende Tela
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12);
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 10);
 
-        Label tituloPrincipal = new Label("Cardápio");
+        Label tituloPrincipal = new Label((Tela.emFrances) ? "Menu" : "Cardápio");
         tituloPrincipal.setFont(playfairFontTitulo);
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
 
@@ -132,19 +132,19 @@ public class TelaCardapio extends Tela{ // Já estende Tela
         pratosContainer.setAlignment(Pos.TOP_CENTER);
         pratosContainer.setPadding(new Insets(10, 120, 20, 120));
 
-        VBox pratoMbappe = createPratoCard("Kylian Mbappé", "95,79",
+        VBox pratoMbappe = createPratoCard("Kylian Mbappé", "95,79", (Tela.emFrances) ? "Une explosion de saveurs et de vitesse en bouche, avec une finale impeccable. Servi avec une purée de pommes de terre à la truffe." : 
                 "Uma explosão de sabor e velocidade no paladar, finalização impecável. Acompanha purê de batatas trufado.",
                 corBordaCardRequintado, corTextoCard);
 
-        VBox pratoGriezmann = createPratoCard("Antoine Griezmann", "88,59",
+        VBox pratoGriezmann = createPratoCard("Antoine Griezmann", "88,59", (Tela.emFrances) ?
                 "Elegância e visão de jogo em cada garfada. Um prato versátil com molho hollandaise e aspargos frescos.",
                 corBordaCardRequintado, corTextoCard);
 
-        VBox pratoTchouameni = createPratoCard("Aurélien Tchouaméni", "82,99",
+        VBox pratoTchouameni = createPratoCard("Aurélien Tchouaméni", "82,99", (Tela.emFrances) ? "Élégance et vision à chaque bouchée. Un plat polyvalent avec sauce hollandaise et asperges fraîches." : 
                 "Solidez e força que protegem o meio-campo do seu apetite. Medalhão de filé mignon ao molho de vinho do Porto.",
                 corBordaCardRequintado, corTextoCard);
 
-        VBox pratoHenry = createPratoCard("Thierry Henry", "99,99",
+        VBox pratoHenry = createPratoCard("Thierry Henry", "99,99", (Tela.emFrances) ? "Un classique intemporel avec une touche de génie. Homard grillé au beurre aux fines herbes." : 
                 "Um clássico atemporal com um toque de genialidade. Lagosta grelhada com manteiga de ervas finas.",
                 corBordaCardRequintado, corTextoCard);
 
