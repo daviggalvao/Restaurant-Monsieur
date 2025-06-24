@@ -43,8 +43,6 @@ public class TelaEstoque extends Tela {
         TableView<Ingrediente> tabela = new TableView<>();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
-        TableColumn<Ingrediente, String> idColuna = new TableColumn<>("ID");
-        idColuna.setCellValueFactory(new PropertyValueFactory<>("id"));
         TableColumn<Ingrediente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Ingredient" : "Ingrediente");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
         TableColumn<Ingrediente, Float> precoColuna = new TableColumn<>(Tela.emFrances ? "Prix (R$)" : "Preço (R$)");
@@ -53,8 +51,25 @@ public class TelaEstoque extends Tela {
         quantidadeColuna.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
         TableColumn<Ingrediente, String> validadeColuna = new TableColumn<>(Tela.emFrances ? "Validité" : "Validade");
         validadeColuna.setCellValueFactory(new PropertyValueFactory<>("validade"));
+        TableColumn<Ingrediente, Void> pedirColuna = new TableColumn<>(Tela.emFrances ? "Carburant" : "Abastecer");
+        promoverColuna.setCellFactory(coluna -> new TableCell<>() {
+            private final Button botao = new Button(Tela.emFrances ? "Carburant" : "Abastecer");
+            {
+                botao.setOnAction(event -> {
+                    Ingrediente inc = getTableView().getItems().get(getIndex());
+                    if(inc.precisaRepor())
+                        inc.encomendaIngrediente(10);
+                    getTableView().refresh();
+                });
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : botao);
+            }
+        });
 
-        tabela.getColumns().addAll(idColuna, nomeColuna, precoColuna, quantidadeColuna, validadeColuna);
+        tabela.getColumns().addAll(nomeColuna, precoColuna, quantidadeColuna, validadeColuna, pedirColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
         ObservableList<Ingrediente> dados = FXCollections.observableArrayList(
