@@ -6,10 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
@@ -49,10 +46,8 @@ public class TelaEstoque extends Tela {
         precoColuna.setCellValueFactory(new PropertyValueFactory<>("preco"));
         TableColumn<Ingrediente, Integer> quantidadeColuna = new TableColumn<>(Tela.emFrances ? "Montant" : "Quantidade");
         quantidadeColuna.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
-        TableColumn<Ingrediente, String> validadeColuna = new TableColumn<>(Tela.emFrances ? "Validité" : "Validade");
-        validadeColuna.setCellValueFactory(new PropertyValueFactory<>("validade"));
         TableColumn<Ingrediente, Void> pedirColuna = new TableColumn<>(Tela.emFrances ? "Carburant" : "Abastecer");
-        promoverColuna.setCellFactory(coluna -> new TableCell<>() {
+        pedirColuna.setCellFactory(coluna -> new TableCell<>() {
             private final Button botao = new Button(Tela.emFrances ? "Carburant" : "Abastecer");
             {
                 botao.setOnAction(event -> {
@@ -69,11 +64,11 @@ public class TelaEstoque extends Tela {
             }
         });
 
-        tabela.getColumns().addAll(nomeColuna, precoColuna, quantidadeColuna, validadeColuna, pedirColuna);
+        tabela.getColumns().addAll(nomeColuna, precoColuna, quantidadeColuna, pedirColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
         ObservableList<Ingrediente> dados = FXCollections.observableArrayList(
-                new Ingrediente(1L, "Tomate Italiano", 8.50f, 20, "15/06/2025"),
+                new Ingrediente(1L, "Tomate Italiano", 8.50f, 0, "15/06/2025"),
                 new Ingrediente(2L, "Queijo Mussarela", 45.00f, 15, "30/07/2025"),
                 new Ingrediente(3L, "Farinha de Trigo", 5.20f, 50, "01/12/2026")
         );
@@ -118,6 +113,9 @@ public class TelaEstoque extends Tela {
         Runnable acaoVoltar = () -> new TelaServicos(super.getStage()).mostrarTela();
         BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
 
-        return new Scene(stackPane); // Retorna a cena com o StackPane
+        Scene scene = new Scene(stackPane);
+        scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
+
+        return scene;
     }
 }

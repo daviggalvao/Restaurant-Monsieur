@@ -1,6 +1,7 @@
 package classes;
 
 import jakarta.persistence.*;
+import org.checkerframework.checker.units.qual.C;
 
 @Entity
 @Table(name = "ingredientes")
@@ -38,15 +39,15 @@ public class Ingrediente {
     public void setQuantidade(int quantidade) {this.quantidade = quantidade;}
     public void setValidade(String validade) {this.validade = validade;}
     @Transient
-    boolean precisaRepor(){
+    public boolean precisaRepor(){
         return this.quantidade < 10;
     }
     @Transient
-    boolean encomendaIngrediente(int quantidade){
+    public boolean encomendaIngrediente(int quantidade){
         float precoEncomenda = quantidade * this.preco;
         if(ContaBancariaJose.getSaldo() > precoEncomenda){
-            ContaBancariaJose.setSaida(conta.getSaida() + precoEncomenda);
-            ContaBancariaJose.setSaldo(conta.getSaldo() - precoEncomenda);
+            ContaBancariaJose.setSaida(ContaBancariaJose.getSaida() + precoEncomenda);
+            ContaBancariaJose.setSaldo(ContaBancariaJose.getSaldo() - precoEncomenda);
             this.quantidade += quantidade;
             return true;
         }

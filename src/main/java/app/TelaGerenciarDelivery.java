@@ -1,10 +1,6 @@
 package app;
 
-import classes.Pedido;
-import classes.Prato;
-import classes.Cliente;
-import classes.Pagamento;
-import classes.Ingrediente;
+import classes.*;
 import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
@@ -16,6 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
@@ -41,22 +38,18 @@ public class TelaGerenciarDelivery extends Tela {
 
     private Map<Pedido, String> statusDosPedidos = new HashMap<>();
 
-    // --- BEGIN STYLE CONSTANTS ---
-    private static final String DARK_BACKGROUND_COLOR = "#4B3832";
+    // --- Constantes de Estilo ---
+    private static final String DARK_BACKGROUND_COLOR = "linear-gradient(to right, #30000C, #800020)";
     private static final String PANEL_BACKGROUND_COLOR = "#FAF0E6";
-    private static final String ACCENT_COLOR_GOLD = "#DAA520";
+    private static final String ACCENT_COLOR_GOLD = "#FFC300";
     private static final String ACCENT_COLOR_DARK_GOLD = "#B8860B";
     private static final String TEXT_COLOR_ON_PANEL = "#3D2B1F";
-    private static final String TEXT_COLOR_LIGHT = "#F5F5F5";
     private static final String BORDER_COLOR_PANEL = "#C8A67B";
     private static final String BUTTON_TEXT_COLOR = "#FFFFFF";
 
-    private static final Font FONT_TITLE = Font.font("Arial", FontWeight.BOLD, 24);
-    private static final Font FONT_SUBTITLE = Font.font("Arial", FontWeight.BOLD, 18);
     private static final Font FONT_LABEL = Font.font("Arial", FontWeight.NORMAL, 14);
     private static final Font FONT_LABEL_BOLD = Font.font("Arial", FontWeight.BOLD, 14);
     private static final Font FONT_BUTTON = Font.font("Arial", FontWeight.BOLD, 14);
-    // --- END STYLE CONSTANTS ---
 
     public TelaGerenciarDelivery(Stage stage) {
         super(stage);
@@ -64,28 +57,42 @@ public class TelaGerenciarDelivery extends Tela {
         this.listaDePedidos.forEach(p -> statusDosPedidos.putIfAbsent(p, "Recebido"));
     }
 
+    /**
+     * CORREÇÃO AQUI:
+     * O método foi reescrito para usar a nova estrutura de Pedido e PedidoItem.
+     */
     private List<Pedido> criarPedidosFicticios() {
         List<Pedido> pedidos = new ArrayList<>();
-
         List<Ingrediente> ingredientesVazios = new ArrayList<>();
 
+        // --- Pedido 1 ---
         Cliente cliente1 = new Cliente("João Silva", LocalDate.of(1990, 5, 15), "Rua A, 123", "senha123", "joao@email.com");
         Prato prato1 = new Prato(45.00f, ingredientesVazios, "Pizza de Calabresa", "Pizza com calabresa e queijo", 10);
         Prato prato2 = new Prato(10.00f, ingredientesVazios, "Coca-Cola 2L", "Refrigerante", 20);
-        Pagamento pag1 = new Pagamento(65.00f, "Dinheiro", "Dinheiro", 1);
+        Pagamento pag1 = new Pagamento(100.00f, "Dinheiro", "Dinheiro", 1);
 
-        // CORREÇÃO AQUI: A ordem dos argumentos no construtor de Pedido
-        // Construtor: Pedido(Pagamento pagamento, ArrayList<Prato> pratos, ArrayList<Integer> quantidades, Cliente consumidor)
-        Pedido pedido1 = new Pedido(pag1, new ArrayList<>(Arrays.asList(prato1, prato2)), new ArrayList<>(Arrays.asList(1, 2)), cliente1);
+        // Cria o pedido e associa os itens
+        Pedido pedido1 = new Pedido(); // Assume construtor vazio
+        pedido1.setConsumidor(cliente1);
+        pedido1.setPagamento(pag1);
+        List<PedidoItem> itensPedido1 = new ArrayList<>();
+        itensPedido1.add(new PedidoItem(pedido1, prato1, 2)); // 2 x 45.00
+        itensPedido1.add(new PedidoItem(pedido1, prato2, 1)); // 1 x 10.00
+        pedido1.setItensPedido(itensPedido1); // Assume que este método existe
         pedidos.add(pedido1);
 
+        // --- Pedido 2 ---
         Cliente cliente2 = new Cliente("Maria Oliveira", LocalDate.of(1988, 10, 20), "Av. B, 456", "senha456", "maria@email.com");
-        Prato prato3 = new Prato(35.00f, ingredientesVazios, "Salada Caesar", "Salada com frango grelhado e molho caesar", 15);
+        Prato prato3 = new Prato(35.00f, ingredientesVazios, "Salada Caesar", "Salada com frango grelhado", 15);
         Pagamento pag2 = new Pagamento(35.00f, "Cartão de Crédito", "Crédito", 1);
 
-        // CORREÇÃO AQUI: A ordem dos argumentos no construtor de Pedido
-        // Construtor: Pedido(Pagamento pagamento, ArrayList<Prato> pratos, ArrayList<Integer> quantidades, Cliente consumidor)
-        Pedido pedido2 = new Pedido(pag2, new ArrayList<>(Arrays.asList(prato3)), new ArrayList<>(Arrays.asList(1)), cliente2);
+        // Cria o pedido e associa os itens
+        Pedido pedido2 = new Pedido();
+        pedido2.setConsumidor(cliente2);
+        pedido2.setPagamento(pag2);
+        List<PedidoItem> itensPedido2 = new ArrayList<>();
+        itensPedido2.add(new PedidoItem(pedido2, prato3, 1)); // 1 x 35.00
+        pedido2.setItensPedido(itensPedido2);
         pedidos.add(pedido2);
 
         return pedidos;
@@ -95,13 +102,18 @@ public class TelaGerenciarDelivery extends Tela {
     public Scene criarScene() {
         BorderPane layoutPrincipal = new BorderPane();
         layoutPrincipal.setPadding(new Insets(20));
-        layoutPrincipal.setStyle("-fx-background-color: " + DARK_BACKGROUND_COLOR + ";");
 
-        Label titulo = new Label("Gerenciamento de Deliveries");
-        titulo.setFont(FONT_TITLE);
-        titulo.setTextFill(Color.web(ACCENT_COLOR_GOLD));
-        titulo.setPadding(new Insets(0, 0, 20, 0));
-        layoutPrincipal.setTop(titulo);
+        Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Commandes" : "Pedidos");
+        tituloPrincipal.setFont(playfairFontTitulo);
+        tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
+        Rectangle sublinhado = new Rectangle(230, 4);
+        sublinhado.setFill(Color.web("#FFC300"));
+        sublinhado.widthProperty().bind(tituloPrincipal.widthProperty());
+        VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
+        blocoTitulo.setAlignment(Pos.CENTER);
+        blocoTitulo.setPadding(new Insets(0, 0, 20, 0));
+        layoutPrincipal.setTop(blocoTitulo);
 
         tabelaPedidos = criarTabelaPedidos();
         layoutPrincipal.setCenter(tabelaPedidos);
@@ -122,7 +134,13 @@ public class TelaGerenciarDelivery extends Tela {
 
         carregarPedidosNaTabela();
 
-        Scene scene = new Scene(layoutPrincipal, 1200, 700);
+        StackPane stackPane = new StackPane(layoutPrincipal);
+        stackPane.setStyle("-fx-background-color: " + DARK_BACKGROUND_COLOR + ";");
+
+        Runnable acaoVoltar = () -> new TelaServicos(super.getStage()).mostrarTela();
+        BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
+
+        Scene scene = new Scene(stackPane, 1200, 700);
         try {
             String css = getTableViewStylesheet();
             String dataUri = "data:text/css," + URLEncoder.encode(css, StandardCharsets.UTF_8.name());
@@ -184,7 +202,7 @@ public class TelaGerenciarDelivery extends Tela {
         );
 
         Label tituloDetalhes = new Label("Detalhes do Pedido");
-        tituloDetalhes.setFont(FONT_TITLE);
+        tituloDetalhes.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         tituloDetalhes.setTextFill(Color.web(ACCENT_COLOR_DARK_GOLD));
         tituloDetalhes.setMaxWidth(Double.MAX_VALUE);
         tituloDetalhes.setAlignment(Pos.CENTER);
@@ -237,6 +255,10 @@ public class TelaGerenciarDelivery extends Tela {
         return painel;
     }
 
+    /**
+     * CORREÇÃO AQUI:
+     * O método foi atualizado para iterar sobre a lista de PedidoItem.
+     */
     private void popularPainelDetalhes(Pedido pedido) {
         clienteLabel.setText("Cliente: " + (pedido.getConsumidor() != null ? pedido.getConsumidor().getNome() : "N/A"));
         totalLabel.setText("Valor Total: " + (pedido.getPagamento() != null ? String.format("R$ %.2f", pedido.getPagamento().getPreco()) : "R$ 0,00"));
@@ -246,11 +268,13 @@ public class TelaGerenciarDelivery extends Tela {
         statusComboBox.setValue(statusAtual);
 
         detalhesListView.getItems().clear();
-        if (pedido.getPratos() != null && pedido.getQuantidades() != null) {
-            for (int i = 0; i < pedido.getPratos().size(); i++) {
-                Prato prato = pedido.getPratos().get(i);
-                Integer quantidade = pedido.getQuantidades().get(i);
-                detalhesListView.getItems().add(String.format("%dx %s (R$ %.2f)", quantidade, prato.getNome(), prato.getPreco()));
+        if (pedido.getItensPedido() != null && !pedido.getItensPedido().isEmpty()) { // Itera sobre a lista correta
+            for (PedidoItem item : pedido.getItensPedido()) {
+                Prato prato = item.getPrato(); // Assume que item.getPrato() existe
+                Integer quantidade = item.getQuantidade(); // Assume que item.getQuantidade() existe
+                if (prato != null) {
+                    detalhesListView.getItems().add(String.format("%dx %s (R$ %.2f)", quantidade, prato.getNome(), prato.getPreco()));
+                }
             }
         }
 
