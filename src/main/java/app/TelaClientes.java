@@ -10,29 +10,25 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
-import javafx.stage.Stage; // Necessário para o construtor, mas não para o criarScene
+import javafx.stage.Stage;
 import javafx.geometry.*;
 
 import java.time.LocalDate;
 
-public class TelaClientes extends Tela { // Já estende Tela
+public class TelaClientes extends Tela {
 
-    /**
-     * Construtor da TelaCliente.
-     * @param stage O palco principal da aplicação.
-     */
     public TelaClientes(Stage stage) {
         super(stage);
     }
 
-    @Override // 1. Implementar o método abstrato criarScene()
-    public Scene criarScene() { // MUDANÇA AQUI: de void mostrarTela() para Scene criarScene()
+    @Override
+    public Scene criarScene() {
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
 
         // --- Título Principal ---
-        Label tituloPrincipal = new Label(Tela.emFrances ? "Clients" : "Clientes"); // Usar Tela.emFrances
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Clients" : "Clientes");
         tituloPrincipal.setFont(playfairFontTitulo);
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
 
@@ -43,55 +39,43 @@ public class TelaClientes extends Tela { // Já estende Tela
         blocoTitulo.setAlignment(Pos.CENTER);
         VBox.setMargin(blocoTitulo, new Insets(20, 0, 30, 0));
 
+        // --- Tabela ---
         TableView<Cliente> tabela = new TableView<>();
-
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        TableColumn<Cliente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome"); // Usar Tela.emFrances
+        TableColumn<Cliente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
-
         TableColumn<Cliente, String> idColuna = new TableColumn<>("ID");
         idColuna.setCellValueFactory(new PropertyValueFactory<>("Id"));
-
-        TableColumn<Cliente, String> fidelidadeColuna = new TableColumn<>(Tela.emFrances ? "Fidelité" : "Fidelidade"); // Usar Tela.emFrances
+        TableColumn<Cliente, String> fidelidadeColuna = new TableColumn<>(Tela.emFrances ? "Fidelité" : "Fidelidade");
         fidelidadeColuna.setCellValueFactory(new PropertyValueFactory<>("fidelidade"));
-
-        TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>(Tela.emFrances ? "Anniversaire" : "Aniversário"); // Usar Tela.emFrances
+        TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>(Tela.emFrances ? "Anniversaire" : "Aniversário");
         aniversarioColuna.setCellValueFactory(new PropertyValueFactory<>("dataAniversario"));
-
-        TableColumn<Cliente, String> enderecoColuna = new TableColumn<>(Tela.emFrances ? "Adresse" : "Endereço"); // Usar Tela.emFrances
+        TableColumn<Cliente, String> enderecoColuna = new TableColumn<>(Tela.emFrances ? "Adresse" : "Endereço");
         enderecoColuna.setCellValueFactory(new PropertyValueFactory<>("endereco"));
 
         tabela.getColumns().addAll(nomeColuna, idColuna, fidelidadeColuna, aniversarioColuna, enderecoColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        LocalDate data = LocalDate.of(2003, 2, 24);
-        Cliente test = new Cliente("Maria", data, "Samambaia Norte q.2", "interdelixao", "mariazinha@outlook.com");
-
-        ObservableList<Cliente> ClienteList = FXCollections.observableArrayList(test);
-
-        tabela.setItems(ClienteList);
+        Cliente test = new Cliente("Maria", LocalDate.of(2003, 2, 24), "Samambaia Norte q.2", "interdelixao", "mariazinha@outlook.com");
+        tabela.setItems(FXCollections.observableArrayList(test));
 
         // --- Rodapé ---
-        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
+        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
-        Label desc2 = new Label(Tela.emFrances ? "Projetado para a excelência culinária francesa" : "Projetado para a excelência culinária francesa"); // Corrigida tradução
+        Label desc2 = new Label("Projetado para a excelência culinária francesa");
         desc2.setFont(interfontRodape2);
-        String corTextoRodape = "white";
-        desc1.setStyle("-fx-text-fill: " + corTextoRodape + ";");
-        desc2.setStyle("-fx-text-fill: " + corTextoRodape + ";");
+        desc1.setStyle("-fx-text-fill: white;");
+        desc2.setStyle("-fx-text-fill: white;");
 
         VBox descricaoRodape = new VBox(5, desc1, desc2);
         descricaoRodape.setAlignment(Pos.CENTER);
         VBox.setMargin(descricaoRodape, new Insets(20, 0, 20, 0));
 
-        // --- Layout Principal com VBox root (rodapé rolável) ---
+        // --- Layout Principal ---
         VBox root = new VBox(10, blocoTitulo, tabela, descricaoRodape);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
-
-        VBox.setVgrow(blocoTitulo, Priority.NEVER);
-        VBox.setVgrow(descricaoRodape, Priority.NEVER);
-        VBox.setVgrow(tabela, Priority.ALWAYS); // Garante que a tabela cresça
+        VBox.setVgrow(tabela, Priority.ALWAYS);
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -107,7 +91,19 @@ public class TelaClientes extends Tela { // Já estende Tela
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        Scene scene = new Scene(scrollPane);
+        // --- MUDANÇAS PARA ADICIONAR O BOTÃO VOLTAR ---
+        // 1. Envolver o layout principal em um StackPane
+        StackPane stackPane = new StackPane(scrollPane);
+        stackPane.setStyle("-fx-background-color: " + estiloFundoVinho); // Garante o fundo correto
+
+        // 2. Definir a ação de voltar para a TelaGerente
+        Runnable acaoVoltar = () -> new TelaGerente(super.getStage()).mostrarTela();
+
+        // 3. Adicionar o botão ao StackPane
+        BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
+
+        // 4. Criar a cena com o StackPane como raiz
+        Scene scene = new Scene(stackPane);
 
         // Lógica de responsividade
         scene.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -120,14 +116,6 @@ public class TelaClientes extends Tela { // Já estende Tela
             }
         });
 
-        // 2. Removidos os comandos de Stage.setScene, Stage.setTitle, Stage.setMinWidth, etc.
-        // super.getStage().setTitle("Clientes");
-        // super.getStage().setMaximized(true);
-        // super.getStage().setScene(scene);
-        // super.getStage().setMinWidth(800);
-        // super.getStage().setMinHeight(600);
-        // super.getStage().show();
-
-        return scene; // Retorna a Scene
+        return scene;
     }
 }

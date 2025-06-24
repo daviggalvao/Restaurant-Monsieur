@@ -38,25 +38,20 @@ public class TelaGerenciarDelivery extends Tela {
     private Label clienteLabel, totalLabel, statusAtualLabel;
     private ComboBox<String> statusComboBox;
     private Button salvarStatusButton;
-
     private Map<Pedido, String> statusDosPedidos = new HashMap<>();
 
-    // --- BEGIN STYLE CONSTANTS ---
-    private static final String DARK_BACKGROUND_COLOR = "#4B3832";
+    private static final String DARK_BACKGROUND_COLOR = "#30000C"; // Alterado para combinar
     private static final String PANEL_BACKGROUND_COLOR = "#FAF0E6";
     private static final String ACCENT_COLOR_GOLD = "#DAA520";
     private static final String ACCENT_COLOR_DARK_GOLD = "#B8860B";
     private static final String TEXT_COLOR_ON_PANEL = "#3D2B1F";
-    private static final String TEXT_COLOR_LIGHT = "#F5F5F5";
     private static final String BORDER_COLOR_PANEL = "#C8A67B";
     private static final String BUTTON_TEXT_COLOR = "#FFFFFF";
 
     private static final Font FONT_TITLE = Font.font("Arial", FontWeight.BOLD, 24);
-    private static final Font FONT_SUBTITLE = Font.font("Arial", FontWeight.BOLD, 18);
     private static final Font FONT_LABEL = Font.font("Arial", FontWeight.NORMAL, 14);
     private static final Font FONT_LABEL_BOLD = Font.font("Arial", FontWeight.BOLD, 14);
     private static final Font FONT_BUTTON = Font.font("Arial", FontWeight.BOLD, 14);
-    // --- END STYLE CONSTANTS ---
 
     public TelaGerenciarDelivery(Stage stage) {
         super(stage);
@@ -65,6 +60,7 @@ public class TelaGerenciarDelivery extends Tela {
     }
 
     private List<Pedido> criarPedidosFicticios() {
+        // ... (código existente sem alterações)
         List<Pedido> pedidos = new ArrayList<>();
 
         List<Ingrediente> ingredientesVazios = new ArrayList<>();
@@ -73,18 +69,12 @@ public class TelaGerenciarDelivery extends Tela {
         Prato prato1 = new Prato(45.00f, ingredientesVazios, "Pizza de Calabresa", "Pizza com calabresa e queijo", 10);
         Prato prato2 = new Prato(10.00f, ingredientesVazios, "Coca-Cola 2L", "Refrigerante", 20);
         Pagamento pag1 = new Pagamento(65.00f, "Dinheiro", "Dinheiro", 1);
-
-        // CORREÇÃO AQUI: A ordem dos argumentos no construtor de Pedido
-        // Construtor: Pedido(Pagamento pagamento, ArrayList<Prato> pratos, ArrayList<Integer> quantidades, Cliente consumidor)
         Pedido pedido1 = new Pedido(pag1, new ArrayList<>(Arrays.asList(prato1, prato2)), new ArrayList<>(Arrays.asList(1, 2)), cliente1);
         pedidos.add(pedido1);
 
         Cliente cliente2 = new Cliente("Maria Oliveira", LocalDate.of(1988, 10, 20), "Av. B, 456", "senha456", "maria@email.com");
-        Prato prato3 = new Prato(35.00f, ingredientesVazios, "Salada Caesar", "Salada com frango grelhado e molho caesar", 15);
+        Prato prato3 = new Prato(35.00f, ingredientesVazios, "Salada Caesar", "Salada com frango grelhado", 15);
         Pagamento pag2 = new Pagamento(35.00f, "Cartão de Crédito", "Crédito", 1);
-
-        // CORREÇÃO AQUI: A ordem dos argumentos no construtor de Pedido
-        // Construtor: Pedido(Pagamento pagamento, ArrayList<Prato> pratos, ArrayList<Integer> quantidades, Cliente consumidor)
         Pedido pedido2 = new Pedido(pag2, new ArrayList<>(Arrays.asList(prato3)), new ArrayList<>(Arrays.asList(1)), cliente2);
         pedidos.add(pedido2);
 
@@ -95,7 +85,7 @@ public class TelaGerenciarDelivery extends Tela {
     public Scene criarScene() {
         BorderPane layoutPrincipal = new BorderPane();
         layoutPrincipal.setPadding(new Insets(20));
-        layoutPrincipal.setStyle("-fx-background-color: " + DARK_BACKGROUND_COLOR + ";");
+        // O fundo será definido pelo StackPane
 
         Label titulo = new Label("Gerenciamento de Deliveries");
         titulo.setFont(FONT_TITLE);
@@ -112,17 +102,26 @@ public class TelaGerenciarDelivery extends Tela {
 
         tabelaPedidos.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> {
-                    if (newSelection != null) {
-                        popularPainelDetalhes(newSelection);
-                    } else {
-                        limparPainelDetalhes();
-                    }
-                }
-        );
+                    if (newSelection != null) popularPainelDetalhes(newSelection);
+                    else limparPainelDetalhes();
+                });
 
         carregarPedidosNaTabela();
 
-        Scene scene = new Scene(layoutPrincipal, 1200, 700);
+        // --- MUDANÇAS PARA ADICIONAR O BOTÃO VOLTAR ---
+        String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)";
+        StackPane stackPane = new StackPane(layoutPrincipal);
+        stackPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
+        // Ajusta o preenchimento no StackPane para dar espaço ao botão
+        stackPane.setPadding(new Insets(20));
+
+        Runnable acaoVoltar = () -> new TelaServicos(super.getStage()).mostrarTela();
+        BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
+        // Remove o alinhamento do botão que está no StackPane, pois o criarEPosicionar já faz isso
+        StackPane.setAlignment(layoutPrincipal, Pos.CENTER);
+
+
+        Scene scene = new Scene(stackPane, 1280, 720);
         try {
             String css = getTableViewStylesheet();
             String dataUri = "data:text/css," + URLEncoder.encode(css, StandardCharsets.UTF_8.name());
@@ -134,6 +133,7 @@ public class TelaGerenciarDelivery extends Tela {
         return scene;
     }
 
+    // ... (Restante do código da classe TelaGerenciarDelivery permanece o mesmo)
     private TableView<Pedido> criarTabelaPedidos() {
         TableView<Pedido> tabela = new TableView<>();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);

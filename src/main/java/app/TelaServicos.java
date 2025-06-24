@@ -126,7 +126,6 @@ public class TelaServicos extends Tela {
 
         VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
         blocoTitulo.setAlignment(Pos.CENTER);
-        VBox.setMargin(tituloPrincipal, new Insets(0, 0, 0, 0));
         VBox.setMargin(blocoTitulo, new Insets(20, 0, 30, 0));
 
         String corBordaCard = "#E4E9F0";
@@ -147,51 +146,28 @@ public class TelaServicos extends Tela {
         cardBoxContainer.setAlignment(Pos.CENTER);
         cardBoxContainer.setPadding(new Insets(20, 0, 0, 50));
 
-        cardCadastro.setOnMouseClicked(e->{
-            new TelaGerente(super.getStage()).mostrarTela();
-        });
+        cardCadastro.setOnMouseClicked(e -> new TelaGerente(super.getStage()).mostrarTela());
+        cardConta.setOnMouseClicked(e -> new TelaConta(super.getStage()).mostrarTela());
+        cardReserva.setOnMouseClicked(mouseEvent -> new TelaGerenciarReserva(super.getStage()).mostrarTela());
+        cardEstoque.setOnMouseClicked(mouseEvent -> new TelaEstoque(super.getStage()).mostrarTela());
+        cardPedido.setOnMouseClicked(mouseEvent -> new TelaGerenciarDelivery(super.getStage()).mostrarTela());
+        cardMenu.setOnMouseClicked(mouseEvent -> new TelaCardapio(super.getStage()).mostrarTela());
 
-        cardConta.setOnMouseClicked(e->{
-            new TelaConta(super.getStage()).mostrarTela();
-        });
-
-        cardReserva.setOnMouseClicked(mouseEvent -> {
-            new TelaGerenciarReserva(super.getStage()).mostrarTela();
-        });
-
-        cardEstoque.setOnMouseClicked(mouseEvent -> {
-            new TelaEstoque(super.getStage()).mostrarTela();
-        });
-
-        cardPedido.setOnMouseClicked(mouseEvent->{
-            new TelaGerenciarDelivery(super.getStage()).mostrarTela();
-        });
-
-        cardMenu.setOnMouseClicked(mouseEvent -> {
-            new TelaCardapio(super.getStage()).mostrarTela();
-        });
-
-        // --- Rodapé ---
-        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
+        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
-        Label desc2 = new Label(Tela.emFrances ? "Projetado para a excelência culinária francesa" : "Projetado para a excelência culinária francesa");
+        Label desc2 = new Label("Projetado para a excelência culinária francesa");
         desc2.setFont(interfontRodape2);
-        String corTextoRodape = "white";
-        desc1.setStyle("-fx-text-fill: " + corTextoRodape + ";");
-        desc2.setStyle("-fx-text-fill: " + corTextoRodape + ";");
+        desc1.setStyle("-fx-text-fill: white;");
+        desc2.setStyle("-fx-text-fill: white;");
 
         VBox descricaoRodape = new VBox(5, desc1, desc2);
         descricaoRodape.setAlignment(Pos.CENTER);
         VBox.setMargin(descricaoRodape, new Insets(20, 0, 20, 0));
 
-        // --- Layout Principal ---
         VBox rootContent = new VBox(10, blocoTitulo, cardBoxContainer, descricaoRodape);
         rootContent.setAlignment(Pos.CENTER);
         rootContent.setPadding(new Insets(20));
-
-        VBox.setVgrow(blocoTitulo, Priority.NEVER);
         VBox.setVgrow(cardBoxContainer, Priority.ALWAYS);
-        VBox.setVgrow(descricaoRodape, Priority.NEVER);
 
         GridPane grid = new GridPane();
         grid.setAlignment(Pos.CENTER);
@@ -207,20 +183,17 @@ public class TelaServicos extends Tela {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        // *** Novo StackPane raiz para acomodar o botão de voltar ***
         StackPane root = new StackPane(scrollPane);
         root.setAlignment(Pos.CENTER);
-
-        // --- LINHA ADICIONADA: Define o fundo do StackPane raiz ---
-        // Esta é a correção principal. Garante que toda a cena tenha o fundo vinho.
         root.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        // --- Adicionar botão de voltar utilizando a classe BotaoVoltar ---
-        BotaoVoltar.criarEPosicionar(root, super.getStage());
+        // --- CORREÇÃO AQUI ---
+        // Definimos a ação para voltar à TelaInicial e passamos para o botão
+        Runnable acaoVoltar = () -> new TelaInicial(super.getStage()).mostrarTela();
+        BotaoVoltar.criarEPosicionar(root, acaoVoltar);
 
-        Scene scene = new Scene(root); // Cria a cena com o StackPane como root
-
-        // Lógica de responsividade (aplicada na scene, mas influenciando elementos dentro do root)
+        Scene scene = new Scene(root);
+        // ... (lógica de responsividade existente)
         scene.widthProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.doubleValue() < 1200) {
                 tituloPrincipal.setFont(Font.font(playfairFontTitulo.getFamily(), 52));
