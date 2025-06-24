@@ -232,15 +232,23 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
         root.setAlignment(Pos.CENTER);
         root.setStyle(estiloFundoVinho);
 
-        Scene scene = new Scene(root);
+        // --- INÍCIO DA MODIFICAÇÃO ---
+        // 1. Criar um StackPane para ser o novo root da cena
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(root); // Adiciona o VBox original
+
+        // 2. Criar e posicionar o botão de voltar
+        BotaoVoltar.criarEPosicionar(stackPane, () -> {
+            new TelaInicial(super.getStage()).mostrarTela();
+        });
+
+        // 3. Criar a cena com o StackPane
+        Scene scene = new Scene(stackPane);
+        // --- FIM DA MODIFICAÇÃO ---
+
         scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
 
-        // 3. Removidos os comandos de Stage.setScene, Stage.setTitle, Stage.setMinWidth, etc.
-        // Isso será feito pelo método mostrarTela() da classe base Tela.
-        // super.getStage().setScene(scene);
-        // super.getStage().setMaximized(true);
-        // super.getStage().show();
-
+        // Comandos de stage removidos conforme a estrutura
         return scene; // Retorna a Scene
     }
 }
