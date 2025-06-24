@@ -1,37 +1,49 @@
 package classes;
 
+import jakarta.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.List;
 
-public class Pedido {
+@Entity
+@Table(name = "pedidos")
+public class Pedido implements Serializable {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Embedded
     private Pagamento pagamento;
-    private ArrayList<Prato> pratos;
-    private ArrayList<Integer> quantidades;
+    @OneToMany(mappedBy = "pedido", // 'pedido' is the field name in PedidoItem that maps back to Pedido
+            cascade = CascadeType.ALL, // Operations (persist, merge, remove) on Pedido cascade to PedidoItem
+            orphanRemoval = true,      // If a PedidoItem is removed from the collection, it's deleted
+            fetch = FetchType.LAZY)
+    private List<PedidoItem> itensPedido;
+    @ManyToOne
+    @JoinColumn(name = "consumidor_id")
     private Cliente consumidor;
+    @Column
     private int frete;
 
     public Pedido(){
-        this.pratos = new ArrayList<>();
-        this.quantidades = new ArrayList<>();
+        this.itensPedido = new ArrayList<>();
     }
 
-    public Pedido(Pagamento pagamento,ArrayList<Prato> pratos,ArrayList<Integer> quantidades,
-    Cliente consumidor){
+    public Pedido(Pagamento pagamento,List<PedidoItem> itens, Cliente consumidor){
         this.pagamento = pagamento;
-        this.pratos = pratos;
-        this.quantidades = quantidades;
         this.consumidor = consumidor;
+        this.itensPedido = itens;
     }
 
+    public Long getId() {return id;}
     public Pagamento getPagamento(){return this.pagamento;}
-    public ArrayList<Prato> getPratos(){return this.pratos;}
-    public ArrayList<Integer> getQuantidades(){return this.quantidades;}
+    public List<PedidoItem> getItensPedido(){return this.itensPedido;}
     public Cliente getConsumidor(){return this.consumidor;}
     public int getFrete(){return this.frete;}
 
+    public void setId(Long id) {this.id = id;}
     public void setFrete(int frete){this.frete = frete;}
     public void setPagamento(Pagamento pagamento){this.pagamento = pagamento;}
-    public void setPratos(ArrayList<Prato> pratos){this.pratos = pratos;}
-    public void setQuantidades(ArrayList<Integer> quantidades){this.quantidades = quantidades;}
+    public void setItensPedido(List<PedidoItem> itens){this.itensPedido = itens;}
     public void setConsumidor(Cliente consumidor){this.consumidor = consumidor;}
     
     public void calcularFrete(){
@@ -45,13 +57,15 @@ public class Pedido {
             this.frete = 25;
         }else if(consumidor.getEndereco().equalsIgnoreCase("Zona Oeste")){
             this.frete = 30;
+        }else{
+            this.frete = 40;
         }
     }
 
     public float calcularPrecoTotal(){
         float valorTotal = 0.0f;
-        for(int i=0;i<this.pratos.size();i++){
-            valorTotal += (this.pratos.get(i).getPreco()*this.quantidades.get(i));
+        for (PedidoItem pedidoItem : this.itensPedido) {
+            valorTotal += (pedidoItem.getPrato().getPreco() * pedidoItem.getQuantidade());
         }
         this.calcularFrete();
         valorTotal += this.frete;

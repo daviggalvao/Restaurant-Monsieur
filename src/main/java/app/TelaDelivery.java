@@ -1,9 +1,9 @@
 package app;
 
-import classes.Pedido;
-import classes.Prato;
+import classes.*;
 
 import database.JpaUtil;
+import jakarta.persistence.TypedQuery;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -37,7 +37,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
     private ListView<ItemCarrinhoUI> carrinhoListViewUI;
     private Label totalLabelUI;
     private Label statusLabelUI;
-
+    private String userEmail;
     // --- BEGIN STYLE CONSTANTS ---
     private static final String DARK_BACKGROUND_COLOR = "#4B3832";
     private static final String PANEL_BACKGROUND_COLOR = "#FAF0E6";
@@ -58,9 +58,9 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
     private static final Font FONT_ITEM_PRICE = Font.font("Arial", FontWeight.BOLD, 15);
     // --- END STYLE CONSTANTS ---
 
-    public TelaDelivery(Stage stage) {
+    public TelaDelivery(Stage stage,String userEmail) {
         super(stage);
-
+        this.userEmail = userEmail;
         this.pratosDisponiveisNoMenu = FXCollections.observableArrayList();
         carregarPratosDoBancoDeDados();
 
@@ -109,11 +109,12 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
     public Scene criarScene() { // MUDANÇA AQUI: de void mostrarTela() para Scene criarScene()
         BorderPane layoutPrincipal = new BorderPane();
         layoutPrincipal.setPadding(new Insets(20));
-        layoutPrincipal.setStyle("-fx-background-color: " + DARK_BACKGROUND_COLOR + ";");
+        String estiloFundoVinho = "-fx-background-color: linear-gradient(to right, #30000C, #800020);";
+        layoutPrincipal.setStyle(estiloFundoVinho);
 
         Label screenTitle = new Label("Restaurante Monsieur-José - Delivery");
         screenTitle.setFont(FONT_TITLE);
-        screenTitle.setTextFill(Color.web(ACCENT_COLOR_GOLD));
+        screenTitle.setStyle("-fx-text-fill: #FFC300");
         screenTitle.setPadding(new Insets(0, 0, 20, 5));
         layoutPrincipal.setTop(screenTitle);
         BorderPane.setAlignment(screenTitle, Pos.CENTER_LEFT);
@@ -131,8 +132,8 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         statusLabelUI.setAlignment(Pos.CENTER_LEFT);
         statusLabelUI.setFont(FONT_TEXT_NORMAL);
         statusLabelUI.setStyle(
-                "-fx-background-color: " + darkenSlightly(DARK_BACKGROUND_COLOR, 0.1) + "; " +
-                        "-fx-text-fill: " + TEXT_COLOR_LIGHT + "; " +
+               estiloFundoVinho +
+                        "-fx-text-fill: #FFC300; " +
                         "-fx-border-color: " + ACCENT_COLOR_GOLD + "; " +
                         "-fx-border-width: 1 0 0 0;"
         );
@@ -187,7 +188,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
         Label tituloMenu = new Label("Cardápio");
         tituloMenu.setFont(FONT_TITLE);
-        tituloMenu.setTextFill(Color.web(ACCENT_COLOR_DARK_GOLD));
+        tituloMenu.setStyle("-fx-text-fill: #FFC300");;
         tituloMenu.setMaxWidth(Double.MAX_VALUE);
         tituloMenu.setAlignment(Pos.CENTER);
 
@@ -215,7 +216,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
         Label tituloCarrinho = new Label("Seu Pedido");
         tituloCarrinho.setFont(FONT_TITLE);
-        tituloCarrinho.setTextFill(Color.web(ACCENT_COLOR_DARK_GOLD));
+        tituloCarrinho.setStyle("-fx-text-fill: #FFC300");;
         tituloCarrinho.setMaxWidth(Double.MAX_VALUE);
         tituloCarrinho.setAlignment(Pos.CENTER);
 
@@ -235,7 +236,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         totalTextoLabel.setTextFill(Color.web(TEXT_COLOR_ON_PANEL));
         totalLabelUI = new Label("R$ 0,00");
         totalLabelUI.setFont(FONT_LABEL_BOLD);
-        totalLabelUI.setTextFill(Color.web(ACCENT_COLOR_DARK_GOLD));
+        totalLabelUI.setStyle("-fx-text-fill: #FFC300");;
         totalBox.getChildren().addAll(totalTextoLabel, totalLabelUI);
 
         Button btnFinalizarPedido = new Button("Finalizar Pedido");
@@ -300,7 +301,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
             quantidadeSpinner = new Spinner<>(1, 10, 1);
             quantidadeSpinner.setPrefWidth(70);
-            quantidadeSpinner.getEditor().setStyle("-fx-background-color: #FFFFFF; -fx-text-fill: " + TEXT_COLOR_ON_PANEL + "; -fx-border-color: " + BORDER_COLOR_PANEL + "; -fx-border-width: 1;");
+            quantidadeSpinner.getEditor().setStyle("-fx-background-color: #FFFFFF;" + "-fx-text-fill: #FFC300;" + "-fx-border-color: " + BORDER_COLOR_PANEL + "; -fx-border-width: 1;");
 
 
             addButton = new Button("Adicionar");
@@ -534,28 +535,59 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
             pratosParaPedidoFinal.add(itemUI.getPrato());
             quantidadesParaPedidoFinal.add(itemUI.getQuantidadeNoCarrinho());
         }
-        pedidoFinal.setPratos(pratosParaPedidoFinal);
-        pedidoFinal.setQuantidades(quantidadesParaPedidoFinal);
+
+        List<PedidoItem> pedidoItems = new ArrayList<>();
+        for(int i =0;i < pratosParaPedidoFinal.size();i++) {
+            PedidoItem item = new PedidoItem(pedidoFinal,pratosParaPedidoFinal.get(i),quantidadesParaPedidoFinal.get(i));
+            pedidoItems.add(item);
+        }
 
         StringBuilder sb = new StringBuilder("Seu pedido foi preparado para envio:\n\n");
         sb.append("Itens do Pedido:\n");
-        if (pedidoFinal.getPratos() != null && pedidoFinal.getQuantidades() != null &&
-                pedidoFinal.getPratos().size() == pedidoFinal.getQuantidades().size()) {
-            for (int i = 0; i < pedidoFinal.getPratos().size(); i++) {
-                Prato p = pedidoFinal.getPratos().get(i);
-                int q = pedidoFinal.getQuantidades().get(i);
-                if (p != null) {
-                    sb.append(String.format("  - %dx %s (R$ %.2f cada)\n", q, p.getNome(), p.getPreco()));
-                }
+        for( int j = 0;j < pedidoItems.size();j++) {
+            if (pedidoItems.get(j).getPrato() != null) {
+                    Prato p = pedidoItems.get(j).getPrato();
+                    int q = pedidoItems.get(j).getQuantidade();
+                    if (p != null) {
+                        sb.append(String.format("  - %dx %s (R$ %.2f cada)\n", q, p.getNome(), p.getPreco()));
+                    }
             }
         }
 
-        double subtotalSimples = 0;
-        for (ItemCarrinhoUI itemUI : carrinhoDaUI) {
-            subtotalSimples += itemUI.getSubtotal();
-        }
-        sb.append(String.format("\nSubtotal dos Pratos: R$ %.2f", subtotalSimples));
+        TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c WHERE c.email = :email", Cliente.class);
+        query.setParameter("email", this.userEmail);
+        Cliente cliente = query.getSingleResult();
+        pedidoFinal.setConsumidor(cliente);
+        pedidoFinal.setItensPedido(pedidoItems);
+        Float subtotalSimplesFinal = pedidoFinal.calcularPrecoTotal();
+        Pagamento pagamentoFinal = new Pagamento(subtotalSimplesFinal,cliente.getNome(),"Pix",1);
+        pedidoFinal.setPagamento(pagamentoFinal);
 
+        EntityManager tempEm = JpaUtil.getFactory().createEntityManager(); // Use a new EM for this transaction
+        try {
+            tempEm.getTransaction().begin();
+            tempEm.persist(pedidoFinal);
+            tempEm.getTransaction().commit();
+            statusLabelUI.setText("Pedido finalizado e salvo com sucesso! O carrinho foi limpo.");
+            carrinhoDaUI.clear(); // Clear cart only after successful save
+        } catch (Exception e) {
+            if (tempEm.getTransaction().isActive()) {
+                tempEm.getTransaction().rollback();
+            }
+            System.err.println("Erro ao salvar o pedido: " + e.getMessage());
+            e.printStackTrace();
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar o pedido no banco de dados. Por favor, tente novamente.", ButtonType.OK);
+            errorAlert.setHeaderText("Erro de Persistência");
+            styleAlertDialog(errorAlert);
+            errorAlert.showAndWait();
+            statusLabelUI.setText("Erro ao finalizar o pedido.");
+        } finally {
+            if (tempEm != null && tempEm.isOpen()) {
+                tempEm.close(); // Always close the EntityManager
+            }
+        }
+        sb.append(String.format("  - 1x Frete: R$ %d\n",pedidoFinal.getFrete()));
+        sb.append(String.format("\nSubtotal dos Pratos: R$ %.2f", subtotalSimplesFinal));
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Pedido Finalizado");
         alert.setHeaderText("Confirmação do Pedido");
