@@ -52,8 +52,8 @@ public class Prato implements Serializable {
     public void setDescricao(String descricao) {this.descricao = descricao;}
     public void setQuantidade(int quantidade) {this.quantidade = quantidade;}
 
-    public void entregaPrato(ContaBancariaJose conta){
-        conta.setEntrada(conta.getEntrada() + this.preco);
+    public void entregaPrato(){
+        ContaBancariaJose.setEntrada(ContaBancariaJose.getEntrada() + this.preco);
         this.quantidade--;
     }
     public void fazPrato(){

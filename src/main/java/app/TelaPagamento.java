@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -428,16 +429,18 @@ public class TelaPagamento extends Tela { // A classe já estende Tela
         pane.setFitToWidth(true);
         pane.setStyle("-fx-background-color:"  + estiloFundoVinho + ";");
 
-        Scene scene = new Scene(pane);
+        // --- INÍCIO DA MODIFICAÇÃO ---
+        // 1. Criar um StackPane para ser o novo nó raiz da cena.
+        StackPane rootPane = new StackPane();
+        rootPane.getChildren().add(pane); // Adiciona o ScrollPane original.
 
-        // REMOVIDO: stage.setTitle, stage.setScene, stage.setMinWidth, etc.
-        // super.getStage().setTitle("Pagamento");
-        // super.getStage().setScene(scene);
-        // super.getStage().setMinWidth(800);
-        // super.getStage().setMinHeight(600);
-        // super.getStage().setMaximized(true);
-        // super.getStage().show();
+        // 2. Criar e posicionar o botão de voltar, com a ação de ir para a TelaInicial.
+        BotaoVoltar.criarEPosicionar(rootPane, () -> new TelaInicial(super.getStage()).mostrarTela());
 
-        return scene; // RETORNA a Scene
+        // 3. Criar a cena usando o StackPane como raiz.
+        Scene scene = new Scene(rootPane);
+        // --- FIM DA MODIFICAÇÃO ---
+
+        return scene;
     }
 }

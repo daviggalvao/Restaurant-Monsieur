@@ -132,23 +132,28 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         statusLabelUI.setAlignment(Pos.CENTER_LEFT);
         statusLabelUI.setFont(FONT_TEXT_NORMAL);
         statusLabelUI.setStyle(
-               estiloFundoVinho +
+                estiloFundoVinho +
                         "-fx-text-fill: #FFC300; " +
                         "-fx-border-color: " + ACCENT_COLOR_GOLD + "; " +
                         "-fx-border-width: 1 0 0 0;"
         );
         layoutPrincipal.setBottom(statusLabelUI);
 
-        Scene scene = new Scene(layoutPrincipal, 1024, 768);
+        // --- INÍCIO DA MODIFICAÇÃO ---
+        // 1. Criar um StackPane para ser o novo root da cena
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(layoutPrincipal); // Adiciona o BorderPane original
 
-        // 3. Removidos os comandos de Stage.setScene, Stage.setTitle, Stage.setMinWidth, etc.
-        // super.getStage().setScene(scene);
-        // super.getStage().setTitle("Sistema de Delivery - Cardápio Monsieur-José");
-        // super.getStage().setMinWidth(900);
-        // super.getStage().setMinHeight(700);
-        // super.getStage().setMaximized(true);
-        // super.getStage().show();
+        // 2. Criar e posicionar o botão de voltar
+        BotaoVoltar.criarEPosicionar(stackPane, () -> {
+            new TelaInicial(super.getStage()).mostrarTela();
+        });
 
+        // 3. Criar a cena com o StackPane
+        Scene scene = new Scene(stackPane, 1024, 768);
+        // --- FIM DA MODIFICAÇÃO ---
+
+        // Comandos de stage removidos conforme a estrutura
         return scene; // Retorna a Scene
     }
 
@@ -188,7 +193,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
         Label tituloMenu = new Label("Cardápio");
         tituloMenu.setFont(FONT_TITLE);
-        tituloMenu.setStyle("-fx-text-fill: #FFC300");;
+        tituloMenu.setStyle("-fx-text-fill: " + TEXT_COLOR_ON_PANEL);
         tituloMenu.setMaxWidth(Double.MAX_VALUE);
         tituloMenu.setAlignment(Pos.CENTER);
 
@@ -216,7 +221,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
         Label tituloCarrinho = new Label("Seu Pedido");
         tituloCarrinho.setFont(FONT_TITLE);
-        tituloCarrinho.setStyle("-fx-text-fill: #FFC300");;
+        tituloCarrinho.setStyle("-fx-text-fill: " + TEXT_COLOR_ON_PANEL);
         tituloCarrinho.setMaxWidth(Double.MAX_VALUE);
         tituloCarrinho.setAlignment(Pos.CENTER);
 
@@ -236,7 +241,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         totalTextoLabel.setTextFill(Color.web(TEXT_COLOR_ON_PANEL));
         totalLabelUI = new Label("R$ 0,00");
         totalLabelUI.setFont(FONT_LABEL_BOLD);
-        totalLabelUI.setStyle("-fx-text-fill: #FFC300");;
+        totalLabelUI.setStyle("-fx-text-fill: " + ACCENT_COLOR_DARK_GOLD);
         totalBox.getChildren().addAll(totalTextoLabel, totalLabelUI);
 
         Button btnFinalizarPedido = new Button("Finalizar Pedido");
@@ -301,7 +306,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
             quantidadeSpinner = new Spinner<>(1, 10, 1);
             quantidadeSpinner.setPrefWidth(70);
-            quantidadeSpinner.getEditor().setStyle("-fx-background-color: #FFFFFF;" + "-fx-text-fill: #FFC300;" + "-fx-border-color: " + BORDER_COLOR_PANEL + "; -fx-border-width: 1;");
+            quantidadeSpinner.getEditor().setStyle("-fx-background-color: #FFFFFF;" + "-fx-text-fill: " + TEXT_COLOR_ON_PANEL + ";" + "-fx-border-color: " + BORDER_COLOR_PANEL + "; -fx-border-width: 1;");
 
 
             addButton = new Button("Adicionar");
@@ -546,11 +551,11 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         sb.append("Itens do Pedido:\n");
         for( int j = 0;j < pedidoItems.size();j++) {
             if (pedidoItems.get(j).getPrato() != null) {
-                    Prato p = pedidoItems.get(j).getPrato();
-                    int q = pedidoItems.get(j).getQuantidade();
-                    if (p != null) {
-                        sb.append(String.format("  - %dx %s (R$ %.2f cada)\n", q, p.getNome(), p.getPreco()));
-                    }
+                Prato p = pedidoItems.get(j).getPrato();
+                int q = pedidoItems.get(j).getQuantidade();
+                if (p != null) {
+                    sb.append(String.format("  - %dx %s (R$ %.2f cada)\n", q, p.getNome(), p.getPreco()));
+                }
             }
         }
 
@@ -661,10 +666,4 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
             }
         });
     }
-
-    // Helper class for cart items display
-    // (Preserved as it was not directly related to scene navigation logic)
-    // You must ensure this class (ItemCarrinhoUI) is defined elsewhere or within this file.
-    // For simplicity, let's assume it's an inner class or defined in its own file.
-    // public static class ItemCarrinhoUI { ... }
 }

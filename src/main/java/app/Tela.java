@@ -24,6 +24,5 @@ public abstract class Tela {
         stage.setMinWidth(800);
         stage.setMinHeight(600);
         stage.setMaximized(true);
-        // stage.show(); // O show() deve ser chamado apenas uma vez na inicialização da App.java
     }
 }

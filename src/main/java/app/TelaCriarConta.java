@@ -11,7 +11,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
-import javafx.scene.web.WebView; // Manter este import se criarWebview for usado para outros elementos
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import database.JpaUtil;
 import javafx.util.Pair;
@@ -25,18 +25,17 @@ public class TelaCriarConta extends Tela {
         super(stage);
     }
 
-    // Mover ou remover este criarWebview se ele for exclusivo para o BotaoVoltar
-    // Se você usa criarWebview para outros elementos na TelaCriarConta, mantenha-o ou mova-o para uma classe utilitária
     public WebView criarWebview(String svgPath){
         WebView webView = new WebView();
         webView.setMinSize(25, 25);
         webView.setPrefSize(25, 25);
         webView.setMaxSize(25, 25);
         webView.setMouseTransparent(true);
+        webView.setStyle("-fx-background-color: transparent;");
 
         String svgUrl = getClass().getResource(svgPath).toExternalForm();
-        String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
-                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
+        String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center; background-color: transparent;'>" +
+                "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain;' />" +
                 "</body></html>";
         webView.getEngine().loadContent(html);
         return webView;
@@ -50,10 +49,6 @@ public class TelaCriarConta extends Tela {
         alert.showAndWait();
     }
 
-    /**
-     * Mostra um diálogo modal para o usuário redefinir sua senha.
-     * Este ainda abre uma nova Stage, pois é um diálogo modal.
-     */
     private void mostrarDialogoResetSenha() {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
         dialog.setTitle("Redefinir Senha");
@@ -116,32 +111,22 @@ public class TelaCriarConta extends Tela {
 
                 TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c WHERE c.email = :email", Cliente.class);
                 query.setParameter("email", email);
-
                 Cliente cliente = query.getSingleResult();
-
                 cliente.setSenha(novaSenha);
                 em.merge(cliente);
-
                 em.getTransaction().commit();
-
                 mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Sua senha foi alterada com sucesso!");
 
             } catch (NoResultException e) {
                 mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Nenhum cliente encontrado com o e-mail: " + email);
-                if (em.getTransaction().isActive()) {
-                    em.getTransaction().rollback();
-                }
+                if (em.getTransaction().isActive()) em.getTransaction().rollback();
             }
             catch (Exception e) {
                 e.printStackTrace();
-                mostrarAlerta(Alert.AlertType.ERROR, "Erro de Atualização", "Ocorreu um erro inesperado ao tentar alterar a senha.");
-                if (em.getTransaction().isActive()) {
-                    em.getTransaction().rollback();
-                }
+                mostrarAlerta(Alert.AlertType.ERROR, "Erro de Atualização", "Ocorreu um erro inesperado.");
+                if (em.getTransaction().isActive()) em.getTransaction().rollback();
             } finally {
-                if (em != null) {
-                    em.close();
-                }
+                if (em != null) em.close();
             }
         });
     }
@@ -151,126 +136,78 @@ public class TelaCriarConta extends Tela {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 40);
         Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 13);
 
-        String inputStyle = "-fx-background-color: white;\n" +
-                "    -fx-background-radius: 5px;\n" +
-                "    -fx-border-color: #ddd;\n" +
-                "    -fx-border-radius: 5px;\n" +
-                "    -fx-border-width: 1px;\n" +
-                "    -fx-font-size: 14px;\n" +
-                "    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 1);";
-
+        String inputStyle = "-fx-background-color: white; -fx-background-radius: 5px; -fx-border-color: #ddd; -fx-border-radius: 5px; -fx-border-width: 1px; -fx-font-size: 14px; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 2, 0, 0, 1);";
         String estiloFundoVinho = " -fx-background-color: linear-gradient(to right, #30000C, #800020)";
-        String estiloPainelBranco = "-fx-background-color: white; " +
-                "-fx-background-radius: 10; " +
-                "-fx-padding: 30;";
+        String estiloPainelBranco = "-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 30;";
 
+        // --- Painel de Criar Conta ---
         Label title = new Label("Criar Conta");
         title.setFont(playfairFont);
         title.setStyle("-fx-text-fill: #FFC300");
 
         Label subtitle = new Label("Preencha seus dados para se cadastrar");
         subtitle.setFont(interfont1);
-        VBox titulos = new VBox(5);
+        VBox titulos = new VBox(5, title, subtitle);
         titulos.setAlignment(Pos.CENTER);
-        titulos.getChildren().addAll(title, subtitle);
 
-
-        Label nomecaixa = new Label("Nome Completo");
+        // Campos de texto para criar conta...
         TextField nomeTF = new TextField();
         nomeTF.setPromptText("Digite seu nome completo");
-        nomeTF.setStyle(inputStyle);
-        nomeTF.setPrefHeight(40);
-        nomeTF.setPrefWidth(60);
-        WebView nomeWebView = criarWebview("/svg/profile-1335-svgrepo-com.svg");
-        HBox nomehbox= new HBox(5);
-        nomehbox.getChildren().addAll(nomeWebView,nomecaixa);
-        VBox nomes = new VBox(5,nomehbox,nomeTF);
-        nomes.setAlignment(Pos.CENTER);
+        VBox nomes = new VBox(5, new HBox(5, criarWebview("/svg/profile-1335-svgrepo-com.svg"), new Label("Nome Completo")), nomeTF);
 
-        Label dataAniversario = new Label("Data de Aniversario");
         DatePicker dataAniversarioDP = new DatePicker();
         dataAniversarioDP.setPromptText("Selecione sua data de nascimento");
-        dataAniversarioDP.setStyle(inputStyle);
-        dataAniversarioDP.setPrefHeight(40);
-        dataAniversarioDP.setPrefWidth(460);
-        WebView dataWebView = criarWebview("/svg/calendar-time-svgrepo-com.svg");
-        HBox datahbox = new HBox(5);
-        datahbox.getChildren().addAll(dataWebView,dataAniversario);
-        VBox datas = new VBox(5,datahbox,dataAniversarioDP);
+        dataAniversarioDP.setMaxWidth(Double.MAX_VALUE);
+        VBox datas = new VBox(5, new HBox(5, criarWebview("/svg/calendar-time-svgrepo-com.svg"), new Label("Data de Aniversário")), dataAniversarioDP);
 
-        Label enderecocaixa = new Label("Endereco");
         TextField enderecoTF = new TextField();
-        enderecoTF.setPromptText("Digite seu nome completo");
-        enderecoTF.setStyle(inputStyle);
-        WebView enderecoWebView = criarWebview("/svg/location-2-svgrepo-com.svg");
-        HBox enderecohbox = new HBox(5);
-        enderecohbox.getChildren().addAll(enderecoWebView,enderecocaixa);
-        VBox enderecos = new VBox(5);
-        enderecos.getChildren().addAll(enderecohbox,enderecoTF);
-        enderecos.setAlignment(Pos.CENTER);
+        enderecoTF.setPromptText("Digite seu endereço");
+        VBox enderecos = new VBox(5, new HBox(5, criarWebview("/svg/location-2-svgrepo-com.svg"), new Label("Endereço")), enderecoTF);
 
-        Label emailcaixa = new Label("E-mail");
         TextField emailTF = new TextField();
         emailTF.setPromptText("Digite seu e-mail");
-        emailTF.setStyle(inputStyle);
-        WebView emailWebView = criarWebview("/svg/email-svgrepo-com.svg");
-        HBox emailhbox = new HBox(5);
-        emailhbox.getChildren().addAll(emailWebView,emailcaixa);
-        VBox emails = new VBox(5);
-        emails.getChildren().addAll(emailhbox,emailTF);
-        emails.setAlignment(Pos.CENTER);
+        VBox emails = new VBox(5, new HBox(5, criarWebview("/svg/email-svgrepo-com.svg"), new Label("E-mail")), emailTF);
 
-        Label senhacaixa = new Label("Senha");
         PasswordField senhaTF = new PasswordField();
         senhaTF.setPromptText("Digite sua senha");
+        VBox senhas = new VBox(5, new HBox(5, criarWebview("/svg/padlock-svgrepo-com.svg"), new Label("Senha")), senhaTF);
+
+        // Aplicando estilos
+        nomeTF.setStyle(inputStyle);
+        dataAniversarioDP.setStyle(inputStyle);
+        enderecoTF.setStyle(inputStyle);
+        emailTF.setStyle(inputStyle);
         senhaTF.setStyle(inputStyle);
-        WebView senhaWebView = criarWebview("/svg/padlock-svgrepo-com.svg");
-        HBox senhahbox = new HBox(5);
-        senhahbox.getChildren().addAll(senhaWebView,senhacaixa);
-        VBox senhas = new VBox(5);
-        senhas.getChildren().addAll(senhahbox,senhaTF);
-        senhas.setAlignment(Pos.CENTER);
 
         Button confirmar = new Button("Criar Conta");
         confirmar.getStyleClass().add("button");
+        confirmar.setMaxWidth(Double.MAX_VALUE);
 
         confirmar.setOnAction(event -> {
+            // ... (Lógica de confirmação existente)
             String nome = nomeTF.getText();
             String email = emailTF.getText();
             String senha = senhaTF.getText();
             String endereco = enderecoTF.getText();
             LocalDate dateAniversario = dataAniversarioDP.getValue();
 
-            if (nome.trim().isEmpty() ||
-                    email.trim().isEmpty() ||
-                    senha.trim().isEmpty() ||
-                    dateAniversario == null) {
-
-                mostrarAlerta(Alert.AlertType.WARNING,
-                        "Campos Obrigatórios",
-                        "Por favor, preencha todos os campos para continuar.");
-
+            if (nome.trim().isEmpty() || email.trim().isEmpty() || senha.trim().isEmpty() || dateAniversario == null) {
+                mostrarAlerta(Alert.AlertType.WARNING, "Campos Obrigatórios", "Por favor, preencha todos os campos.");
                 return;
             }
 
             EntityManager em = JpaUtil.getFactory().createEntityManager();
-
             try {
                 TypedQuery<Long> query = em.createQuery("SELECT COUNT(c) FROM Cliente c WHERE c.email = :email", Long.class);
                 query.setParameter("email", email);
-
-                Long count = query.getSingleResult();
-
-                if (count > 0) {
-                    mostrarAlerta(Alert.AlertType.WARNING, "Aviso de Cadastro", "O email '" + email + "' já está em uso. Por favor, tente outro.");
+                if (query.getSingleResult() > 0) {
+                    mostrarAlerta(Alert.AlertType.WARNING, "Aviso", "O email '" + email + "' já está em uso.");
                 } else {
-                    Cliente novoCliente = new Cliente(nome,dateAniversario,endereco,email,senha);
-
+                    Cliente novoCliente = new Cliente(nome, dateAniversario, endereco, email, senha);
                     em.getTransaction().begin();
                     em.persist(novoCliente);
                     em.getTransaction().commit();
-
-                    mostrarAlerta(Alert.AlertType.INFORMATION, "Cadastro Realizado", "Cliente '" + nome + "' cadastrado com sucesso!");
+                    mostrarAlerta(Alert.AlertType.INFORMATION, "Sucesso", "Cliente '" + nome + "' cadastrado com sucesso!");
 
                     if ("Reserva".equals(Tela.proximaTelaAposLogin)) {
                         new TelaReserva(super.getStage()).mostrarTela();
@@ -281,32 +218,21 @@ public class TelaCriarConta extends Tela {
                     }
                     Tela.proximaTelaAposLogin = null;
                 }
-
             } catch (Exception e) {
-                if (em.getTransaction().isActive()) {
-                    em.getTransaction().rollback();
-                }
+                if (em.getTransaction().isActive()) em.getTransaction().rollback();
                 e.printStackTrace();
-                System.out.println("Erro ao cadastrar o cliente.");
+                mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Erro ao cadastrar o cliente.");
             } finally {
-                if (em != null) {
-                    em.close();
-                }
+                if (em != null) em.close();
             }
         });
 
-        VBox Main = new VBox(20,titulos,nomes,datas,enderecos,emails,senhas,confirmar);
-        Main.setAlignment(Pos.TOP_CENTER);
-        Main.setMaxWidth(400);
-        Main.setMaxHeight(625);
-        Main.setStyle(estiloPainelBranco);
+        VBox painelCriarConta = new VBox(20, titulos, nomes, datas, enderecos, emails, senhas, confirmar);
+        painelCriarConta.setAlignment(Pos.TOP_CENTER);
+        painelCriarConta.setMaxWidth(400);
+        painelCriarConta.setStyle(estiloPainelBranco);
 
-        VBox vboxLogin = new VBox(20);
-        vboxLogin.setAlignment(Pos.TOP_CENTER);
-        vboxLogin.setMaxWidth(400);
-        vboxLogin.setMaxHeight(625);
-        vboxLogin.setStyle(estiloPainelBranco);
-
+        // --- Painel de Login ---
         Label loginTitle = new Label("Entrar");
         loginTitle.setFont(playfairFont);
         loginTitle.setStyle("-fx-text-fill: #FFC300");
@@ -315,23 +241,17 @@ public class TelaCriarConta extends Tela {
         VBox loginTitulos = new VBox(5, loginTitle, loginSubtitle);
         loginTitulos.setAlignment(Pos.CENTER);
 
-        Label emailLoginLabel = new Label("E-mail");
+        // Campos de login...
         TextField emailTFLogin = new TextField();
         emailTFLogin.setPromptText("Digite seu e-mail");
-        emailTFLogin.setStyle(inputStyle);
-        emailTFLogin.setPrefHeight(40);
-        WebView emailLoginWebView = criarWebview("/svg/email-svgrepo-com.svg");
-        HBox emailLoginHbox = new HBox(5, emailLoginWebView, emailLoginLabel);
-        VBox emailLoginVbox = new VBox(5, emailLoginHbox, emailTFLogin);
+        VBox emailLoginVbox = new VBox(5, new HBox(5, criarWebview("/svg/email-svgrepo-com.svg"), new Label("E-mail")), emailTFLogin);
 
-        Label senhaLoginLabel = new Label("Senha");
         PasswordField senhaTFLogin = new PasswordField();
         senhaTFLogin.setPromptText("Digite sua senha");
+        VBox senhaLoginVbox = new VBox(5, new HBox(5, criarWebview("/svg/padlock-svgrepo-com.svg"), new Label("Senha")), senhaTFLogin);
+
+        emailTFLogin.setStyle(inputStyle);
         senhaTFLogin.setStyle(inputStyle);
-        senhaTFLogin.setPrefHeight(40);
-        WebView senhaLoginWebView = criarWebview("/svg/padlock-svgrepo-com.svg");
-        HBox senhaLoginHbox = new HBox(5, senhaLoginWebView, senhaLoginLabel);
-        VBox senhaLoginVbox = new VBox(5, senhaLoginHbox, senhaTFLogin);
 
         CheckBox lembrarCb = new CheckBox("Lembrar de mim");
         Hyperlink esqueceuLink = new Hyperlink("Esqueceu a senha?");
@@ -343,8 +263,9 @@ public class TelaCriarConta extends Tela {
 
         Button btnEntrar = new Button("Entrar");
         btnEntrar.getStyleClass().add("button");
-        btnEntrar.setPrefWidth(460);
+        btnEntrar.setMaxWidth(Double.MAX_VALUE);
         btnEntrar.setOnAction(event -> {
+            // ... (Lógica de login existente)
             String email = emailTFLogin.getText();
             String senha = senhaTFLogin.getText();
 
@@ -372,46 +293,41 @@ public class TelaCriarConta extends Tela {
                 Tela.proximaTelaAposLogin = null;
 
             } catch (NoResultException e) {
-                mostrarAlerta(Alert.AlertType.ERROR, "Erro de Login", "E-mail ou senha incorretos. Tente novamente.");
+                mostrarAlerta(Alert.AlertType.ERROR, "Erro de Login", "E-mail ou senha incorretos.");
             } catch (Exception e) {
                 e.printStackTrace();
-                mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Ocorreu um erro inesperado ao tentar fazer login.");
+                mostrarAlerta(Alert.AlertType.ERROR, "Erro", "Ocorreu um erro inesperado.");
             } finally {
-                if (em != null) {
-                    em.close();
-                }
+                if (em != null) em.close();
             }
         });
 
-        Region linha1 = new Region();
-        linha1.setStyle("-fx-background-color: #ddd; -fx-pref-height: 1;");
-        HBox.setHgrow(linha1, Priority.ALWAYS);
-        Label ouLabel = new Label("ou");
-        Region linha2 = new Region();
-        linha2.setStyle("-fx-background-color: #ddd; -fx-pref-height: 1;");
-        HBox.setHgrow(linha2, Priority.ALWAYS);
-        HBox separador = new HBox(linha1, ouLabel, linha2);
-        separador.setAlignment(Pos.CENTER);
-        separador.setSpacing(10);
+        VBox painelLogin = new VBox(20);
+        painelLogin.setAlignment(Pos.TOP_CENTER);
+        painelLogin.setMaxWidth(400);
+        painelLogin.setStyle(estiloPainelBranco);
+        painelLogin.getChildren().addAll(loginTitulos, emailLoginVbox, senhaLoginVbox, lembrarHbox, btnEntrar);
 
+        // --- Layout Principal com Separador ---
         Region separadorCustomizado = new Region();
         separadorCustomizado.setPrefWidth(3);
         separadorCustomizado.setMaxHeight(550);
         separadorCustomizado.setStyle("-fx-background-color: #FFC300;");
-        vboxLogin.getChildren().addAll(loginTitulos, emailLoginVbox, senhaLoginVbox, lembrarHbox, btnEntrar);
-        HBox painelPrincipal = new HBox(40);
-        painelPrincipal.setAlignment(Pos.CENTER);
-        painelPrincipal.getChildren().addAll(Main,separadorCustomizado,vboxLogin);
 
+        HBox painelPrincipal = new HBox(40, painelCriarConta, separadorCustomizado, painelLogin);
+        painelPrincipal.setAlignment(Pos.CENTER);
+
+        // --- Container Raiz com Botão Voltar ---
         StackPane root = new StackPane(painelPrincipal);
         root.setAlignment(Pos.CENTER);
         root.setStyle(estiloFundoVinho);
 
+        // Ação de voltar para a Tela Inicial
+        Runnable acaoVoltar = () -> new TelaInicial(super.getStage()).mostrarTela();
+        BotaoVoltar.criarEPosicionar(root, acaoVoltar);
+
         Scene scene = new Scene(root);
         scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
-
-        // --- Substituir por BotaoVoltar ---
-        BotaoVoltar.criarEPosicionar(root, super.getStage());
 
         return scene;
     }
