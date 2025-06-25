@@ -211,6 +211,8 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
                 reservation.ehMuitaGente();
                 reservation.ehDiaSemana();
                 if(cliente.ehAniversario()){reservation.getPagamento().setPreco(reservation.getPagamento().getPreco()-5);}
+                Float desconto = cliente.descontoIdade(reservation.getPagamento().getPreco());
+                reservation.getPagamento().setPreco(desconto);
                 reservation.getPagamento().ehPix();
                 em.getTransaction().begin();
                 em.persist(reservation);
