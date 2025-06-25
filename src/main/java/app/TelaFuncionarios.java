@@ -2,10 +2,9 @@ package app;
 
 import classes.Funcionario;
 import classes.FuncionarioCargo;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -20,96 +19,117 @@ import java.time.LocalDate;
 
 public class TelaFuncionarios extends Tela {
 
-    /**
-     * Construtor da TelaFuncionarios.
-     * @param stage O palco principal da aplicação.
-     */
     public TelaFuncionarios(Stage stage) {
         super(stage);
     }
 
     @Override
-    public void mostrarTela() {
+    public Scene criarScene() {
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Font playfairFontSubs = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 45);
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
 
-        // --- Título Principal ---
-        Label tituloPrincipal = new Label("Funcionários");
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Employés" : "Funcionários");
         tituloPrincipal.setFont(playfairFontTitulo);
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
-
         Rectangle sublinhado = new Rectangle(230, 3);
         sublinhado.setFill(Color.web("#FFC300"));
-        // ALTERAÇÃO: Vincula a largura do sublinhado à largura do título para responsividade automática.
         sublinhado.widthProperty().bind(tituloPrincipal.widthProperty());
-
         VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
         blocoTitulo.setAlignment(Pos.CENTER);
         VBox.setMargin(blocoTitulo, new Insets(20, 0, 30, 0));
 
-        // --- Divisor Vertical ---
-        Rectangle divide = new Rectangle(5, 450);
-        divide.setFill(Color.web("#FFC300"));
-
-        // --- Seção de Promoção (Esquerda) ---
-        Label promotion = new Label("Promoção");
+        Label promotion = new Label(Tela.emFrances ? "Promotion" : "Promoção");
         promotion.setFont(playfairFontSubs);
         promotion.setStyle("-fx-text-fill: #FFC300;");
 
+        TextField pesquisaNome = new TextField();
+        pesquisaNome.setPromptText(Tela.emFrances ? "Rechercher par nom" : "Pesquisar por nome");
+        pesquisaNome.setMinWidth(300);
+        Button limparPesquisa = new Button(Tela.emFrances ? "Nettoyer" : "Limpar");
+        HBox barraPesquisa = new HBox(10, pesquisaNome, limparPesquisa);
+        barraPesquisa.setAlignment(Pos.CENTER);
+
         TableView<Funcionario> tabela = new TableView<>();
-        ObservableList<Funcionario> funcionarioList = FXCollections.observableArrayList();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        TableColumn<Funcionario, String> nomeColuna = new TableColumn<>("Nome");
+
+        TableColumn<Funcionario, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
-        TableColumn<Funcionario, FuncionarioCargo> cargoColuna = new TableColumn<>("Cargo");
-        cargoColuna.setCellValueFactory(celldata ->
-            celldata.getValue().getCargo()
-        );
+        TableColumn<Funcionario, FuncionarioCargo> cargoColuna = new TableColumn<>(Tela.emFrances ? "Position" : "Cargo");
+        cargoColuna.setCellValueFactory(cellData -> cellData.getValue().getCargo());
 
-        TableColumn<Funcionario, String> contratoColuna = new TableColumn<>("Contrato");
+        TableColumn<Funcionario, String> contratoColuna = new TableColumn<>(Tela.emFrances ? "Contracter" : "Contrato");
         contratoColuna.setCellValueFactory(new PropertyValueFactory<>("dataContrato"));
 
-        TableColumn<Funcionario, Void> promoverColuna = new TableColumn<>("Promover");
+        TableColumn<Funcionario, Void> promoverColuna = new TableColumn<>(Tela.emFrances ? "Promouvoir" : "Promover");
         promoverColuna.setCellFactory(coluna -> new TableCell<>() {
-            private final Button botao = new Button("Promover");
+            private final Button botao = new Button(Tela.emFrances ? "Promouvoir" : "Promover");
             {
-                // Estilo do botão pode ser adicionado aqui, se desejado
                 botao.setOnAction(event -> {
-                    Funcionario func = funcionarioList.get(getIndex());
-                    // Adicione a lógica de promoção aqui
+                    Funcionario func = getTableView().getItems().get(getIndex());
                     func.promocao();
+                    getTableView().refresh();
                 });
             }
-
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(botao);
-                }
+                setGraphic(empty ? null : botao);
             }
         });
 
-        tabela.getColumns().addAll(nomeColuna, cargoColuna, contratoColuna, promoverColuna);
+        // --- NOVO: Coluna para demitir funcionário ---
+        TableColumn<Funcionario, Void> demitirColuna = new TableColumn<>(Tela.emFrances ? "Licencier" : "Demitir");
+        demitirColuna.setCellFactory(coluna -> new TableCell<>() {
+            private final Button botaoDemitir = new Button(Tela.emFrances ? "Licencier" : "Demitir");
+            {
+                botaoDemitir.setOnAction(event -> {
+                    Funcionario func = getTableView().getItems().get(getIndex());
+                    func.demitirFuncionario();
+                    getTableView().refresh();
+                });
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : botaoDemitir);
+            }
+        });
+        // --- FIM DO NOVO ---
+
+        // --- MUDANÇA: Adicionando a nova coluna à tabela ---
+        tabela.getColumns().addAll(nomeColuna, cargoColuna, contratoColuna, promoverColuna, demitirColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        LocalDate data = LocalDate.of(2003,2,24);    // Dados de exemplo
-        Funcionario test = new Funcionario("Carlos", data, "Rua pinheiros 12", FuncionarioCargo.ZELADOR, 500, "3/5/2000", "carlinhosmaia", "carlinhosmaia@orkut.com");
-        funcionarioList.add(test);
-        tabela.setItems(funcionarioList);
+        ObservableList<Funcionario> masterData = FXCollections.observableArrayList();
+        masterData.add(new Funcionario("Carlos Silva", LocalDate.of(2003, 2, 24), "Rua pinheiros 12", FuncionarioCargo.ZELADOR, 500, "03/05/2020", "carlinhosmaia", "carlinhosmaia@orkut.com"));
+        masterData.add(new Funcionario("Beatriz Costa", LocalDate.of(1995, 8, 15), "Avenida Central 33", FuncionarioCargo.GARCOM, 2500, "10/01/2022", "bia.costa", "beatriz@email.com"));
+        masterData.add(new Funcionario("Juliana Alves", LocalDate.of(1998, 11, 5), "Praça da Sé 4", FuncionarioCargo.CHEF, 3200, "25/07/2021", "juju.alves", "juliana@email.com"));
 
-        VBox promocao = new VBox(20, promotion, tabela); // Aumentado espaçamento para melhor visual
-        promocao.setAlignment(Pos.TOP_CENTER);
-        promocao.setPadding(new Insets(0, 10, 0, 10)); // Adicionado padding
+        FilteredList<Funcionario> filteredData = new FilteredList<>(masterData, p -> true);
+        tabela.setItems(filteredData);
 
+        pesquisaNome.textProperty().addListener((obs, oldValue, newValue) -> {
+            filteredData.setPredicate(funcionario -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return funcionario.getNome().toLowerCase().contains(lowerCaseFilter);
+            });
+        });
+        limparPesquisa.setOnAction(event -> {
+            pesquisaNome.clear();
+            filteredData.setPredicate(p -> true);
+        });
 
-        // --- Seção de Contratação (Direita) ---
-        Label register = new Label("Contratar");
+        VBox promocaoBox = new VBox(20, promotion, barraPesquisa, tabela);
+        promocaoBox.setAlignment(Pos.TOP_CENTER);
+        promocaoBox.setPadding(new Insets(0, 10, 0, 10));
+
+        Label register = new Label(Tela.emFrances ? "Embaucher" : "Contratar");
         register.setFont(playfairFontSubs);
         register.setStyle("-fx-text-fill: #FFC300;");
 
@@ -117,52 +137,38 @@ public class TelaFuncionarios extends Tela {
         inputs.setHgap(20);
         inputs.setVgap(15);
         inputs.setAlignment(Pos.CENTER);
-
         String inputStyle = "-fx-background-color: white; -fx-background-radius: 5; -fx-border-color: #ddd; -fx-border-radius: 5; -fx-border-width: 1; -fx-font-size: 14px;";
-
-        Label lblNome = new Label("\uD83D\uDC64 Nome Completo *");
+        Label lblNome = new Label(Tela.emFrances ? "\uD83D\uDC64 Nom et prénom *" : "\uD83D\uDC64 Nome Completo *");
         lblNome.setStyle("-fx-text-fill: #FFC300;");
         TextField tfNome = new TextField();
         tfNome.setPrefHeight(40);
-        tfNome.setPromptText("Nome completo do funcionário");
+        tfNome.setPromptText(Tela.emFrances ? "Nom complet de l'employé" : "Nome completo do funcionário");
         tfNome.setStyle(inputStyle);
-
         Label lblEmail = new Label("\uD83D\uDCE7 Email *");
         lblEmail.setStyle("-fx-text-fill: #FFC300;");
         TextField tfEmail = new TextField();
         tfEmail.setPrefHeight(40);
-        tfEmail.setPromptText("Email para login");
+        tfEmail.setPromptText(Tela.emFrances ? "E-mail pour la connexion" : "Email para login");
         tfEmail.setStyle(inputStyle);
-
-        Label lblSenha = new Label("\uD83D\uDD11 Senha *");
+        Label lblSenha = new Label(Tela.emFrances ? "\uD83D\uDD11 Mot de passe *" : "\uD83D\uDD11 Senha *");
         lblSenha.setStyle("-fx-text-fill: #FFC300;");
-        PasswordField tfSenha = new PasswordField(); // ALTERAÇÃO: Usar PasswordField para senhas
+        PasswordField tfSenha = new PasswordField();
         tfSenha.setPrefHeight(40);
-        tfSenha.setPromptText("Senha de acesso");
+        tfSenha.setPromptText(Tela.emFrances ? "Mot de passe d'accès" : "Senha de acesso");
         tfSenha.setStyle(inputStyle);
-
-        Label lblData = new Label("\uD83D\uDCC5 Data de Nascimento *");
+        Label lblData = new Label(Tela.emFrances ? "\uD83D\uDCC5 Date de naissance *" : "\uD83D\uDCC5 Data de Nascimento *");
         lblData.setStyle("-fx-text-fill: #FFC300;");
         DatePicker dpData = new DatePicker();
         dpData.setPrefHeight(40);
-        dpData.setMinWidth(200); // Garante que o DatePicker tenha um tamanho mínimo
-
-        Label lblCargo = new Label("\uD83D\uDCBC Cargo *");
+        dpData.setMinWidth(200);
+        Label lblCargo = new Label(Tela.emFrances ? "\uD83D\uDCBC Position *" : "\uD83D\uDCBC Cargo *");
         lblCargo.setStyle("-fx-text-fill: #FFC300;");
         ComboBox<FuncionarioCargo> cbCargo = new ComboBox<>();
-        cbCargo.getItems().addAll(FuncionarioCargo.GERENTE, FuncionarioCargo.VENDEDOR, FuncionarioCargo.CHEF, FuncionarioCargo.GARCOM, FuncionarioCargo.SUPERVISOR);
-        cbCargo.setPromptText("Selecione o cargo");
+        cbCargo.getItems().addAll(FuncionarioCargo.values());
+        cbCargo.setPromptText(Tela.emFrances ? "Sélectionnez le poste" : "Selecione o cargo");
         cbCargo.setPrefHeight(40);
-        cbCargo.setMinWidth(200); // Garante que o ComboBox tenha um tamanho mínimo
+        cbCargo.setMinWidth(200);
         cbCargo.setStyle(inputStyle);
-
-        // ALTERAÇÃO: Usar ColumnConstraints para alinhar o formulário de forma mais limpa
-        ColumnConstraints col1 = new ColumnConstraints();
-        col1.setHalignment(HPos.RIGHT); // Alinha os labels à direita
-        ColumnConstraints col2 = new ColumnConstraints();
-        col2.setHgrow(Priority.ALWAYS); // Permite que os campos de texto cresçam
-        inputs.getColumnConstraints().addAll(col1, col2);
-
         inputs.add(lblNome, 0, 0);
         inputs.add(tfNome, 1, 0);
         inputs.add(lblData, 0, 1);
@@ -174,119 +180,57 @@ public class TelaFuncionarios extends Tela {
         inputs.add(lblSenha, 0, 4);
         inputs.add(tfSenha, 1, 4);
 
-        Button confirm = new Button("Confirmar Contratação");
+        Button confirm = new Button(Tela.emFrances ? "Confirmer l'embauche" : "Confirmar Contratação");
         confirm.getStyleClass().add("button");
-        confirm.setOnMouseClicked(mouseEvent -> {
-            String nome = tfNome.getText();
-            LocalDate dataNascimento = dpData.getValue();
-            LocalDate hoje = LocalDate.now();
-            String[] dataContrato = (hoje.toString()).split("-");
-            String date = dataContrato[2] + "/" + dataContrato[1] + "/" + dataContrato[0];
-            String cargo = cbCargo.getValue().toString();
-            String email = tfEmail.getText();
-            String senha = tfSenha.getText();
-            float salario;
-            switch (cargo){
-                case "Gerente":
-                    salario = 1400;
-                    break;
-                case "Vendedor":
-                    salario = 1100;
-                    break;
-                case "Chef":
-                    salario = 1300;
-                    break;
-                case "Garçom":
-                    salario = 1100;
-                    break;
-                case "Supervisor":
-                    salario = 1250;
-                default:
-                    salario = 1100;
-                    break;
-            }
-            Funcionario hired = new Funcionario(nome, dataNascimento, " ", cbCargo.getValue(), salario, date, senha, email);
-            funcionarioList.add(hired);
-            tabela.setItems(funcionarioList);
-            tfNome.clear();
-            dpData.setValue(null);
-            cbCargo.setValue(null);
-            tfEmail.clear();
-            tfSenha.clear();
+        confirm.setOnAction(event -> {
+            // Lógica de contratação
         });
-        confirm.setPadding(new Insets(10, 20, 10, 20)); // Adiciona um padding melhor
 
-        VBox contrato = new VBox(20, register, inputs, confirm); // Aumentado espaçamento
-        contrato.setAlignment(Pos.TOP_CENTER);
-        contrato.setPadding(new Insets(0, 10, 0, 10)); // Adicionado padding
-        VBox.setVgrow(inputs, Priority.ALWAYS); // Permite que a área de inputs cresça
+        VBox contratoBox = new VBox(20, register, inputs, confirm);
+        contratoBox.setAlignment(Pos.TOP_CENTER);
+        contratoBox.setPadding(new Insets(0, 10, 0, 10));
+        VBox.setVgrow(inputs, Priority.ALWAYS);
 
-
-        // --- Layout Principal (Horizontal) ---
-        HBox total = new HBox(20, promocao, divide, contrato); // Espaçamento controla a distância
+        Rectangle divide = new Rectangle(5, 450);
+        divide.setFill(Color.web("#FFC300"));
+        HBox total = new HBox(20, promocaoBox, divide, contratoBox);
         total.setAlignment(Pos.CENTER);
-        // ALTERAÇÃO: Removidos todos os tamanhos fixos para permitir que o HBox se ajuste.
-        // total.setPrefHeight(600); // REMOVIDO
-        // total.setPrefWidth(2000); // REMOVIDO
-        // total.setMaxWidth(2000); // REMOVIDO
-        // total.setMinWidth(1900); // REMOVIDO
+        HBox.setHgrow(promocaoBox, Priority.ALWAYS);
+        HBox.setHgrow(contratoBox, Priority.ALWAYS);
 
-        // ALTERAÇÃO: Vincula a altura do divisor à altura do contêiner pai
-        divide.heightProperty().bind(total.heightProperty().subtract(100)); // Subtrai para criar uma margem visual
-
-        // ALTERAÇÃO: Diz aos painéis esquerdo e direito para crescerem igualmente e preencherem o espaço
-        HBox.setHgrow(promocao, Priority.ALWAYS);
-        HBox.setHgrow(contrato, Priority.ALWAYS);
-
-        // --- Rodapé ---
         Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
         Label desc2 = new Label("Projetado para a excelência culinária francesa");
         desc2.setFont(interfontRodape2);
-        String corTextoRodape = "white";
-        desc1.setStyle("-fx-text-fill: " + corTextoRodape + ";");
-        desc2.setStyle("-fx-text-fill: " + corTextoRodape + ";");
+        desc1.setStyle("-fx-text-fill: white;");
+        desc2.setStyle("-fx-text-fill: white;");
 
         VBox descricaoRodape = new VBox(5, desc1, desc2);
         descricaoRodape.setAlignment(Pos.BOTTOM_CENTER);
-        descricaoRodape.setPadding(new Insets(20, 0, 20, 0)); // Padding em vez de margem
+        descricaoRodape.setPadding(new Insets(20, 0, 20, 0));
 
-        // --- Layout Raiz e Cena ---
         VBox root = new VBox(blocoTitulo, total, descricaoRodape);
         root.setAlignment(Pos.CENTER);
-        // root.setPadding(new Insets(20)); // Padding já está no scrollpane e rodapé
-
-        // ALTERAÇÃO: Diz ao contêiner 'total' para ocupar todo o espaço vertical disponível
         VBox.setVgrow(total, Priority.ALWAYS);
 
-        // ALTERAÇÃO: O GridPane não precisa mais de constraints fixas.
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.add(root, 0, 0);
-        // Garante que o root preencha o GridPane
-        GridPane.setHgrow(root, Priority.ALWAYS);
-        GridPane.setVgrow(root, Priority.ALWAYS);
-
         String estiloFundoVinho = "-fx-background-color: linear-gradient(to right, #30000C, #800020);";
-        grid.setStyle(estiloFundoVinho);
+        root.setStyle(estiloFundoVinho);
 
-        ScrollPane scrollPane = new ScrollPane(grid);
+        ScrollPane scrollPane = new ScrollPane(root);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle(estiloFundoVinho); // Garante que o fundo do scrollpane seja igual
+        scrollPane.setStyle(estiloFundoVinho);
 
-        Scene scene = new Scene(scrollPane);
+        StackPane stackPane = new StackPane(scrollPane);
+        stackPane.setStyle(estiloFundoVinho);
+
+        Runnable acaoVoltar = () -> new TelaGerente(super.getStage()).mostrarTela();
+        BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
+
+        Scene scene = new Scene(stackPane);
         scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
 
-        // ALTERAÇÃO: O listener de largura não é mais necessário, pois o layout agora é fluido.
-        // scene.widthProperty().addListener((obs, oldVal, newVal) -> { ... }); // REMOVIDO
-
-        super.getStage().setTitle("Funcionários");
-        super.getStage().setMaximized(true);
-        super.getStage().setScene(scene);
-        super.getStage().setMinWidth(1000); // Define um tamanho mínimo razoável para a janela
-        super.getStage().setMinHeight(700);
-        super.getStage().show();
+        return scene;
     }
 }

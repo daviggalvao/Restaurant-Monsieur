@@ -19,7 +19,6 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 public class TelaInicial extends Tela {
-    private boolean emFrances = false;
     private WebView webView;
     private String txtNomeRest = "Restaurant";
     private String txtNomeRest2 = "Monsieur-José";
@@ -41,8 +40,7 @@ public class TelaInicial extends Tela {
     }
 
     private void traduzirParaFrances(Button botaoTraduzir){
-        if (!emFrances) {
-            // Traduz para francês
+        if (!Tela.emFrances) {
             txtNomeRest = "Restaurant";
             txtNomeRest2 = "Monsieur-José";
             txtInfo1 = "Système de gestion professionnelle";
@@ -55,7 +53,7 @@ public class TelaInicial extends Tela {
             txtCard2Title = "Livraison";
             txtCard2Desc = "Gérer les demandes de livraison";
 
-            emFrances = true;
+            Tela.emFrances = true;
 
             WebView brasil = new WebView();
             brasil.setPrefSize(15,15);
@@ -70,7 +68,6 @@ public class TelaInicial extends Tela {
             brasil.getEngine().loadContent(html);
             botaoTraduzir.setGraphic(brasil);
         } else {
-            // Traduz para português
             txtNomeRest = "Restaurant";
             txtNomeRest2 = "Monsieur-José";
             txtInfo1 = "Sistema de Gestão Profissional";
@@ -83,7 +80,7 @@ public class TelaInicial extends Tela {
             txtCard2Title = "Delivery";
             txtCard2Desc = "Gerenciar Pedidos de Delivery";
 
-            emFrances = false;
+            Tela.emFrances = false;
 
             WebView france = new WebView();
             france.setPrefSize(15,15);
@@ -116,56 +113,32 @@ public class TelaInicial extends Tela {
         descricao.setText(novaDescricao);
     }
 
-    private void abrirNovaJanela(String titulo) {
-        Stage novaJanela = new Stage();
-        novaJanela.setTitle(titulo);
-
-        Label label = new Label("Conteúdo da janela: " + titulo);
-        label.setStyle("-fx-font-size: 20px; -fx-padding: 20px;");
-
-        StackPane pane = new StackPane(label);
-        pane.setPadding(new Insets(20));
-        Scene scene = new Scene(pane, 400, 300);
-
-        novaJanela.setMaximized(true);
-        novaJanela.setScene(scene);
-        novaJanela.show();
-    }
-
     protected VBox createCard(String svgPath, String titleText, String descText, String color, String cortexto) {
-        // Ícone como Label ou pode usar ImageView
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30);
         Font interfont = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"),12);
 
-
-        // Carrega o SVG diretamente do arquivo
         WebView webView = new WebView();
-        webView.setMinSize(40, 40);  // Tamanho mínimo
-        webView.setPrefSize(50, 50); // Tamanho preferencial
+        webView.setMinSize(40, 40);
+        webView.setPrefSize(50, 50);
         webView.setMaxSize(40, 40);
 
-        // Tamanho máximo
         String svgUrl = getClass().getResource(svgPath).toExternalForm();
         String html = "<html><body style='margin:0; overflow:hidden; display:flex; justify-content:center; align-items:center;'>" +
                 "<img src='" + svgUrl + "' style='width:100%; height:100%; object-fit:contain; background-color: transparent;' />" +
                 "</body></html>";
         webView.getEngine().loadContent(html);
 
-
-        // efeito hover
         Circle circle = new Circle(40);
         circle.setFill(Color.WHITE);
         circle.setVisible(false);
         StackPane iconStack = new StackPane(circle, webView);
         iconStack.setAlignment(Pos.CENTER);
 
-        // Título
         Label title = new Label(titleText);
         title.setTextFill(Color.web(cortexto));
         title.setFont(playfairFont);
         title.setAlignment(Pos.CENTER);
 
-        // Descrição
         Label desc = new Label(descText);
         desc.setTextFill(Color.web(cortexto));
         desc.setWrapText(true);
@@ -178,7 +151,6 @@ public class TelaInicial extends Tela {
         vbox.setPadding(new Insets(40));
         vbox.setPrefSize(300, 250);
 
-        // Borda estilo card
         String normalStyle = "-fx-border-color: " + color + ";" +
                 "-fx-border-radius: 10;" +
                 "-fx-border-width: 2.0;" +
@@ -187,8 +159,6 @@ public class TelaInicial extends Tela {
 
         vbox.setStyle(normalStyle);
 
-
-        // Efeito hover
         vbox.setOnMouseEntered(e -> {
             TranslateTransition translate = new TranslateTransition(Duration.millis(200), vbox);
             translate.setToY(-5);
@@ -209,7 +179,7 @@ public class TelaInicial extends Tela {
                             "-fx-border-radius: 10;" +
                             "-fx-border-width: 2;" +
                             "-fx-background-radius: 10;" +
-                            "-fx-background-color: #F0F0F0;"  // ou qualquer outra cor
+                            "-fx-background-color: #F0F0F0;"
             );
         });
 
@@ -229,19 +199,11 @@ public class TelaInicial extends Tela {
 
             vbox.setStyle(normalStyle);
         });
-
-
-        // Evento de clique para abrir nova janela
-        vbox.setOnMouseClicked(e -> {
-            abrirNovaJanela(titleText);  // chama método que cria e mostra a nova janela
-        });
-
-
         return vbox;
     }
 
     @Override
-    public void mostrarTela() {
+    public Scene criarScene() {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
         Font playfairFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 46);
         Font playfairFont3 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 24);
@@ -304,14 +266,14 @@ public class TelaInicial extends Tela {
 
             vbox.setBackground(new Background(new BackgroundFill(Color.web("#F0F0F0"), CornerRadii.EMPTY, Insets.EMPTY)));
             TextField senha = new TextField();
-            senha.setPromptText("Senha do gerente");
-            String msg = "Senha do Gerente: ";
+            senha.setPromptText(Tela.emFrances ? "Passe gestionnaire" : "Senha do gerente");
+            String msg = Tela.emFrances ? "Passe gestionnaire" : "Senha do Gerente: ";
             Label label = new Label(msg);
             label.setFont(playfairFont3);
             label.setTextFill(Color.web("#30000C"));
             label.setWrapText(true);
 
-            String msg2 = "Senha incorreta!";
+            String msg2 = Tela.emFrances ? "Passe incorrect!" : "Senha incorreta!";
             Label error = new Label(msg2);
             error.setFont(interfont2);
             error.setTextFill(Color.web("#30000C"));
@@ -320,7 +282,7 @@ public class TelaInicial extends Tela {
             Rectangle under = new Rectangle(150, 2);
             under.setFill(Color.web("#30000C"));
 
-            Button confirm = new Button("Confirmar");
+            Button confirm = new Button(Tela.emFrances? "Confirmer" : "Confirmar");
             VBox.setMargin(under, new Insets(0, 0, 23, 0));
             VBox.setMargin(senha, new Insets(0, 0, 15, 0));
 
@@ -337,7 +299,8 @@ public class TelaInicial extends Tela {
                 String password = senha.getText();
                 if (password.equals("PSG5-0")){
                     stage.close();
-                    new TelaServicos(new Stage()).mostrarTelaServicos();}
+                    new TelaServicos(super.getStage()).mostrarTela(); // Chama mostrarTela() da base
+                }
                 else{error.setVisible(true);}});
         });
 
@@ -355,14 +318,21 @@ public class TelaInicial extends Tela {
 
         VBox vbox1 = new VBox(0, nomeRest, blocoMonsieur,infos);
         vbox1.setAlignment(Pos.CENTER);
-        VBox.setMargin(nomeRest, new Insets(0, 0, -10, 0)); // Ajuste fino para aproximar "Restaurant" e "Monsieur-José"
-        VBox.setMargin(blocoMonsieur, new Insets(-10, 0, 0, 0)); // A
+        VBox.setMargin(nomeRest, new Insets(0, 0, -10, 0));
+        VBox.setMargin(blocoMonsieur, new Insets(-10, 0, 0, 0));
 
-         card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#F0F0F0","#000000");
-         card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#F0F0F0","#000000");
+        card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#F0F0F0","#000000");
+        card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#F0F0F0","#000000");
 
-        card1.setOnMouseClicked(mouseEvent->{ new TelaReserva(new Stage()).mostrarTela();});
-        card2.setOnMouseClicked(mouseEvent->{ new TelaCardapio(new Stage()).mostrarTela();});
+        // *** AQUI É ONDE MUDAMOS PARA A NOVA LÓGICA DE NAVEGAÇÃO PARA CRIAÇÃO DE CONTA ***
+        card1.setOnMouseClicked(mouseEvent -> {
+            Tela.proximaTelaAposLogin = "Reserva"; // Define o destino
+            new TelaCriarConta(super.getStage()).mostrarTela(); // Vai para a tela de login/cadastro
+        });
+        card2.setOnMouseClicked(mouseEvent->{
+            Tela.proximaTelaAposLogin = "Delivery"; // Define o destino
+            new TelaCriarConta(super.getStage()).mostrarTela(); // Vai para a tela de login/cadastro
+        });
 
         HBox cardBox = new HBox(20, card1, card2);
         cardBox.setAlignment(Pos.CENTER);
@@ -388,7 +358,7 @@ public class TelaInicial extends Tela {
 
 
         GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER); // Centraliza o GridPane na cena
+        grid.setAlignment(Pos.CENTER);
         grid.getColumnConstraints().add(new ColumnConstraints(1000));
         grid.add(root, 0, 0);
         String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)";
@@ -404,10 +374,10 @@ public class TelaInicial extends Tela {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
         scrollPane.setStyle(
-                "-fx-background-color: transparent;"      +  // remove o fundo branco da própria ScrollPane
-                        "-fx-background: transparent;"            +  // garante que o fundo seja transparente
-                        "-fx-border-color: transparent;"          +  // remove qualquer borda externa que viesse por padrão
-                        "-fx-focus-color: transparent;"           +  // impede que apareça o contorno de seleção azul
+                "-fx-background-color: transparent;"      +
+                        "-fx-background: transparent;"            +
+                        "-fx-border-color: transparent;"          +
+                        "-fx-focus-color: transparent;"           +
                         "-fx-faint-focus-color: transparent;"
         );
 
@@ -437,11 +407,7 @@ public class TelaInicial extends Tela {
             }
         });
 
-        super.getStage().setScene(scene);
-        super.getStage().setMinWidth(800);
-        super.getStage().setMinHeight(600);
-        super.getStage().setMaximized(true);
-        super.getStage().show();
-
+        // Este método é chamado pela classe base Tela. O stage.setScene e show são tratados lá.
+        return scene;
     }
 }

@@ -1,8 +1,7 @@
 package classes;
 
 import java.time.LocalDate;
-import java.time.DayOfWeek;
-import classes.Pagamento;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -10,9 +9,9 @@ import jakarta.persistence.*;
     public class Reserva{
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
-        private String id;
+        private int id;
         @Column
-        private String data;
+        private LocalDate data;
         @Column
         private String horario;
         @Column
@@ -27,7 +26,7 @@ import jakarta.persistence.*;
         private Pagamento pagamento;
 
         public Reserva(){}
-        public Reserva(String data,String horario,
+        public Reserva(LocalDate data,String horario,
         Cliente cliente,int qtdPessoas,boolean chofer,Pagamento pagamento){
             this.data = data;
             this.horario = horario;
@@ -37,44 +36,40 @@ import jakarta.persistence.*;
             this.chofer = chofer;
         }
 
-        public String getId(){return this.id;}
-        public String getData(){return this.data;}
+        public int getId(){return this.id;}
+        public LocalDate getData(){return this.data;}
         public String getHorario(){return this.horario;}
         public boolean getChofer(){return this.chofer;}
         public Cliente getCliente(){return this.cliente;}
         public int getQuantidadePessoas(){return this.qtdPessoas;}
-        public String getPagamento(){return this.pagamento.getTipo();}
+        public Pagamento getPagamento(){return this.pagamento;}
 
-        public void setId(String id){this.id = id;}
-        public void setData(String data){this.data = data;}
+        public void setId(int id){this.id = id;}
+        public void setData(LocalDate data){this.data = data;}
         public void setHorario(String horario){this.horario = horario;}
         public void setChofer(boolean chofer){this.chofer = chofer;}
         public void setCliente(Cliente cliente){this.cliente = cliente;}
         public void setQuantidadePessoas(int qtdPessoas){this.qtdPessoas = qtdPessoas;}
         public void setPagamento(Pagamento pagamento){this.pagamento = pagamento;}
 
-        public boolean ehDiaSemana(){
-            int dia,mes,ano;
-            String[] Partes = this.data.split("/");
-            dia = Integer.parseInt(Partes[0]);
-            mes = Integer.parseInt(Partes[1]);
-            ano = Integer.parseInt(Partes[2]);
-            LocalDate data = LocalDate.of(ano,mes,dia);
-            DayOfWeek diaSemana = data.getDayOfWeek();
-            return diaSemana.getValue() >=1 && diaSemana.getValue() <=5;
+        public void ehDiaSemana(){
+            LocalDate dia = this.getData();
+            int valorDia = dia.getDayOfWeek().getValue();
+            if(valorDia >= 1 && valorDia <= 5){
+                this.pagamento.setPreco(this.pagamento.getPreco()-5);
+            }
         }
 
         public void ehMuitaGente(){
             if(this.qtdPessoas > 5){
-                this.pagamento.setPreco(this.qtdPessoas);
+                this.pagamento.setPreco(this.pagamento.getPreco()/2);
             }else{ 
-                this.pagamento.setPreco(this.qtdPessoas*2);
+                this.pagamento.setPreco(this.pagamento.getPreco());
             }
         }
 
-        public boolean querChofer(){
-            if (!this.chofer) return false;
+        public void querChofer(){
+            if (!this.chofer) return;
             this.pagamento.setPreco(this.pagamento.getPreco() + 10);
-            return true;
         }
     }

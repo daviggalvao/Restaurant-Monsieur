@@ -3,6 +3,7 @@ package app;
 import classes.Cliente;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -17,115 +18,126 @@ import java.time.LocalDate;
 
 public class TelaClientes extends Tela {
 
-    /**
-     * Construtor da TelaCliente.
-     * @param stage O palco principal da aplicação.
-     */
-    public TelaClientes(Stage stage) {super(stage);}
+    public TelaClientes(Stage stage) {
+        super(stage);
+    }
 
     @Override
-    public void mostrarTela() { //
-        Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50); //
-        Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15); //
-        Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17); //
+    public Scene criarScene() {
+        Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
+        Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
+        Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
 
-        // --- Título Principal ---
-        Label tituloPrincipal = new Label("Clientes"); //
-        tituloPrincipal.setFont(playfairFontTitulo); //
-        tituloPrincipal.setStyle("-fx-text-fill: #FFC300;"); // Cor do título: amarelo
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Clients" : "Clientes");
+        tituloPrincipal.setFont(playfairFontTitulo);
+        tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
 
-        Rectangle sublinhado = new Rectangle(230, 3); //
-        sublinhado.setFill(Color.web("#FFC300")); // Cor do sublinhado: amarelo
+        Rectangle sublinhado = new Rectangle(230, 3);
+        sublinhado.setFill(Color.web("#FFC300"));
 
-        VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado); //
-        blocoTitulo.setAlignment(Pos.CENTER); //
-        VBox.setMargin(tituloPrincipal, new Insets(0, 0, 0, 0)); //
-        VBox.setMargin(blocoTitulo, new Insets(20, 0, 30, 0)); //
+        VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
+        blocoTitulo.setAlignment(Pos.CENTER);
+        VBox.setMargin(blocoTitulo, new Insets(20, 0, 20, 0));
 
-        TableView<Cliente> tabela= new TableView<Cliente>();
+        TextField pesquisaNome = new TextField();
+        pesquisaNome.setPromptText(Tela.emFrances ? "Rechercher par nom" : "Pesquisar por nome");
+        pesquisaNome.setMinWidth(300);
 
+        Button limparPesquisa = new Button(Tela.emFrances ? "Nettoyer" : "Limpar");
+
+        HBox barraPesquisa = new HBox(10, pesquisaNome, limparPesquisa);
+        barraPesquisa.setAlignment(Pos.CENTER);
+        VBox.setMargin(barraPesquisa, new Insets(0, 0, 20, 0));
+
+        TableView<Cliente> tabela = new TableView<>();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
-        TableColumn<Cliente, String> nomeColuna = new TableColumn<>("Nome");
+
+        TableColumn<Cliente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
-
-        TableColumn<Cliente, String>idColuna = new TableColumn<>("ID");
-        idColuna.setCellValueFactory(new PropertyValueFactory<>("Id"));
-
-        TableColumn<Cliente, String> fidelidadeColuna = new TableColumn<>("Fidelidade");
+        TableColumn<Cliente, String> fidelidadeColuna = new TableColumn<>(Tela.emFrances ? "Fidelité" : "Fidelidade");
         fidelidadeColuna.setCellValueFactory(new PropertyValueFactory<>("fidelidade"));
-
-        TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>("Aniversário");
+        TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>(Tela.emFrances ? "Anniversaire" : "Aniversário");
         aniversarioColuna.setCellValueFactory(new PropertyValueFactory<>("dataAniversario"));
-
-        TableColumn<Cliente, String> enderecoColuna = new TableColumn<>("Endereço");
+        TableColumn<Cliente, String> enderecoColuna = new TableColumn<>(Tela.emFrances ? "Adresse" : "Endereço");
         enderecoColuna.setCellValueFactory(new PropertyValueFactory<>("endereco"));
-        
 
-        tabela.getColumns().addAll(nomeColuna, idColuna, fidelidadeColuna, aniversarioColuna, enderecoColuna);
+        tabela.getColumns().addAll(nomeColuna, fidelidadeColuna, aniversarioColuna, enderecoColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        LocalDate data = LocalDate.of(2003,2,24);
-        Cliente test = new Cliente("Maria", data, "Samambaia Norte q.2", "interdelixao", "mariazinha@outlook.com");
+        ObservableList<Cliente> masterData = FXCollections.observableArrayList(
+                new Cliente("Maria Silva", LocalDate.of(2003, 2, 24), "Samambaia Norte Q.2", "interdelixao", "mariazinha@outlook.com"),
+                new Cliente("João Santos", LocalDate.of(1995, 5, 10), "Asa Sul", "joao123", "joao.santos@email.com"),
+                new Cliente("Ana Pereira", LocalDate.of(1988, 9, 30), "Lago Norte", "ana.p", "ana.pereira@email.com"),
+                new Cliente("Carlos Souza", LocalDate.of(1999, 7, 15), "Taguatinga Centro", "carlos.souza", "carlos@email.com")
+        );
 
-        ObservableList<Cliente> ClienteList = FXCollections.observableArrayList(test);
+        FilteredList<Cliente> filteredData = new FilteredList<>(masterData, p -> true);
+        tabela.setItems(filteredData);
 
-        tabela.setItems(ClienteList);
+        pesquisaNome.textProperty().addListener((obs, oldValue, newValue) -> {
+            filteredData.setPredicate(cliente -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return cliente.getNome().toLowerCase().contains(lowerCaseFilter);
+            });
+        });
 
-        // --- Rodapé ---
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante"); //
-        desc1.setFont(interfontRodape1); //
-        Label desc2 = new Label("Projetado para a excelência culinária francesa"); //
-        desc2.setFont(interfontRodape2); //
-        // MODIFICAÇÃO: Cor do texto do rodapé alterada para BRANCO
-        String corTextoRodape = "white";
-        desc1.setStyle("-fx-text-fill: " + corTextoRodape + ";"); //
-        desc2.setStyle("-fx-text-fill: " + corTextoRodape + ";"); //
+        limparPesquisa.setOnAction(event -> {
+            pesquisaNome.clear();
+            filteredData.setPredicate(p -> true);
+        });
 
-        VBox descricaoRodape = new VBox(5, desc1, desc2); //
-        descricaoRodape.setAlignment(Pos.CENTER); //
-        VBox.setMargin(descricaoRodape, new Insets(20, 0, 20, 0)); //
+        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
+        desc1.setFont(interfontRodape1);
+        Label desc2 = new Label("Projetado para a excelência culinária francesa");
+        desc2.setFont(interfontRodape2);
+        desc1.setStyle("-fx-text-fill: white;");
+        desc2.setStyle("-fx-text-fill: white;");
 
-        // --- Layout Principal com VBox root (rodapé rolável) ---
-        VBox root = new VBox(10, blocoTitulo, tabela, descricaoRodape); //
-        root.setAlignment(Pos.CENTER); //
-        root.setPadding(new Insets(20)); //
+        VBox descricaoRodape = new VBox(5, desc1, desc2);
+        descricaoRodape.setAlignment(Pos.CENTER);
+        VBox.setMargin(descricaoRodape, new Insets(20, 0, 20, 0));
 
-        VBox.setVgrow(blocoTitulo, Priority.NEVER); //
-        VBox.setVgrow(descricaoRodape, Priority.NEVER); //
+        VBox root = new VBox(10, blocoTitulo, barraPesquisa, tabela, descricaoRodape);
+        root.setAlignment(Pos.CENTER);
+        root.setPadding(new Insets(20));
+        VBox.setVgrow(tabela, Priority.ALWAYS);
 
-        GridPane grid = new GridPane(); //
-        grid.setAlignment(Pos.CENTER); //
-        grid.getColumnConstraints().add(new ColumnConstraints(1000)); //
-        grid.add(root, 0, 0); //
+        GridPane grid = new GridPane();
+        grid.setAlignment(Pos.CENTER);
+        grid.getColumnConstraints().add(new ColumnConstraints(1000));
+        grid.add(root, 0, 0);
 
-        // Fundo da tela: vinho
-        String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)"; //
-        grid.setStyle("-fx-background-color: " + estiloFundoVinho + ";"); //
+        String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)";
+        grid.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        ScrollPane scrollPane = new ScrollPane(grid); //
-        scrollPane.setFitToWidth(true); //
-        scrollPane.setFitToHeight(true); //
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER); //
-        scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";"); // Fundo do ScrollPane vinho
+        ScrollPane scrollPane = new ScrollPane(grid);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setFitToHeight(true);
+        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        Scene scene = new Scene(scrollPane); //
+        StackPane stackPane = new StackPane(scrollPane);
+        stackPane.setStyle("-fx-background-color: " + estiloFundoVinho);
 
-        // Lógica de responsividade
-        scene.widthProperty().addListener((obs, oldVal, newVal) -> { //
-            if (newVal.doubleValue() < 1200) { //
-                tituloPrincipal.setFont(Font.font(playfairFontTitulo.getFamily(), 52)); //
-                sublinhado.setWidth(190); //
-            } else { //
-                tituloPrincipal.setFont(playfairFontTitulo); //
-                sublinhado.setWidth(230); //
+        Runnable acaoVoltar = () -> new TelaGerente(super.getStage()).mostrarTela();
+        BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
+
+        Scene scene = new Scene(stackPane);
+        scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
+
+        scene.widthProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal.doubleValue() < 1200) {
+                tituloPrincipal.setFont(Font.font(playfairFontTitulo.getFamily(), 42));
+                sublinhado.setWidth(190);
+            } else {
+                tituloPrincipal.setFont(playfairFontTitulo);
+                sublinhado.setWidth(230);
             }
         });
 
-        super.getStage().setTitle("Clientes"); //
-        super.getStage().setMaximized(true); //
-        super.getStage().setScene(scene); //
-        super.getStage().setMinWidth(800); //
-        super.getStage().setMinHeight(600); //
-        super.getStage().show(); //
+        return scene;
     }
 }

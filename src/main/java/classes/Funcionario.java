@@ -56,14 +56,17 @@ public class Funcionario extends Pessoa {
         }
     }
 
+    public void demitirFuncionario() {
+        this.cargo.set(FuncionarioCargo.DEMITIDO);
+        this.salario = 0;
+    }
+
     @Override
     public boolean ehAniversario() {
         LocalDate dataAniversario = super.getDataAniversario();
         LocalDate hoje = LocalDate.now();
         if (dataAniversario == null) {return false;}
-        if(dataAniversario.getDayOfMonth() == hoje.getDayOfMonth() &&
-                dataAniversario.getMonthValue() == hoje.getMonthValue()){
-            return true;}
-        return false;
+        return dataAniversario.getDayOfMonth() == hoje.getDayOfMonth() &&
+                dataAniversario.getMonthValue() == hoje.getMonthValue();
     }
 }

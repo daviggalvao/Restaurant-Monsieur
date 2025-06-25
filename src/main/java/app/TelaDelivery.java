@@ -1,11 +1,9 @@
 package app;
 
-import classes.Pedido;
-import classes.Prato;
-// Removido: import classes.Pedido; // Não usaremos o Pedido do usuário para o estado interno da UI do carrinho
-// As classes Pagamento e Cliente não são usadas diretamente na construção desta tela de menu/carrinho
-// mas seriam necessárias para popular completamente o 'classes.Pedido' no final.
+import classes.*;
 
+import database.JpaUtil;
+import jakarta.persistence.TypedQuery;
 import javafx.application.Platform;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
@@ -18,33 +16,37 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
+import jakarta.persistence.EntityManager;
+
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
-public class TelaDelivery extends Tela {
+public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
-    private ObservableList<Prato> pratosDisponiveisNoMenu; // Pratos carregados para exibir no menu
+    private ObservableList<Prato> pratosDisponiveisNoMenu;
+    private EntityManager em = JpaUtil.getFactory().createEntityManager();
 
-    // Carrinho da Interface Gráfica: lista de ItemCarrinhoUI
     private ObservableList<ItemCarrinhoUI> carrinhoDaUI;
 
     private ListView<ItemCarrinhoUI> carrinhoListViewUI;
     private Label totalLabelUI;
     private Label statusLabelUI;
-
+    private String userEmail;
     // --- BEGIN STYLE CONSTANTS ---
-    private static final String DARK_BACKGROUND_COLOR = "#4B3832"; // Deep Brownish-Red (inspired by "Reserve Sua Mesa")
-    private static final String PANEL_BACKGROUND_COLOR = "#FAF0E6"; // Linen (warm off-white for panels)
-    private static final String ACCENT_COLOR_GOLD = "#DAA520";     // Goldenrod (for titles, buttons)
-    private static final String ACCENT_COLOR_DARK_GOLD = "#B8860B"; // DarkGoldenrod (for more contrast on buttons/important text)
-    private static final String TEXT_COLOR_ON_PANEL = "#3D2B1F";   // Dark Brown (for text on light panels)
-    private static final String TEXT_COLOR_LIGHT = "#F5F5F5";      // Light Cream/Off-white (for text on dark backgrounds)
-    private static final String BORDER_COLOR_PANEL = "#C8A67B";    // A muted gold/brown for panel borders
+    private static final String DARK_BACKGROUND_COLOR = "#4B3832";
+    private static final String PANEL_BACKGROUND_COLOR = "#FAF0E6";
+    private static final String ACCENT_COLOR_GOLD = "#DAA520";
+    private static final String ACCENT_COLOR_DARK_GOLD = "#B8860B";
+    private static final String TEXT_COLOR_ON_PANEL = "#3D2B1F";
+    private static final String TEXT_COLOR_LIGHT = "#F5F5F5";
+    private static final String BORDER_COLOR_PANEL = "#C8A67B";
     private static final String BUTTON_TEXT_COLOR = "#FFFFFF";
 
     private static final Font FONT_TITLE = Font.font("Arial", FontWeight.BOLD, 24);
@@ -57,35 +59,88 @@ public class TelaDelivery extends Tela {
     private static final Font FONT_ITEM_PRICE = Font.font("Arial", FontWeight.BOLD, 15);
     // --- END STYLE CONSTANTS ---
 
-    public TelaDelivery(Stage stage) {
+    public TelaDelivery(Stage stage,String userEmail) {
         super(stage);
-        Prato pratosDoMenu = null;
-        this.pratosDisponiveisNoMenu = FXCollections.observableArrayList(pratosDoMenu);
+        this.userEmail = userEmail;
+        this.pratosDisponiveisNoMenu = FXCollections.observableArrayList();
+        carregarPratosDoBancoDeDados();
+
         this.carrinhoDaUI = FXCollections.observableArrayList(item ->
-                new Observable[]{ // Para que a ListView observe mudanças
+                new Observable[]{
                         item.quantidadeNoCarrinhoProperty(),
                         item.pratoProperty()
                 });
     }
 
+    private void carregarPratosDoBancoDeDados() {
+        if (em == null || !em.isOpen()) {
+            Platform.runLater(() -> statusLabelUI.setText("Erro: EntityManager não está ativo ou inicializado. Não foi possível carregar o cardápio."));
+            return;
+        }
+
+        try {
+            em.getTransaction().begin();
+
+            List<Prato> pratosDoBanco = em.createQuery("SELECT p FROM Prato p", Prato.class).getResultList();
+
+            pratosDisponiveisNoMenu.clear();
+            pratosDisponiveisNoMenu.addAll(pratosDoBanco);
+
+            em.getTransaction().commit();
+
+            Platform.runLater(() -> {
+                if (pratosDisponiveisNoMenu.isEmpty()) {
+                    statusLabelUI.setText("Nenhum prato disponível no cardápio.");
+                } else {
+                    statusLabelUI.setText("Cardápio carregado com " + pratosDisponiveisNoMenu.size() + " pratos.");
+                }
+            });
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            System.err.println("Erro ao carregar pratos do banco de dados: " + e.getMessage());
+            e.printStackTrace();
+            Platform.runLater(() -> statusLabelUI.setText("Erro ao carregar cardápio: " + e.getMessage()));
+        }
+    }
+
     @Override
-    public void mostrarTela() {
+    public Scene criarScene() {
         BorderPane layoutPrincipal = new BorderPane();
-        layoutPrincipal.setPadding(new Insets(20)); // Increased padding
-        layoutPrincipal.setStyle("-fx-background-color: " + DARK_BACKGROUND_COLOR + ";");
+        layoutPrincipal.setPadding(new Insets(20));
+        String estiloFundoVinho = "-fx-background-color: linear-gradient(to right, #30000C, #800020);";
+        layoutPrincipal.setStyle(estiloFundoVinho);
 
-        // Main Title for the Delivery Screen
-        Label screenTitle = new Label("Restaurante Monsieur-José - Delivery");
-        screenTitle.setFont(Font.font("Arial", FontWeight.BOLD, 28));
-        screenTitle.setTextFill(Color.web(ACCENT_COLOR_GOLD));
-        screenTitle.setPadding(new Insets(0, 0, 20, 5)); // Add some bottom padding
-        layoutPrincipal.setTop(screenTitle);
-        BorderPane.setAlignment(screenTitle, Pos.CENTER_LEFT);
+        // --- INÍCIO DA MODIFICAÇÃO DO TÍTULO ---
 
+        // 1. Carregar a fonte e criar o Label principal
+        Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
+        // Usamos a variável estática 'emFrances' para a tradução, assim como na outra tela
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Livraison" : "Delivery");
+        tituloPrincipal.setFont(playfairFontTitulo);
+        tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
+
+        // 2. Criar o sublinhado
+        Rectangle sublinhado = new Rectangle(230, 4); // A largura inicial é ajustada pelo 'bind'
+        sublinhado.setFill(Color.web("#FFC300"));
+        // A largura do sublinhado se ajusta automaticamente à largura do texto
+        sublinhado.widthProperty().bind(tituloPrincipal.widthProperty());
+
+        // 3. Agrupar o título e o sublinhado em um VBox
+        VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
+        blocoTitulo.setAlignment(Pos.CENTER);
+        blocoTitulo.setPadding(new Insets(0, 0, 20, 0)); // Adiciona um espaço abaixo do título
+
+        // 4. Posicionar o bloco do título no topo do layout
+        layoutPrincipal.setTop(blocoTitulo);
+
+        // --- FIM DA MODIFICAÇÃO DO TÍTULO ---
 
         VBox painelMenu = criarPainelMenu();
         layoutPrincipal.setLeft(painelMenu);
-        BorderPane.setMargin(painelMenu, new Insets(0, 15, 0, 0)); // Increased margin
+        BorderPane.setMargin(painelMenu, new Insets(0, 15, 0, 0));
 
         VBox painelCarrinho = criarPainelCarrinhoDaUI();
         layoutPrincipal.setCenter(painelCarrinho);
@@ -96,25 +151,34 @@ public class TelaDelivery extends Tela {
         statusLabelUI.setAlignment(Pos.CENTER_LEFT);
         statusLabelUI.setFont(FONT_TEXT_NORMAL);
         statusLabelUI.setStyle(
-                "-fx-background-color: " + darkenSlightly(DARK_BACKGROUND_COLOR, 0.1) + "; " +
-                        "-fx-text-fill: " + TEXT_COLOR_LIGHT + "; " +
+                estiloFundoVinho +
+                        "-fx-text-fill: #FFC300; " +
                         "-fx-border-color: " + ACCENT_COLOR_GOLD + "; " +
                         "-fx-border-width: 1 0 0 0;"
         );
         layoutPrincipal.setBottom(statusLabelUI);
 
-        Scene scene = new Scene(layoutPrincipal, 1024, 768); // Slightly larger default size
-        super.getStage().setScene(scene);
-        super.getStage().setTitle("Sistema de Delivery - Cardápio Monsieur-José");
-        super.getStage().setMinWidth(900); // Increased min width
-        super.getStage().setMinHeight(700); // Increased min height
-        super.getStage().show();
+        StackPane stackPane = new StackPane();
+        stackPane.getChildren().add(layoutPrincipal);
+
+        BotaoVoltar.criarEPosicionar(stackPane, () -> {
+            new TelaInicial(super.getStage()).mostrarTela();
+        });
+
+        Scene scene = new Scene(stackPane, 1024, 768);
+        return scene;
     }
 
-    // Helper to slightly darken a hex color
+    public void fecharRecursosJPA() {
+        if (em != null && em.isOpen()) {
+            em.close();
+            System.out.println("EntityManager da TelaDelivery fechado.");
+        }
+        JpaUtil.close();
+    }
+
     private String darkenSlightly(String hexColor, double factor) {
         Color color = Color.web(hexColor);
-        // Factor > 0 darkens, Factor < 0 lightens
         if (factor > 0) {
             for (int i = 0; i < (int)(factor * 10); i++) color = color.darker();
         } else {
@@ -128,7 +192,7 @@ public class TelaDelivery extends Tela {
 
 
     private VBox criarPainelMenu() {
-        VBox painel = new VBox(15); // Increased spacing
+        VBox painel = new VBox(15);
         painel.setPadding(new Insets(15));
         painel.setStyle(
                 "-fx-background-color: " + PANEL_BACKGROUND_COLOR + "; " +
@@ -137,18 +201,18 @@ public class TelaDelivery extends Tela {
                         "-fx-border-radius: 8; " +
                         "-fx-background-radius: 8;"
         );
-        painel.setPrefWidth(480); // Adjusted preference
+        painel.setPrefWidth(480);
 
         Label tituloMenu = new Label("Cardápio");
         tituloMenu.setFont(FONT_TITLE);
-        tituloMenu.setTextFill(Color.web(ACCENT_COLOR_DARK_GOLD));
+        tituloMenu.setStyle("-fx-text-fill: " + TEXT_COLOR_ON_PANEL);
         tituloMenu.setMaxWidth(Double.MAX_VALUE);
         tituloMenu.setAlignment(Pos.CENTER);
 
 
         ListView<Prato> menuListView = new ListView<>(pratosDisponiveisNoMenu);
         menuListView.setCellFactory(param -> new PratoListCell());
-        menuListView.setPrefHeight(600); // Adjusted preference
+        menuListView.setPrefHeight(600);
         menuListView.setStyle("-fx-background-color: transparent; -fx-control-inner-background: " + PANEL_BACKGROUND_COLOR + ";");
 
 
@@ -157,7 +221,7 @@ public class TelaDelivery extends Tela {
     }
 
     private VBox criarPainelCarrinhoDaUI() {
-        VBox painel = new VBox(15); // Increased spacing
+        VBox painel = new VBox(15);
         painel.setPadding(new Insets(15));
         painel.setStyle(
                 "-fx-background-color: " + PANEL_BACKGROUND_COLOR + "; " +
@@ -169,13 +233,13 @@ public class TelaDelivery extends Tela {
 
         Label tituloCarrinho = new Label("Seu Pedido");
         tituloCarrinho.setFont(FONT_TITLE);
-        tituloCarrinho.setTextFill(Color.web(ACCENT_COLOR_DARK_GOLD));
+        tituloCarrinho.setStyle("-fx-text-fill: " + TEXT_COLOR_ON_PANEL);
         tituloCarrinho.setMaxWidth(Double.MAX_VALUE);
         tituloCarrinho.setAlignment(Pos.CENTER);
 
-        carrinhoListViewUI = new ListView<>(carrinhoDaUI); // Usa a lista de ItemCarrinhoUI
+        carrinhoListViewUI = new ListView<>(carrinhoDaUI);
         carrinhoListViewUI.setCellFactory(param -> new ItemCarrinhoUIListCell());
-        carrinhoListViewUI.setPrefHeight(400); // Adjusted preference
+        carrinhoListViewUI.setPrefHeight(400);
         carrinhoListViewUI.setStyle("-fx-background-color: transparent; -fx-control-inner-background: " + PANEL_BACKGROUND_COLOR + ";");
 
 
@@ -189,7 +253,7 @@ public class TelaDelivery extends Tela {
         totalTextoLabel.setTextFill(Color.web(TEXT_COLOR_ON_PANEL));
         totalLabelUI = new Label("R$ 0,00");
         totalLabelUI.setFont(FONT_LABEL_BOLD);
-        totalLabelUI.setTextFill(Color.web(ACCENT_COLOR_DARK_GOLD)); // Use accent for total value
+        totalLabelUI.setStyle("-fx-text-fill: " + ACCENT_COLOR_DARK_GOLD);
         totalBox.getChildren().addAll(totalTextoLabel, totalLabelUI);
 
         Button btnFinalizarPedido = new Button("Finalizar Pedido");
@@ -198,10 +262,10 @@ public class TelaDelivery extends Tela {
                 "-fx-background-color: " + ACCENT_COLOR_GOLD + "; " +
                         "-fx-text-fill: " + BUTTON_TEXT_COLOR + "; " +
                         "-fx-background-radius: 5; " +
-                        "-fx-padding: 10 20 10 20;" // Added padding
+                        "-fx-padding: 10 20 10 20;"
         );
         btnFinalizarPedido.setOnMouseEntered(e -> btnFinalizarPedido.setStyle(
-                "-fx-background-color: " + ACCENT_COLOR_DARK_GOLD + "; " + // Darken on hover
+                "-fx-background-color: " + ACCENT_COLOR_DARK_GOLD + "; " +
                         "-fx-text-fill: " + BUTTON_TEXT_COLOR + "; " +
                         "-fx-background-radius: 5; " +
                         "-fx-padding: 10 20 10 20;"
@@ -213,7 +277,7 @@ public class TelaDelivery extends Tela {
                         "-fx-padding: 10 20 10 20;"
         ));
 
-        btnFinalizarPedido.setPrefWidth(200); // Increased preferred width
+        btnFinalizarPedido.setPrefWidth(200);
         btnFinalizarPedido.setOnAction(e -> handleFinalizarPedido());
 
         HBox finalizarBox = new HBox(btnFinalizarPedido);
@@ -221,7 +285,7 @@ public class TelaDelivery extends Tela {
         finalizarBox.setPadding(new Insets(10,0,0,0));
 
         painel.getChildren().addAll(tituloCarrinho, carrinhoListViewUI, totalBox, finalizarBox);
-        atualizarTotalDaUI(); // Calcula o total inicial
+        atualizarTotalDaUI();
         return painel;
     }
 
@@ -245,8 +309,8 @@ public class TelaDelivery extends Tela {
 
             descricaoText = new Text();
             descricaoText.setFont(FONT_ITEM_DETAILS);
-            descricaoText.setFill(Color.web(darkenSlightly(TEXT_COLOR_ON_PANEL, 0.2))); // Slightly darker for description
-            descricaoText.setWrappingWidth(380); // Adjust if panel width changes significantly
+            descricaoText.setFill(Color.web(darkenSlightly(TEXT_COLOR_ON_PANEL, 0.2)));
+            descricaoText.setWrappingWidth(380);
 
             precoLabel = new Label();
             precoLabel.setFont(FONT_ITEM_PRICE);
@@ -254,12 +318,11 @@ public class TelaDelivery extends Tela {
 
             quantidadeSpinner = new Spinner<>(1, 10, 1);
             quantidadeSpinner.setPrefWidth(70);
-            // Basic styling for spinner to blend in
-            quantidadeSpinner.getEditor().setStyle("-fx-background-color: #FFFFFF; -fx-text-fill: " + TEXT_COLOR_ON_PANEL + "; -fx-border-color: " + BORDER_COLOR_PANEL + "; -fx-border-width: 1;");
+            quantidadeSpinner.getEditor().setStyle("-fx-background-color: #FFFFFF;" + "-fx-text-fill: " + TEXT_COLOR_ON_PANEL + ";" + "-fx-border-color: " + BORDER_COLOR_PANEL + "; -fx-border-width: 1;");
 
 
             addButton = new Button("Adicionar");
-            addButton.setFont(Font.font("Arial", FontWeight.BOLD, 12)); // Keep this button a bit smaller
+            addButton.setFont(Font.font("Arial", FontWeight.BOLD, 12));
             addButton.setStyle(
                     "-fx-background-color: " + ACCENT_COLOR_GOLD + "; " +
                             "-fx-text-fill: " + BUTTON_TEXT_COLOR + "; " +
@@ -281,22 +344,19 @@ public class TelaDelivery extends Tela {
                 if (pratoSelecionado != null) {
                     int quantidade = quantidadeSpinner.getValue();
                     adicionarPratoAoCarrinhoDaUI(pratoSelecionado, quantidade);
-                    quantidadeSpinner.getValueFactory().setValue(1); // Reset spinner
+                    quantidadeSpinner.getValueFactory().setValue(1);
                 }
             });
             HBox addControls = new HBox(10, quantidadeSpinner, addButton);
             addControls.setAlignment(Pos.CENTER_LEFT);
-            addControls.setPadding(new Insets(8,0,5,0)); // Adjusted padding
+            addControls.setPadding(new Insets(8,0,5,0));
 
-            content = new VBox(8, nomeLabel, descricaoText, precoLabel, addControls); // Increased spacing
-            content.setPadding(new Insets(10, 10, 10, 10)); // Uniform padding
+            content = new VBox(8, nomeLabel, descricaoText, precoLabel, addControls);
+            content.setPadding(new Insets(10, 10, 10, 10));
             content.setStyle(defaultContentStyle);
 
-
-            // Remove default cell padding and background to let content VBox handle it
             setStyle("-fx-padding: 0; -fx-background-color: transparent;");
 
-            // Hover effect for the cell content
             setOnMouseEntered(e -> {
                 if (!isEmpty() && getItem() != null) {
                     content.setStyle(hoverContentStyle);
@@ -313,15 +373,12 @@ public class TelaDelivery extends Tela {
             super.updateItem(prato, empty);
             if (empty || prato == null) {
                 setGraphic(null);
-                // Ensure empty cells also have transparent background if ListView bg is set
-                // and reset content style if it was hovered
                 if (content != null) content.setStyle(defaultContentStyle);
             } else {
                 nomeLabel.setText(prato.getNome());
                 descricaoText.setText(prato.getDescricao());
                 precoLabel.setText(String.format("R$ %.2f", prato.getPreco()));
                 setGraphic(content);
-                // Ensure correct style is applied (in case of recycling)
                 content.setStyle(defaultContentStyle);
             }
         }
@@ -344,12 +401,9 @@ public class TelaDelivery extends Tela {
         Platform.runLater(() -> {
             if (!carrinhoDaUI.isEmpty()) {
                 carrinhoListViewUI.scrollTo(carrinhoDaUI.size() -1);
-                // Optionally select the last item, can be commented out if not desired
-                // carrinhoListViewUI.getSelectionModel().select(carrinhoDaUI.size() - 1);
             }
         });
     }
-
 
     private class ItemCarrinhoUIListCell extends ListCell<ItemCarrinhoUI> {
         private HBox content;
@@ -364,24 +418,22 @@ public class TelaDelivery extends Tela {
         public ItemCarrinhoUIListCell() {
             super();
             itemLabel = new Label();
-            itemLabel.setFont(FONT_ITEM_DETAILS); // Slightly smaller for cart items
+            itemLabel.setFont(FONT_ITEM_DETAILS);
             itemLabel.setTextFill(Color.web(TEXT_COLOR_ON_PANEL));
             itemLabel.setMaxWidth(Double.MAX_VALUE);
             HBox.setHgrow(itemLabel, Priority.ALWAYS);
 
-            quantidadeItemSpinner = new Spinner<>(0, 99, 1); // Permite 0 para remover
+            quantidadeItemSpinner = new Spinner<>(0, 99, 1);
             quantidadeItemSpinner.setPrefWidth(70);
             quantidadeItemSpinner.getEditor().setStyle("-fx-background-color: #FFFFFF; -fx-text-fill: " + TEXT_COLOR_ON_PANEL + "; -fx-border-color: " + BORDER_COLOR_PANEL + "; -fx-border-width: 1;");
 
 
             quantidadeItemSpinner.valueProperty().addListener((obs, oldValue, newValue) -> {
                 ItemCarrinhoUI item = getItem();
-                // Check if item is not null and newValue is different from current quantity
                 if (item != null && newValue != null && newValue != item.getQuantidadeNoCarrinho()) {
-                    Platform.runLater(() -> { // Defer modification
-                        // Re-fetch item inside Platform.runLater to ensure it's still valid
+                    Platform.runLater(() -> {
                         ItemCarrinhoUI currentItem = getItem();
-                        if (currentItem != null) { // Check again as cell might have been recycled
+                        if (currentItem != null) {
                             if (newValue <= 0) {
                                 carrinhoDaUI.remove(currentItem);
                                 statusLabelUI.setText(currentItem.getPrato().getNome() + " removido do carrinho.");
@@ -392,7 +444,6 @@ public class TelaDelivery extends Tela {
                         }
                     });
                 } else if (item != null && newValue != null && newValue == 0 && newValue == item.getQuantidadeNoCarrinho()){
-                    // Handles the case where quantity is already 0 and spinner is set to 0 again (to remove)
                     Platform.runLater(() -> {
                         ItemCarrinhoUI currentItem = getItem();
                         if(currentItem != null) {
@@ -403,13 +454,13 @@ public class TelaDelivery extends Tela {
                 }
             });
 
-            removeButton = new Button("X"); // Smaller remove button
+            removeButton = new Button("X");
             removeButton.setFont(Font.font("Arial", FontWeight.BOLD, 12));
             removeButton.setStyle(
-                    "-fx-background-color: #D32F2F; " + // A subtle red for removal
+                    "-fx-background-color: #D32F2F; " +
                             "-fx-text-fill: " + BUTTON_TEXT_COLOR + "; " +
                             "-fx-background-radius: 4; " +
-                            "-fx-padding: 3 8 3 8;" // Smaller padding
+                            "-fx-padding: 3 8 3 8;"
             );
             removeButton.setOnMouseEntered(e -> removeButton.setStyle(
                     "-fx-background-color: #B71C1C; " +
@@ -441,10 +492,8 @@ public class TelaDelivery extends Tela {
             content.setPadding(new Insets(8));
             content.setStyle(defaultContentStyle);
 
-            // Remove default cell padding and background
             setStyle("-fx-padding: 0; -fx-background-color: transparent;");
 
-            // Hover effect
             setOnMouseEntered(e -> {
                 if (!isEmpty() && getItem() != null) {
                     content.setStyle(hoverContentStyle);
@@ -467,7 +516,6 @@ public class TelaDelivery extends Tela {
                 itemLabel.setText(String.format("%s (Qtd: %d) - Sub: R$ %.2f",
                         item.getPrato().getNome(), item.getQuantidadeNoCarrinho(), item.getSubtotal()));
 
-                // Update spinner value without triggering listener if it's the same
                 if (quantidadeItemSpinner.getValueFactory().getValue() != item.getQuantidadeNoCarrinho()) {
                     quantidadeItemSpinner.getValueFactory().setValue(item.getQuantidadeNoCarrinho());
                 }
@@ -496,7 +544,7 @@ public class TelaDelivery extends Tela {
             return;
         }
 
-        Pedido pedidoFinal = new Pedido(); // Assuming classes.Pedido exists
+        Pedido pedidoFinal = new Pedido();
         ArrayList<Prato> pratosParaPedidoFinal = new ArrayList<>();
         ArrayList<Integer> quantidadesParaPedidoFinal = new ArrayList<>();
 
@@ -504,30 +552,59 @@ public class TelaDelivery extends Tela {
             pratosParaPedidoFinal.add(itemUI.getPrato());
             quantidadesParaPedidoFinal.add(itemUI.getQuantidadeNoCarrinho());
         }
-        pedidoFinal.setPratos(pratosParaPedidoFinal); // Assuming setPratos method exists
-        pedidoFinal.setQuantidades(quantidadesParaPedidoFinal); // Assuming setQuantidades method exists
+
+        List<PedidoItem> pedidoItems = new ArrayList<>();
+        for(int i =0;i < pratosParaPedidoFinal.size();i++) {
+            PedidoItem item = new PedidoItem(pedidoFinal,pratosParaPedidoFinal.get(i),quantidadesParaPedidoFinal.get(i));
+            pedidoItems.add(item);
+        }
 
         StringBuilder sb = new StringBuilder("Seu pedido foi preparado para envio:\n\n");
         sb.append("Itens do Pedido:\n");
-        if (pedidoFinal.getPratos() != null && pedidoFinal.getQuantidades() != null &&
-                pedidoFinal.getPratos().size() == pedidoFinal.getQuantidades().size()) {
-            for (int i = 0; i < pedidoFinal.getPratos().size(); i++) {
-                Prato p = pedidoFinal.getPratos().get(i);
-                int q = pedidoFinal.getQuantidades().get(i);
+        for( int j = 0;j < pedidoItems.size();j++) {
+            if (pedidoItems.get(j).getPrato() != null) {
+                Prato p = pedidoItems.get(j).getPrato();
+                int q = pedidoItems.get(j).getQuantidade();
                 if (p != null) {
                     sb.append(String.format("  - %dx %s (R$ %.2f cada)\n", q, p.getNome(), p.getPreco()));
                 }
             }
         }
 
+        TypedQuery<Cliente> query = em.createQuery("SELECT c FROM Cliente c WHERE c.email = :email", Cliente.class);
+        query.setParameter("email", this.userEmail);
+        Cliente cliente = query.getSingleResult();
+        pedidoFinal.setConsumidor(cliente);
+        pedidoFinal.setItensPedido(pedidoItems);
+        Float subtotalSimplesFinal = pedidoFinal.calcularPrecoTotal();
+        Pagamento pagamentoFinal = new Pagamento(subtotalSimplesFinal,cliente.getNome(),"Pix",1);
+        pedidoFinal.setPagamento(pagamentoFinal);
 
-        double subtotalSimples = 0;
-        for (ItemCarrinhoUI itemUI : carrinhoDaUI) {
-            subtotalSimples += itemUI.getSubtotal();
+        EntityManager tempEm = JpaUtil.getFactory().createEntityManager(); // Use a new EM for this transaction
+        try {
+            tempEm.getTransaction().begin();
+            tempEm.persist(pedidoFinal);
+            tempEm.getTransaction().commit();
+            statusLabelUI.setText("Pedido finalizado e salvo com sucesso! O carrinho foi limpo.");
+            carrinhoDaUI.clear(); // Clear cart only after successful save
+        } catch (Exception e) {
+            if (tempEm.getTransaction().isActive()) {
+                tempEm.getTransaction().rollback();
+            }
+            System.err.println("Erro ao salvar o pedido: " + e.getMessage());
+            e.printStackTrace();
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar o pedido no banco de dados. Por favor, tente novamente.", ButtonType.OK);
+            errorAlert.setHeaderText("Erro de Persistência");
+            styleAlertDialog(errorAlert);
+            errorAlert.showAndWait();
+            statusLabelUI.setText("Erro ao finalizar o pedido.");
+        } finally {
+            if (tempEm != null && tempEm.isOpen()) {
+                tempEm.close(); // Always close the EntityManager
+            }
         }
-        sb.append(String.format("\nSubtotal dos Pratos: R$ %.2f", subtotalSimples));
-        // sb.append(String.format("\nTotal Completo (calculado por classes.Pedido): R$ %.2f", totalCalculadoPeloSeuPedido)); // If implemented
-
+        sb.append(String.format("  - 1x Frete: R$ %d\n",pedidoFinal.getFrete()));
+        sb.append(String.format("\nSubtotal dos Pratos: R$ %.2f", subtotalSimplesFinal));
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Pedido Finalizado");
         alert.setHeaderText("Confirmação do Pedido");
@@ -539,20 +616,22 @@ public class TelaDelivery extends Tela {
 
         ScrollPane scrollPane = new ScrollPane(textArea);
         scrollPane.setFitToWidth(true);
-        scrollPane.setPrefHeight(200); // Adjust height as needed
+        scrollPane.setPrefHeight(200);
         scrollPane.setStyle("-fx-background: " + PANEL_BACKGROUND_COLOR + "; -fx-border-color: " + BORDER_COLOR_PANEL + ";");
 
-        alert.getDialogPane().setContent(scrollPane); // Use setContent for complex content
+        alert.getDialogPane().setContent(scrollPane);
         alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        alert.getDialogPane().setMinWidth(500); // Wider dialog
+        alert.getDialogPane().setMinWidth(500);
         styleAlertDialog(alert);
         alert.showAndWait();
 
         statusLabelUI.setText("Pedido finalizado com sucesso! O carrinho foi limpo.");
         carrinhoDaUI.clear();
+
+        // Opcional: Voltar para Tela Inicial ou para a tela de serviços após o pedido
+        new TelaInicial(super.getStage()).mostrarTela(); // Exemplo de retorno
     }
 
-    // Helper method to style Alert dialogs consistently
     private void styleAlertDialog(Alert alert) {
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.setStyle(
@@ -569,9 +648,7 @@ public class TelaDelivery extends Tela {
             }
         }
 
-
         Node content = dialogPane.getContent();
-        // If content is the default label, style it. Otherwise, assume it's custom (like our TextArea)
         if (content instanceof Label) {
             ((Label)content).setStyle("-fx-text-fill: " + TEXT_COLOR_ON_PANEL + "; -fx-font-size: 14px; -fx-wrap-text: true;");
             ((Label)content).setPadding(new Insets(10));
