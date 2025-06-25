@@ -14,7 +14,7 @@ public class App extends Application{
        // TelaInicial tela = new TelaInicial(primaryStage);
         // tela.mostrarTela(); // Chama o método mostrarTela() da base Tela
         //primaryStage.show();
-        TelaPagamento tela = new TelaPagamento(primaryStage,"rbcorreaneto@gmail.com");
+        TelaGerenciarReserva tela = new TelaGerenciarReserva(primaryStage);
         tela.mostrarTela();
         primaryStage.show();
     }

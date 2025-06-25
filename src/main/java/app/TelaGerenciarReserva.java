@@ -6,6 +6,7 @@ import classes.Reserva;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -17,6 +18,7 @@ import javafx.stage.Stage;
 import javafx.geometry.*;
 
 import java.time.LocalDate;
+import java.util.function.Predicate;
 
 public class TelaGerenciarReserva extends Tela {
 
@@ -39,7 +41,20 @@ public class TelaGerenciarReserva extends Tela {
 
         VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
         blocoTitulo.setAlignment(Pos.CENTER);
-        VBox.setMargin(blocoTitulo, new Insets(20, 0, 30, 0));
+        VBox.setMargin(blocoTitulo, new Insets(20, 0, 20, 0));
+
+        TextField pesquisaNome = new TextField();
+        pesquisaNome.setPromptText(Tela.emFrances ? "Rechercher par nom" : "Pesquisar por nome");
+        pesquisaNome.setMinWidth(250);
+
+        DatePicker pesquisaData = new DatePicker();
+        pesquisaData.setPromptText(Tela.emFrances ? "Rechercher par date" : "Pesquisar por data");
+
+        Button limparPesquisa = new Button(Tela.emFrances ? "Nettoyer" : "Limpar");
+
+        HBox barraPesquisa = new HBox(15, pesquisaNome, pesquisaData, limparPesquisa);
+        barraPesquisa.setAlignment(Pos.CENTER);
+        VBox.setMargin(barraPesquisa, new Insets(0, 0, 20, 0));
 
         TableView<Reserva> tabela= new TableView<>();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -58,10 +73,36 @@ public class TelaGerenciarReserva extends Tela {
         tabela.getColumns().addAll(nomeColuna, dataColuna, timeColuna, qtdColuna, choferColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        Cliente test1 = new Cliente("Maria Silva", LocalDate.of(2003,2,24), "Samambaia Norte", "maria", "maria@gmail.com");
-        Pagamento test2 = new Pagamento(300, "pizzas", "Dinheiro", 100);
-        Reserva test = new Reserva(LocalDate.of(2025,7,12), "19:30", test1, 5, false, test2);
-        tabela.setItems(FXCollections.observableArrayList(test));
+        ObservableList<Reserva> masterData = FXCollections.observableArrayList();
+        Cliente cliente1 = new Cliente("Maria Silva", LocalDate.of(2003,2,24), "Samambaia Norte", "maria", "maria@gmail.com");
+        Pagamento pagamento1 = new Pagamento(300, "pizzas", "Dinheiro", 100);
+        Reserva reserva1 = new Reserva(LocalDate.of(2025,7,12), "19:30", cliente1, 5, false, pagamento1);
+
+        Cliente cliente2 = new Cliente("João Santos", LocalDate.of(1995,5,10), "Asa Sul", "joao", "joao@example.com");
+        Pagamento pagamento2 = new Pagamento(450, "jantar completo", "Cartão", 0);
+        Reserva reserva2 = new Reserva(LocalDate.of(2025,7,12), "20:00", cliente2, 2, true, pagamento2);
+
+        Cliente cliente3 = new Cliente("Ana Pereira", LocalDate.of(1988,9,30), "Lago Norte", "ana", "ana@example.com");
+        Pagamento pagamento3 = new Pagamento(200, "almoço", "PIX", 50);
+        Reserva reserva3 = new Reserva(LocalDate.of(2025,8,15), "12:30", cliente3, 4, false, pagamento3);
+        masterData.addAll(reserva1, reserva2, reserva3);
+
+        FilteredList<Reserva> filteredData = new FilteredList<>(masterData, p -> true);
+        tabela.setItems(filteredData);
+
+        pesquisaNome.textProperty().addListener((obs, oldValue, newValue) -> {
+            definirPredicadoFiltro(filteredData, newValue, pesquisaData.getValue());
+        });
+
+        pesquisaData.valueProperty().addListener((obs, oldValue, newValue) -> {
+            definirPredicadoFiltro(filteredData, pesquisaNome.getText(), newValue);
+        });
+
+        limparPesquisa.setOnAction(event -> {
+            pesquisaNome.clear();
+            pesquisaData.setValue(null);
+            filteredData.setPredicate(p -> true);
+        });
 
         Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
@@ -75,7 +116,7 @@ public class TelaGerenciarReserva extends Tela {
         descricaoRodape.setAlignment(Pos.CENTER);
         VBox.setMargin(descricaoRodape, new Insets(20, 0, 20, 0));
 
-        VBox root = new VBox(10, blocoTitulo, tabela, descricaoRodape);
+        VBox root = new VBox(10, blocoTitulo, barraPesquisa, tabela, descricaoRodape);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
         VBox.setVgrow(tabela, Priority.ALWAYS);
@@ -94,11 +135,9 @@ public class TelaGerenciarReserva extends Tela {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        // --- MUDANÇAS PARA ADICIONAR O BOTÃO VOLTAR ---
         StackPane stackPane = new StackPane(scrollPane);
         stackPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        // Ação de voltar para a tela de serviços
         Runnable acaoVoltar = () -> new TelaServicos(super.getStage()).mostrarTela();
         BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
 
@@ -113,6 +152,22 @@ public class TelaGerenciarReserva extends Tela {
             }
         });
 
+        // --- MUDANÇA ---
+        // Adicionando a folha de estilo dos botões à cena inteira.
+        scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
+
         return scene;
+    }
+
+    private void definirPredicadoFiltro(FilteredList<Reserva> filteredData, String nome, LocalDate data) {
+        filteredData.setPredicate(reserva -> {
+            if ((nome == null || nome.isEmpty()) && data == null) {
+                return true;
+            }
+            String lowerCaseFilter = nome.toLowerCase();
+            boolean nomeCorresponde = nome == null || nome.isEmpty() || reserva.getCliente().getNome().toLowerCase().contains(lowerCaseFilter);
+            boolean dataCorresponde = data == null || reserva.getData().equals(data);
+            return nomeCorresponde && dataCorresponde;
+        });
     }
 }
