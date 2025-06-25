@@ -1,8 +1,21 @@
 package classes;
 
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "ContaBancaria")
 public class ContaBancariaJose {
+
+    public ContaBancariaJose(){}
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column
     private static float saldo;
+    @Column
     private static float entrada;
+    @Column
     private static float saida;
 
     public static float getSaldo() {return saldo;}

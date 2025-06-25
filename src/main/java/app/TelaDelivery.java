@@ -39,6 +39,10 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
     private Label totalLabelUI;
     private Label statusLabelUI;
     private String userEmail;
+    // Adicionada a ComboBox para o tipo de pagamento
+    private ComboBox<String> tipoPagamentoComboBox;
+
+
     // --- BEGIN STYLE CONSTANTS ---
     private static final String DARK_BACKGROUND_COLOR = "#4B3832";
     private static final String PANEL_BACKGROUND_COLOR = "#FAF0E6";
@@ -256,6 +260,37 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         totalLabelUI.setStyle("-fx-text-fill: " + ACCENT_COLOR_DARK_GOLD);
         totalBox.getChildren().addAll(totalTextoLabel, totalLabelUI);
 
+
+        // --- INÍCIO DA ADIÇÃO DA COMBOBOX DE TIPO DE PAGAMENTO ---
+        Label labelTipoPagamento = new Label("Tipo de Pagamento:");
+        labelTipoPagamento.setFont(FONT_LABEL_BOLD);
+        labelTipoPagamento.setTextFill(Color.web(TEXT_COLOR_ON_PANEL));
+
+        tipoPagamentoComboBox = new ComboBox<>();
+        tipoPagamentoComboBox.setPrefWidth(200);
+        tipoPagamentoComboBox.getItems().addAll(
+                "Pix",
+                "Cartão de Crédito",
+                "Cartão de Débito",
+                "Talão de Cheque",
+                "Dinheiro Físico",
+                "Pagar Fiado"
+        );
+        tipoPagamentoComboBox.setValue("Pix"); // Valor padrão// Ocupa a largura disponível
+        tipoPagamentoComboBox.setStyle(
+                "-fx-background-color: #FFFFFF; " +
+                        "-fx-border-color: " + BORDER_COLOR_PANEL + "; " +
+                        "-fx-border-radius: 5; " +
+                        "-fx-background-radius: 5; " +
+                        "-fx-font-size: 14px;"
+        );
+
+        VBox tipoPagamentoBox = new VBox(5, labelTipoPagamento, tipoPagamentoComboBox);
+        tipoPagamentoBox.setAlignment(Pos.CENTER_RIGHT);
+        tipoPagamentoBox.setPadding(new Insets(10, 0, 0, 0)); // Espaçamento acima do botão
+        // --- FIM DA ADIÇÃO DA COMBOBOX DE TIPO DE PAGAMENTO ---
+
+
         Button btnFinalizarPedido = new Button("Finalizar Pedido");
         btnFinalizarPedido.setFont(FONT_BUTTON);
         btnFinalizarPedido.setStyle(
@@ -280,10 +315,11 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         btnFinalizarPedido.setPrefWidth(200);
         btnFinalizarPedido.setOnAction(e -> handleFinalizarPedido());
 
-        HBox finalizarBox = new HBox(btnFinalizarPedido);
+        VBox finalizarBox = new VBox(5,tipoPagamentoBox,btnFinalizarPedido);
         finalizarBox.setAlignment(Pos.CENTER_RIGHT);
         finalizarBox.setPadding(new Insets(10,0,0,0));
 
+        // Adiciona a ComboBox ao painel, antes do botão de finalizar
         painel.getChildren().addAll(tituloCarrinho, carrinhoListViewUI, totalBox, finalizarBox);
         atualizarTotalDaUI();
         return painel;
@@ -544,6 +580,19 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
             return;
         }
 
+        // Obtém o tipo de pagamento selecionado na ComboBox
+        String tipoPagamentoSelecionado = tipoPagamentoComboBox.getValue();
+        if (tipoPagamentoSelecionado == null || tipoPagamentoSelecionado.isEmpty()) {
+            Alert alert = new Alert(Alert.AlertType.WARNING, "Por favor, selecione um tipo de pagamento antes de finalizar o pedido.", ButtonType.OK);
+            alert.setHeaderText("Tipo de Pagamento Não Selecionado");
+            alert.setTitle("Atenção");
+            styleAlertDialog(alert);
+            alert.showAndWait();
+            statusLabelUI.setText("Tipo de pagamento não selecionado.");
+            return;
+        }
+
+
         Pedido pedidoFinal = new Pedido();
         ArrayList<Prato> pratosParaPedidoFinal = new ArrayList<>();
         ArrayList<Integer> quantidadesParaPedidoFinal = new ArrayList<>();
@@ -577,8 +626,15 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         pedidoFinal.setConsumidor(cliente);
         pedidoFinal.setItensPedido(pedidoItems);
         Float subtotalSimplesFinal = pedidoFinal.calcularPrecoTotal();
-        Pagamento pagamentoFinal = new Pagamento(subtotalSimplesFinal,cliente.getNome(),"Pix",1);
+
+        // Usa o tipo de pagamento selecionado da ComboBox
+        Pagamento pagamentoFinal = new Pagamento(subtotalSimplesFinal,cliente.getNome(),tipoPagamentoSelecionado,1);
         pedidoFinal.setPagamento(pagamentoFinal);
+        pedidoFinal.getPagamento().ehPix();
+        if(cliente.ehAniversario()){pedidoFinal.getPagamento().setPreco(pedidoFinal.getPagamento().getPreco()-5);}
+        Float desconto = cliente.descontoIdade(pedidoFinal.getPagamento().getPreco());
+        pedidoFinal.getPagamento().setPreco(desconto);
+
 
         EntityManager tempEm = JpaUtil.getFactory().createEntityManager(); // Use a new EM for this transaction
         try {
@@ -605,6 +661,8 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         }
         sb.append(String.format("  - 1x Frete: R$ %d\n",pedidoFinal.getFrete()));
         sb.append(String.format("\nSubtotal dos Pratos: R$ %.2f", subtotalSimplesFinal));
+        sb.append(String.format("\nTipo de Pagamento: %s", tipoPagamentoSelecionado)); // Adiciona o tipo de pagamento ao resumo
+
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Pedido Finalizado");
         alert.setHeaderText("Confirmação do Pedido");
