@@ -16,6 +16,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -105,19 +106,37 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         }
     }
 
-    @Override // 2. Implementa o método abstrato criarScene()
-    public Scene criarScene() { // MUDANÇA AQUI: de void mostrarTela() para Scene criarScene()
+    @Override
+    public Scene criarScene() {
         BorderPane layoutPrincipal = new BorderPane();
         layoutPrincipal.setPadding(new Insets(20));
         String estiloFundoVinho = "-fx-background-color: linear-gradient(to right, #30000C, #800020);";
         layoutPrincipal.setStyle(estiloFundoVinho);
 
-        Label screenTitle = new Label("Restaurante Monsieur-José - Delivery");
-        screenTitle.setFont(FONT_TITLE);
-        screenTitle.setStyle("-fx-text-fill: #FFC300");
-        screenTitle.setPadding(new Insets(0, 0, 20, 5));
-        layoutPrincipal.setTop(screenTitle);
-        BorderPane.setAlignment(screenTitle, Pos.CENTER_LEFT);
+        // --- INÍCIO DA MODIFICAÇÃO DO TÍTULO ---
+
+        // 1. Carregar a fonte e criar o Label principal
+        Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
+        // Usamos a variável estática 'emFrances' para a tradução, assim como na outra tela
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Livraison" : "Delivery");
+        tituloPrincipal.setFont(playfairFontTitulo);
+        tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
+
+        // 2. Criar o sublinhado
+        Rectangle sublinhado = new Rectangle(230, 4); // A largura inicial é ajustada pelo 'bind'
+        sublinhado.setFill(Color.web("#FFC300"));
+        // A largura do sublinhado se ajusta automaticamente à largura do texto
+        sublinhado.widthProperty().bind(tituloPrincipal.widthProperty());
+
+        // 3. Agrupar o título e o sublinhado em um VBox
+        VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
+        blocoTitulo.setAlignment(Pos.CENTER);
+        blocoTitulo.setPadding(new Insets(0, 0, 20, 0)); // Adiciona um espaço abaixo do título
+
+        // 4. Posicionar o bloco do título no topo do layout
+        layoutPrincipal.setTop(blocoTitulo);
+
+        // --- FIM DA MODIFICAÇÃO DO TÍTULO ---
 
         VBox painelMenu = criarPainelMenu();
         layoutPrincipal.setLeft(painelMenu);
@@ -139,22 +158,15 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         );
         layoutPrincipal.setBottom(statusLabelUI);
 
-        // --- INÍCIO DA MODIFICAÇÃO ---
-        // 1. Criar um StackPane para ser o novo root da cena
         StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(layoutPrincipal); // Adiciona o BorderPane original
+        stackPane.getChildren().add(layoutPrincipal);
 
-        // 2. Criar e posicionar o botão de voltar
         BotaoVoltar.criarEPosicionar(stackPane, () -> {
             new TelaInicial(super.getStage()).mostrarTela();
         });
 
-        // 3. Criar a cena com o StackPane
         Scene scene = new Scene(stackPane, 1024, 768);
-        // --- FIM DA MODIFICAÇÃO ---
-
-        // Comandos de stage removidos conforme a estrutura
-        return scene; // Retorna a Scene
+        return scene;
     }
 
     public void fecharRecursosJPA() {

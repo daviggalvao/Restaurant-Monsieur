@@ -53,10 +53,12 @@ import jakarta.persistence.*;
         public void setQuantidadePessoas(int qtdPessoas){this.qtdPessoas = qtdPessoas;}
         public void setPagamento(Pagamento pagamento){this.pagamento = pagamento;}
 
-        public boolean ehDiaSemana(){
+        public void ehDiaSemana(){
             LocalDate dia = this.getData();
             int valorDia = dia.getDayOfWeek().getValue();
-            return valorDia >= 1 && valorDia <= 5;
+            if(valorDia >= 1 && valorDia <= 5){
+                this.pagamento.setPreco(this.pagamento.getPreco() - 5);
+            }
         }
 
         public void ehMuitaGente(){

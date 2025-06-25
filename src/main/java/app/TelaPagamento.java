@@ -395,13 +395,27 @@ public class TelaPagamento extends Tela { // A classe já estende Tela
         return vbox;
     }
 
-    @Override // ADICIONAR @Override e mudar de 'void mostrarTela()' para 'public Scene criarScene()'
+    @Override
     public Scene criarScene() {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Label titulo = new Label("Finalizar Pagamento");
         titulo.setFont(playfairFont);
         titulo.setStyle("-fx-text-fill: #FFC300;");
 
+        // --- INÍCIO DA MODIFICAÇÃO ---
+
+        // 1. Criar o Rectangle que será o sublinhado
+        Rectangle sublinhado = new Rectangle(400, 4); // A largura inicial será ajustada pelo 'bind'
+        sublinhado.setFill(Color.web("#FFC300"));
+
+        // 2. Vincular a largura do sublinhado à largura do título para um ajuste automático
+        sublinhado.widthProperty().bind(titulo.widthProperty());
+
+        // 3. Agrupar o título e o sublinhado em um VBox para centralizá-los juntos
+        VBox blocoTitulo = new VBox(5, titulo, sublinhado); // O '5' é o espaçamento entre o título e a barra
+        blocoTitulo.setAlignment(Pos.CENTER);
+
+        // --- FIM DA MODIFICAÇÃO ---
 
         String corBordaCard = "#E4E9F0";
         String corTextoCard = "black";
@@ -417,7 +431,8 @@ public class TelaPagamento extends Tela { // A classe já estende Tela
         cardsContainer.setAlignment(Pos.CENTER);
 
         VBox contenedor = new VBox(25);
-        contenedor.getChildren().addAll(titulo, cardsContainer);
+        // 4. Adicionar o 'blocoTitulo' ao invés do 'titulo' diretamente
+        contenedor.getChildren().addAll(blocoTitulo, cardsContainer);
         contenedor.setAlignment(Pos.CENTER);
 
         String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)";
@@ -427,19 +442,15 @@ public class TelaPagamento extends Tela { // A classe já estende Tela
         pane.setContent(contenedor);
         pane.setFitToHeight(true);
         pane.setFitToWidth(true);
-        pane.setStyle("-fx-background-color:"  + estiloFundoVinho + ";");
+        pane.setStyle("-fx-background-color: transparent;");
 
-        // --- INÍCIO DA MODIFICAÇÃO ---
-        // 1. Criar um StackPane para ser o novo nó raiz da cena.
         StackPane rootPane = new StackPane();
-        rootPane.getChildren().add(pane); // Adiciona o ScrollPane original.
+        rootPane.getChildren().add(pane);
+        rootPane.setStyle("-fx-background-color:"  + estiloFundoVinho + ";");
 
-        // 2. Criar e posicionar o botão de voltar, com a ação de ir para a TelaInicial.
         BotaoVoltar.criarEPosicionar(rootPane, () -> new TelaInicial(super.getStage()).mostrarTela());
 
-        // 3. Criar a cena usando o StackPane como raiz.
         Scene scene = new Scene(rootPane);
-        // --- FIM DA MODIFICAÇÃO ---
 
         return scene;
     }
