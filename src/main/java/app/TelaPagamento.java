@@ -1,5 +1,10 @@
 package app;
 
+import classes.Cliente;
+import classes.Reserva;
+import database.JpaUtil;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -16,9 +21,13 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
+import org.hibernate.Session;
+import org.hibernate.query.Query;
+
+import java.util.List;
 
 public class TelaPagamento extends Tela { // A classe já estende Tela
-
+    private String userEmail;
     private String tituloDesc;
     private String tituloDesc2;
     private String p1 = "1x de R$ 117.30(à vista)";
@@ -28,8 +37,16 @@ public class TelaPagamento extends Tela { // A classe já estende Tela
     private String p5 = "5x de R$ 23.46";
 
 
-    public TelaPagamento(Stage stage) {
+    public TelaPagamento(Stage stage, String email) {
+
         super(stage);
+        this.userEmail = email;
+    }
+
+    public List<Reserva> buscarReservasPorEmailHQL(EntityManager em) {
+        TypedQuery<Reserva> query = em.createQuery("FROM Reserva r WHERE r.cliente.email = :email ", Reserva.class);
+        query.setParameter("email", this.userEmail);
+        return query.getResultList();
     }
 
     private void updateContent(String selectedItem, VBox contentBox) {
@@ -72,17 +89,24 @@ public class TelaPagamento extends Tela { // A classe já estende Tela
 
 
         } else if (selectedItem.equals("Reservas")) {
+            EntityManager tempEm = JpaUtil.getFactory().createEntityManager();
+            List<Reserva> reservations = buscarReservasPorEmailHQL(tempEm);
 
-            Label reserva = new Label("Reserva #RES001");
-            reserva.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-            Label data = new Label("15/12/2024 às 19:30");
-            data.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
-            Label local = new Label("Local: Salão Principal");
-            local.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
-            Label preco = new Label("Mesa para 4 pessoas                                R$ 120.00");
-            preco.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
-            Label taxaServico = new Label("Taxa de serviço                                           R$ 15.00");
-            taxaServico.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+            double totalReservas = 0.0;
+
+            for (Reserva r : reservations) {
+                String formattedReservation = String.format(
+                        "  - Reserva para %s em %s às %s (R$ %.2f)\n",
+                        r.getCliente().getNome()
+                        , r.getData().toString()
+                        , r.getHorario().toString()
+                        , r.getPagamento().getPreco()
+                );
+                Label reservationLabel = new Label(formattedReservation);
+                reservationLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+                contentBox.getChildren().add(reservationLabel);
+                totalReservas += r.getPagamento().getPreco();
+            }
 
             Rectangle sublinhado = new Rectangle(325, 2);
             sublinhado.setFill(Color.web("#ddd"));
@@ -90,10 +114,14 @@ public class TelaPagamento extends Tela { // A classe já estende Tela
             Rectangle sublinhado2 = new Rectangle(325, 2);
             sublinhado2.setFill(Color.web("#ddd"));
 
+            Label taxaServico = new Label("Taxa de Serviço                                          R$ 0.00"); // Add if applicable
+            taxaServico.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+
             Label subtotal = new Label("Subtotal:");
             subtotal.setStyle("-fx-font-weight: bold; -fx-fill: black; -fx-font-size: 17px; ");
             subtotal.setAlignment(Pos.CENTER_LEFT);
-            Label precoTotal = new Label("R$ 145.00");
+
+            Label precoTotal = new Label(String.format("R$ %.2f", totalReservas));
             precoTotal.setStyle("-fx-font-weight: bold; -fx-text-fill: green; -fx-font-size: 17px; ");
             precoTotal.setAlignment(Pos.CENTER_RIGHT);
 
@@ -101,9 +129,11 @@ public class TelaPagamento extends Tela { // A classe já estende Tela
             subtotalPrecoBox.setAlignment(Pos.CENTER_LEFT);
             HBox.setHgrow(precoTotal, Priority.ALWAYS);
 
-            contentBox.getChildren().addAll(reserva, data, local, preco , sublinhado, taxaServico, sublinhado2, subtotalPrecoBox);
+            contentBox.getChildren().addAll(sublinhado, taxaServico, sublinhado2, subtotalPrecoBox);
             contentBox.setAlignment(Pos.BASELINE_LEFT);
             VBox.setMargin(contentBox,  new Insets(0, 0, 0, 3));
+
+            tempEm.close(); // Close the EntityManager when done
         }
     }
 

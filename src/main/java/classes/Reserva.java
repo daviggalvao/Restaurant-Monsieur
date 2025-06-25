@@ -43,7 +43,7 @@ import jakarta.persistence.*;
         public boolean getChofer(){return this.chofer;}
         public Cliente getCliente(){return this.cliente;}
         public int getQuantidadePessoas(){return this.qtdPessoas;}
-        public String getPagamento(){return this.pagamento.getTipo();}
+        public Pagamento getPagamento(){return this.pagamento;}
 
         public void setId(int id){this.id = id;}
         public void setData(LocalDate data){this.data = data;}
