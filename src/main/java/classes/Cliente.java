@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "cliente")
@@ -21,7 +22,7 @@ public class Cliente extends Pessoa {
             orphanRemoval = true,
             fetch = FetchType.LAZY
     )
-    private ArrayList<Reserva> reservas = new ArrayList<>();
+    private List<Reserva> reservas = new ArrayList<>();
 
 
     public Cliente() {}
@@ -35,7 +36,7 @@ public class Cliente extends Pessoa {
 
     public int getFidelidade() {return fidelidade;}
     public int getNumeroReservas() {return numeroReservas;}
-    public ArrayList<Reserva> getReservas() {return reservas;}
+    public List<Reserva> getReservas() {return reservas;}
 
     public void setNumeroReservas(int numeroReservas) {this.numeroReservas += numeroReservas;}
     public void setFidelidade(int fidelidade) {this.fidelidade = fidelidade;}
@@ -55,9 +56,7 @@ public class Cliente extends Pessoa {
         LocalDate dataAniversario = getDataAniversario();
         LocalDate hoje = LocalDate.now();
         if (dataAniversario == null) {return false;}
-        if(dataAniversario.getDayOfMonth() == hoje.getDayOfMonth() &&
-                dataAniversario.getMonthValue() == hoje.getMonthValue()){
-            return true;}
-        return false;
+        return dataAniversario.getDayOfMonth() == hoje.getDayOfMonth() &&
+                dataAniversario.getMonthValue() == hoje.getMonthValue();
     }
 }
