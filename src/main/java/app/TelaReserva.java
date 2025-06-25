@@ -207,12 +207,16 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
 
                 Pagamento pagamentoReserva = new Pagamento(20.0f, name, pagamento, 1);
                 Reserva reservation = new Reserva(data, hora, cliente, qtdpessoas, chofer, pagamentoReserva);
+                reservation.querChofer();
+                reservation.ehMuitaGente();
+                reservation.ehDiaSemana();
+                if(cliente.ehAniversario()){reservation.getPagamento().setPreco(reservation.getPagamento().getPreco()-5);}
+                reservation.getPagamento().ehPix();
                 em.getTransaction().begin();
                 em.persist(reservation);
                 em.getTransaction().commit();
                 mostrarAlerta(Alert.AlertType.INFORMATION, Tela.emFrances ? "Réservation effectuée" : "Reserva Realizada", Tela.emFrances ? "Réservation effectuée pour le client "+ name +" avec succès !" : "Reserva feita para o cliente" + name + " com sucesso!");
 
-                // Opcional: Voltar para Tela Inicial ou para a tela de serviços após a reserva
                 new TelaInicial(super.getStage()).mostrarTela(); // Exemplo de retorno
 
             }catch (NoResultException e) {

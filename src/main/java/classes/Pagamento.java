@@ -32,10 +32,9 @@ public class Pagamento{
     public void setTipo(String tipo){this.tipo = tipo;}
     public void setParcelas(int parcelas){this.parcelas = parcelas;}
 
-    public boolean ehPix(){
-        if(!this.tipo.equalsIgnoreCase("Pix"))return false;
-        this.preco *= 0.9f;
-        return true;
+    public void ehPix(){
+        if(this.tipo.equalsIgnoreCase("Pix")){
+        this.preco *= 0.9f;}
     }
 
     public void parcelamento(int num){

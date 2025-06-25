@@ -1,8 +1,7 @@
 package classes;
 
 import java.time.LocalDate;
-import java.time.DayOfWeek;
-import classes.Pagamento;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -53,23 +52,24 @@ import jakarta.persistence.*;
         public void setQuantidadePessoas(int qtdPessoas){this.qtdPessoas = qtdPessoas;}
         public void setPagamento(Pagamento pagamento){this.pagamento = pagamento;}
 
-        public boolean ehDiaSemana(){
+        public void ehDiaSemana(){
             LocalDate dia = this.getData();
             int valorDia = dia.getDayOfWeek().getValue();
-            return valorDia >= 1 && valorDia <= 5;
+            if(valorDia >= 1 && valorDia <= 5){
+                this.pagamento.setPreco(this.pagamento.getPreco()-5);
+            }
         }
 
         public void ehMuitaGente(){
             if(this.qtdPessoas > 5){
-                this.pagamento.setPreco(this.qtdPessoas);
+                this.pagamento.setPreco(this.pagamento.getPreco()/2);
             }else{ 
-                this.pagamento.setPreco(this.qtdPessoas*2);
+                this.pagamento.setPreco(this.pagamento.getPreco());
             }
         }
 
-        public boolean querChofer(){
-            if (!this.chofer) return false;
+        public void querChofer(){
+            if (!this.chofer) return;
             this.pagamento.setPreco(this.pagamento.getPreco() + 10);
-            return true;
         }
     }

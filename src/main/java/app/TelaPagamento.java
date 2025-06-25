@@ -1,6 +1,6 @@
 package app;
 
-import classes.Cliente;
+import classes.Pedido;
 import classes.Reserva;
 import database.JpaUtil;
 import jakarta.persistence.EntityManager;
@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region; // Importe Region
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -22,8 +23,6 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import org.hibernate.Session;
-import org.hibernate.query.Query;
 
 import java.util.List;
 
@@ -50,91 +49,226 @@ public class TelaPagamento extends Tela { // A classe já estende Tela
         return query.getResultList();
     }
 
+    public List<Pedido> buscarPedidosPorEmailHQL(EntityManager em) {
+        // Assume que a classe Pedido tem um campo 'consumidor' que é um Cliente
+        // e que Cliente tem um campo 'email'.
+        TypedQuery<Pedido> query = em.createQuery("FROM Pedido p WHERE p.consumidor.email = :email ", Pedido.class);
+        query.setParameter("email", this.userEmail);
+        return query.getResultList();
+    }
+
+    // O método updateContent agora recebe o ScrollPane como argumento
+    // O ScrollPane não é usado para alinhamento de preço, mas o seu uso foi mantido da versão anterior
     private void updateContent(String selectedItem, VBox contentBox) {
-        contentBox.getChildren().clear();
+        contentBox.getChildren().clear(); // Limpa o conteúdo anterior
 
         if (selectedItem.equals("Pedidos")) {
-            Label pedido = new Label("Pedido #PED001");
-            pedido.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
-            Label pizza = new Label("Pizza Margherita x2                                  R$ 91.80");
-            pizza.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
-            Label refrigerante = new Label("Refrigerante 2L x1                                       R$ 8.50");
-            refrigerante.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
-            Label sobremesa = new Label("Sobremesa x1                                            R$ 12.00");
-            sobremesa.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
-            Label taxaEntrega = new Label("Taxa de entrega                                           R$ 5.00");
-            taxaEntrega.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+            // O ScrollPane que contém contentBox é passado para este método na versão anterior.
+            // Para controle da barra de rolagem, parentScrollPane.setVbarPolicy() deve ser chamado
+            // dentro de createCard no listener ou em uma chamada inicial.
+            // parentScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+            // parentScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
 
-            Rectangle sublinhado = new Rectangle(325, 2);
-            sublinhado.setFill(Color.web("#ddd"));
+            EntityManager tempEm = JpaUtil.getFactory().createEntityManager();
+            List<Pedido> pedidos = buscarPedidosPorEmailHQL(tempEm);
 
-            Rectangle sublinhado2 = new Rectangle(325, 2);
-            sublinhado2.setFill(Color.web("#ddd"));
+            double totalPedidosCalculado = 0.0;
+
+            if (pedidos.isEmpty()) {
+                Label noPedidosLabel = new Label("Nenhum pedido encontrado para este usuário.");
+                noPedidosLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
+                contentBox.getChildren().add(noPedidosLabel);
+            } else {
+                for (Pedido p : pedidos) {
+                    Label pedidoHeader = new Label("Pedido #" + p.getId());
+                    pedidoHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+                    contentBox.getChildren().add(pedidoHeader);
+
+                    // Adicionar os itens do pedido
+                    if (p.getItensPedido() != null && !p.getItensPedido().isEmpty()) {
+                        for (classes.PedidoItem item : p.getItensPedido()) {
+                            if (item.getPrato() != null) {
+                                double precoTotalItem = item.getQuantidade() * item.getPrato().getPreco();
+                                String itemText = String.format("%s x%d", item.getPrato().getNome(), item.getQuantidade());
+                                String precoItemText = String.format("R$ %.2f", precoTotalItem);
+
+                                HBox itemRow = new HBox(); // <--- SEM ESPAÇAMENTO FIXO AQUI
+                                Label itemLabel = new Label(itemText);
+                                itemLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+                                itemLabel.setWrapText(true); // Manter quebra de linha
+
+                                Region spacer = new Region(); // <--- NOVO: Espaçador flexível
+                                HBox.setHgrow(spacer, Priority.ALWAYS); // <--- NOVO: Espaçador ocupará o espaço restante
+
+                                Label precoLabel = new Label(precoItemText);
+                                precoLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+                                // precoLabel.setWrapText(true); // Geralmente não é necessário para preços, mas mantido se desejar
+
+                                // Adiciona o itemLabel, o espaçador e o precoLabel
+                                itemRow.getChildren().addAll(itemLabel, spacer, precoLabel); // <--- MODIFICADO AQUI
+                                itemRow.setAlignment(Pos.BASELINE_LEFT); // Alinhar itens na linha (left)
+                                contentBox.getChildren().add(itemRow);
+                            }
+                        }
+                    } else {
+                        Label noItemsLabel = new Label("    (Sem itens no pedido)");
+                        noItemsLabel.setStyle("-fx-font-size: 12px; -fx-text-fill: gray;");
+                        contentBox.getChildren().add(noItemsLabel);
+                    }
+
+                    // Adicionar taxa de entrega específica do pedido
+                    // Também aplicando a mesma lógica para alinhar "R$ X.XX" à direita
+                    HBox taxaEntregaRow = new HBox();
+                    Label taxaEntregaTextLabel = new Label("Taxa de entrega");
+                    taxaEntregaTextLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+                    taxaEntregaTextLabel.setWrapText(true);
+
+                    Region spacerTaxa = new Region();
+                    HBox.setHgrow(spacerTaxa, Priority.ALWAYS);
+
+                    Label taxaEntregaPrecoLabel = new Label(String.format("R$ %.2f", (double)p.getFrete()));
+                    taxaEntregaPrecoLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+
+                    taxaEntregaRow.getChildren().addAll(taxaEntregaTextLabel, spacerTaxa, taxaEntregaPrecoLabel);
+                    taxaEntregaRow.setAlignment(Pos.BASELINE_LEFT);
+                    contentBox.getChildren().add(taxaEntregaRow);
 
 
-            Label subtotal = new Label("Subtotal:");
-            subtotal.setStyle("-fx-font-weight: bold; -fx-fill: black; -fx-font-size: 17px; ");
-            subtotal.setAlignment(Pos.CENTER_LEFT);
-            Label preco = new Label("R$ 117.30");
-            preco.setStyle("-fx-font-weight: bold; -fx-text-fill: green; -fx-font-size: 17px; ");
-            preco.setAlignment(Pos.CENTER_RIGHT);
+                    Rectangle separator = new Rectangle(325, 1); // Separador entre pedidos
+                    separator.setFill(Color.web("#eee"));
+                    VBox.setMargin(separator, new Insets(10, 0, 10, 0));
+                    contentBox.getChildren().add(separator);
 
-            HBox subtotalPrecoBox = new HBox(170, subtotal, preco);
-            subtotalPrecoBox.setAlignment(Pos.CENTER_LEFT);
-            HBox.setHgrow(preco, Priority.ALWAYS);
+                    totalPedidosCalculado += p.calcularPrecoTotal(); // Soma o total de cada pedido
+                }
 
+                // Linhas e subtotal final para todos os pedidos
+                Rectangle sublinhado = new Rectangle(325, 2); // Ajustado para 325 para consistência, se o card for 400 de largura
+                sublinhado.setFill(Color.web("#ddd"));
+                contentBox.getChildren().add(sublinhado);
 
-            contentBox.getChildren().addAll(pedido, pizza, refrigerante, sobremesa, sublinhado, taxaEntrega, sublinhado2, subtotalPrecoBox);
+                Label subtotalGeralLabel = new Label("Subtotal Geral:");
+                subtotalGeralLabel.setStyle("-fx-font-weight: bold; -fx-fill: black; -fx-font-size: 17px; ");
+                subtotalGeralLabel.setAlignment(Pos.CENTER_LEFT);
+
+                Region spacerTotalGeral = new Region(); // <--- NOVO: Espaçador flexível para o subtotal geral
+                HBox.setHgrow(spacerTotalGeral, Priority.ALWAYS); // <--- NOVO: Ocupa o espaço restante
+
+                Label precoTotalGeral = new Label(String.format("R$ %.2f", totalPedidosCalculado));
+                precoTotalGeral.setStyle("-fx-font-weight: bold; -fx-text-fill: green; -fx-font-size: 17px; ");
+                precoTotalGeral.setAlignment(Pos.CENTER_RIGHT);
+
+                HBox subtotalPrecoBox = new HBox(); // <--- SEM ESPAÇAMENTO FIXO AQUI
+                subtotalPrecoBox.setAlignment(Pos.CENTER_LEFT);
+                // HBox.setHgrow(precoTotalGeral, Priority.ALWAYS); // Removido, o spacerTotalGeral faz o trabalho
+                subtotalPrecoBox.getChildren().addAll(subtotalGeralLabel, spacerTotalGeral, precoTotalGeral); // <--- NOVO
+
+                // Afasta o HBox do subtotal da borda esquerda
+                VBox.setMargin(subtotalPrecoBox, new Insets(0, 0, 0, 15)); // <--- NOVO: Adiciona margem esquerda de 15px
+                contentBox.getChildren().add(subtotalPrecoBox);
+            }
+
             contentBox.setAlignment(Pos.BASELINE_LEFT);
-            VBox.setMargin(contentBox,  new Insets(0, 0, 0, 3));
-
-
+            VBox.setMargin(contentBox,  new Insets(0, 0, 0, 0)); // Mantendo a margem interna do VBox
+            tempEm.close(); // Fecha o EntityManager
         } else if (selectedItem.equals("Reservas")) {
+
             EntityManager tempEm = JpaUtil.getFactory().createEntityManager();
             List<Reserva> reservations = buscarReservasPorEmailHQL(tempEm);
 
             double totalReservas = 0.0;
 
-            for (Reserva r : reservations) {
-                String formattedReservation = String.format(
-                        "  - Reserva para %s em %s às %s (R$ %.2f)\n",
-                        r.getCliente().getNome()
-                        , r.getData().toString()
-                        , r.getHorario().toString()
-                        , r.getPagamento().getPreco()
-                );
-                Label reservationLabel = new Label(formattedReservation);
-                reservationLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
-                contentBox.getChildren().add(reservationLabel);
-                totalReservas += r.getPagamento().getPreco();
+            if (reservations.isEmpty()) {
+                Label noReservasLabel = new Label("Nenhuma reserva encontrada para este usuário.");
+                noReservasLabel.setStyle("-fx-font-size: 14px; -fx-text-fill: gray;");
+                contentBox.getChildren().add(noReservasLabel);
+            } else {
+                for (Reserva r : reservations) {
+                    String dia = "N/A";
+                    String mes = "N/A";
+                    if (r.getData() != null) {
+                        String[] dias = r.getData().toString().split("-");
+                        if (dias.length >= 3) {
+                            dia = dias[2];
+                            mes = dias[1];
+                        }
+                    }
+
+                    String nomeCliente = "Cliente Desconhecido";
+                    if (r.getCliente() != null && r.getCliente().getNome() != null) {
+                        String[] nomes = r.getCliente().getNome().split(" ");
+                        if (nomes.length > 0) {
+                            nomeCliente = nomes[0];
+                        }
+                    }
+
+                    double valorPagamento = 0.0;
+                    String nomePagamento = "N/A";
+
+                    // Verificação de nulo para Pagamento
+                    if (r.getPagamento() != null) {
+                        valorPagamento = r.getPagamento().getPreco();
+                        nomePagamento = r.getPagamento().getNome(); // Assumindo que Pagamento tem getNome()
+                    }
+
+                    HBox reservationRow = new HBox(); // <--- NOVO: HBox para a linha da reserva
+                    Label reservationTextLabel = new Label(
+                            String.format("  - Reserva para %s às %s do dia %s-%s",
+                                    nomeCliente, r.getHorario(), dia, mes)
+                    );
+                    reservationTextLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: mediumbold;");
+                    reservationTextLabel.setWrapText(true);
+
+                    Region spacerReserva = new Region(); // <--- NOVO: Espaçador flexível para a reserva
+                    HBox.setHgrow(spacerReserva, Priority.ALWAYS); // <--- NOVO: Ocupa o espaço restante
+
+                    Label reservationPriceLabel = new Label(String.format("(R$ %.2f)", valorPagamento)); // Preço entre parênteses
+                    reservationPriceLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+
+                    reservationRow.getChildren().addAll(reservationTextLabel, spacerReserva, reservationPriceLabel);
+                    reservationRow.setAlignment(Pos.BASELINE_LEFT);
+                    contentBox.getChildren().add(reservationRow);
+
+                    totalReservas += valorPagamento; // Usa o valor do pagamento para o total
+                }
+
+                Rectangle sublinhado = new Rectangle(325, 2);
+                sublinhado.setFill(Color.web("#ddd"));
+
+                // Removendo a Taxa de Serviço fixa, pois não estava sendo usada dinamicamente
+                // Label taxaServico = new Label("Taxa de Serviço                                          R$ 0.00");
+                // taxaServico.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+                // contentBox.getChildren().add(taxaServico);
+
+                // Removido sublinhado2, conforme solicitado anteriormente.
+                // Rectangle sublinhado2 = new Rectangle(325, 2);
+                // sublinhado2.setFill(Color.web("#ddd"));
+
+
+                Label subtotal = new Label("Subtotal:");
+                subtotal.setStyle("-fx-font-weight: bold; -fx-fill: black; -fx-font-size: 17px; ");
+                subtotal.setAlignment(Pos.CENTER_LEFT);
+
+                Region spacerReservaSubtotal = new Region(); // <--- NOVO: Espaçador flexível para o subtotal da reserva
+                HBox.setHgrow(spacerReservaSubtotal, Priority.ALWAYS); // <--- NOVO: Ocupa o espaço restante
+
+                Label precoTotal = new Label(String.format("R$ %.2f", totalReservas));
+                precoTotal.setStyle("-fx-font-weight: bold; -fx-text-fill: green; -fx-font-size: 17px; ");
+                precoTotal.setAlignment(Pos.CENTER_RIGHT);
+
+                HBox subtotalPrecoBox = new HBox(); // <--- SEM ESPAÇAMENTO FIXO AQUI
+                subtotalPrecoBox.setAlignment(Pos.CENTER_LEFT);
+                // HBox.setHgrow(precoTotal, Priority.ALWAYS); // Removido
+                subtotalPrecoBox.getChildren().addAll(subtotal, spacerReservaSubtotal, precoTotal); // <--- NOVO
+
+                // Afasta o HBox do subtotal da borda esquerda
+                VBox.setMargin(subtotalPrecoBox, new Insets(0, 0, 0, 15)); // <--- NOVO: Adiciona margem esquerda de 15px
+                contentBox.getChildren().addAll(sublinhado, subtotalPrecoBox); // Adiciona apenas o que é relevante
             }
 
-            Rectangle sublinhado = new Rectangle(325, 2);
-            sublinhado.setFill(Color.web("#ddd"));
-
-            Rectangle sublinhado2 = new Rectangle(325, 2);
-            sublinhado2.setFill(Color.web("#ddd"));
-
-            Label taxaServico = new Label("Taxa de Serviço                                          R$ 0.00"); // Add if applicable
-            taxaServico.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
-
-            Label subtotal = new Label("Subtotal:");
-            subtotal.setStyle("-fx-font-weight: bold; -fx-fill: black; -fx-font-size: 17px; ");
-            subtotal.setAlignment(Pos.CENTER_LEFT);
-
-            Label precoTotal = new Label(String.format("R$ %.2f", totalReservas));
-            precoTotal.setStyle("-fx-font-weight: bold; -fx-text-fill: green; -fx-font-size: 17px; ");
-            precoTotal.setAlignment(Pos.CENTER_RIGHT);
-
-            HBox subtotalPrecoBox = new HBox(162, subtotal, precoTotal);
-            subtotalPrecoBox.setAlignment(Pos.CENTER_LEFT);
-            HBox.setHgrow(precoTotal, Priority.ALWAYS);
-
-            contentBox.getChildren().addAll(sublinhado, taxaServico, sublinhado2, subtotalPrecoBox);
             contentBox.setAlignment(Pos.BASELINE_LEFT);
-            VBox.setMargin(contentBox,  new Insets(0, 0, 0, 3));
-
-            tempEm.close(); // Close the EntityManager when done
+            VBox.setMargin(contentBox,  new Insets(0, 0, 0, 0));
+            tempEm.close(); // Fecha o EntityManager
         }
     }
 
@@ -284,24 +418,35 @@ public class TelaPagamento extends Tela { // A classe já estende Tela
 
 
             final String[] selectedItem = {"Pedidos"};
-            VBox contentBox = new VBox(15);
+            VBox dynamicContentVBox = new VBox(15);
+            dynamicContentVBox.setStyle("-fx-background-color: white");
+
+            // Adiciona o dynamicContentVBox dentro de um ScrollPane
+            ScrollPane contentScrollPane = new ScrollPane(dynamicContentVBox);
+            contentScrollPane.setFitToWidth(true); // Faz o ScrollPane se ajustar à largura do VBox pai
+            contentScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            contentScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+            contentScrollPane.setFitToHeight(true);
 
             types.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
                 if (newValue != null) {
                     selectedItem[0] = newValue;
-                    updateContent(selectedItem[0],contentBox);
+                    updateContent(selectedItem[0], dynamicContentVBox); // <--- ATENÇÃO: ScrollPane não está sendo passado para updateContent aqui.
                 }
             });
 
             VBox tipos = new VBox(10, tipo, types);
-            updateContent(selectedItem[0], contentBox);
+            updateContent(selectedItem[0], dynamicContentVBox); // <--- ATENÇÃO: ScrollPane não está sendo passado para updateContent aqui.
 
-            VBox vbox = new VBox(20, titulos, tipos, contentBox);
+            dynamicContentVBox.setStyle("-fx-background-color: white");
+            contentScrollPane.setStyle("-fx-background-color: white");
+            VBox vbox = new VBox(20, titulos, tipos, contentScrollPane);
             vbox.setAlignment(Pos.TOP_CENTER);
             vbox.setPadding(new Insets(40));
             vbox.setMinSize(420,450);
             vbox.setPrefSize(420, 450);
             vbox.setMaxSize(420, 950);
+            VBox.setVgrow(contentScrollPane, Priority.ALWAYS);
 
             String cardBackgroundColor = "White";
             String normalStyle = "-fx-border-color: " + borderColor + ";" +
@@ -429,18 +574,9 @@ public class TelaPagamento extends Tela { // A classe já estende Tela
         pane.setFitToWidth(true);
         pane.setStyle("-fx-background-color:"  + estiloFundoVinho + ";");
 
-        // --- INÍCIO DA MODIFICAÇÃO ---
-        // 1. Criar um StackPane para ser o novo nó raiz da cena.
         StackPane rootPane = new StackPane();
         rootPane.getChildren().add(pane); // Adiciona o ScrollPane original.
-
-        // 2. Criar e posicionar o botão de voltar, com a ação de ir para a TelaInicial.
-        BotaoVoltar.criarEPosicionar(rootPane, () -> new TelaInicial(super.getStage()).mostrarTela());
-
-        // 3. Criar a cena usando o StackPane como raiz.
         Scene scene = new Scene(rootPane);
-        // --- FIM DA MODIFICAÇÃO ---
-
         return scene;
     }
 }

@@ -11,8 +11,8 @@ public class App extends Application{
 
         // Cria a primeira tela (TelaInicial) e a exibe na Stage principal
         // Nenhuma outra tela é instanciada aqui
-       // TelaInicial tela = new TelaInicial(primaryStage);
-        // tela.mostrarTela(); // Chama o método mostrarTela() da base Tela
+        //TelaInicial tela = new TelaInicial(primaryStage);
+         //tela.mostrarTela(); // Chama o método mostrarTela() da base Tela
         //primaryStage.show();
         TelaPagamento tela = new TelaPagamento(primaryStage,"rbcorreaneto@gmail.com");
         tela.mostrarTela();
