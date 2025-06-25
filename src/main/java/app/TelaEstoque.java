@@ -3,6 +3,7 @@ package app;
 import classes.Ingrediente;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -35,7 +36,22 @@ public class TelaEstoque extends Tela {
 
         VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
         blocoTitulo.setAlignment(Pos.CENTER);
-        VBox.setMargin(blocoTitulo, new Insets(20, 0, 30, 0));
+        VBox.setMargin(blocoTitulo, new Insets(20, 0, 20, 0));
+
+        // --- MUDANÇA: Ajuste no texto e adição do botão limpar ---
+        TextField pesquisaNome = new TextField();
+        // 1. Texto do campo de pesquisa alterado para ser mais simples
+        pesquisaNome.setPromptText(Tela.emFrances ? "Rechercher par nom" : "Pesquisar por nome");
+        pesquisaNome.setMinWidth(300); // Ajustei a largura mínima
+
+        // 2. Criação do botão Limpar
+        Button limparPesquisa = new Button(Tela.emFrances ? "Nettoyer" : "Limpar");
+
+        // 3. Adição do botão ao HBox, com espaçamento
+        HBox barraPesquisa = new HBox(10, pesquisaNome, limparPesquisa);
+        barraPesquisa.setAlignment(Pos.CENTER);
+        VBox.setMargin(barraPesquisa, new Insets(0, 0, 20, 0));
+        // --- FIM DA MUDANÇA ---
 
         TableView<Ingrediente> tabela = new TableView<>();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -60,19 +76,43 @@ public class TelaEstoque extends Tela {
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                setGraphic(empty ? null : botao);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(botao);
+                }
             }
         });
 
         tabela.getColumns().addAll(nomeColuna, precoColuna, quantidadeColuna, pedirColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        ObservableList<Ingrediente> dados = FXCollections.observableArrayList(
+        ObservableList<Ingrediente> masterData = FXCollections.observableArrayList(
                 new Ingrediente(1L, "Tomate Italiano", 8.50f, 0, "15/06/2025"),
                 new Ingrediente(2L, "Queijo Mussarela", 45.00f, 15, "30/07/2025"),
-                new Ingrediente(3L, "Farinha de Trigo", 5.20f, 50, "01/12/2026")
+                new Ingrediente(3L, "Farinha de Trigo", 5.20f, 50, "01/12/2026"),
+                new Ingrediente(4L, "Azeite de Oliva", 25.50f, 30, "01/01/2027")
         );
-        tabela.setItems(dados);
+
+        FilteredList<Ingrediente> filteredData = new FilteredList<>(masterData, p -> true);
+        tabela.setItems(filteredData);
+
+        pesquisaNome.textProperty().addListener((obs, oldValue, newValue) -> {
+            filteredData.setPredicate(ingrediente -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return ingrediente.getNome().toLowerCase().contains(lowerCaseFilter);
+            });
+        });
+
+        // --- MUDANÇA: Adicionando a ação para o botão de limpar ---
+        limparPesquisa.setOnAction(event -> {
+            pesquisaNome.clear(); // Limpa o campo de texto
+            filteredData.setPredicate(p -> true); // Reseta o filtro para mostrar tudo
+        });
+        // --- FIM DA MUDANÇA ---
 
         Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
@@ -86,7 +126,7 @@ public class TelaEstoque extends Tela {
         descricaoRodape.setAlignment(Pos.CENTER);
         VBox.setMargin(descricaoRodape, new Insets(20, 0, 20, 0));
 
-        VBox root = new VBox(10, blocoTitulo, tabela, descricaoRodape);
+        VBox root = new VBox(10, blocoTitulo, barraPesquisa, tabela, descricaoRodape);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
         VBox.setVgrow(tabela, Priority.ALWAYS);
@@ -105,11 +145,9 @@ public class TelaEstoque extends Tela {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        // --- MUDANÇAS PARA ADICIONAR O BOTÃO VOLTAR ---
         StackPane stackPane = new StackPane(scrollPane);
         stackPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        // Ação de voltar para a tela de serviços
         Runnable acaoVoltar = () -> new TelaServicos(super.getStage()).mostrarTela();
         BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
 

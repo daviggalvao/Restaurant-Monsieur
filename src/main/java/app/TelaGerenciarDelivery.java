@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleFloatProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList; // --- NOVO ---
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -22,20 +23,22 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 
 public class TelaGerenciarDelivery extends Tela {
 
-    private List<Pedido> listaDePedidos;
+    // --- MUDANÇA: Variáveis de dados movidas para o escopo da classe para o filtro ---
     private TableView<Pedido> tabelaPedidos;
+    private ObservableList<Pedido> masterData;
+    private FilteredList<Pedido> filteredData;
+    // --- FIM DA MUDANÇA ---
+
     private ListView<String> detalhesListView;
     private Label clienteLabel, totalLabel, statusAtualLabel;
     private ComboBox<String> statusComboBox;
     private Button salvarStatusButton;
-
     private Map<Pedido, String> statusDosPedidos = new HashMap<>();
 
     // --- Constantes de Estilo ---
@@ -53,45 +56,38 @@ public class TelaGerenciarDelivery extends Tela {
 
     public TelaGerenciarDelivery(Stage stage) {
         super(stage);
-        this.listaDePedidos = criarPedidosFicticios();
-        this.listaDePedidos.forEach(p -> statusDosPedidos.putIfAbsent(p, "Recebido"));
+        // --- MUDANÇA: Inicializa a lista principal (masterData) ---
+        List<Pedido> listaDePedidos = criarPedidosFicticios();
+        this.masterData = FXCollections.observableArrayList(listaDePedidos);
+        this.masterData.forEach(p -> statusDosPedidos.putIfAbsent(p, "Recebido"));
+        // --- FIM DA MUDANÇA ---
     }
 
-    /**
-     * CORREÇÃO AQUI:
-     * O método foi reescrito para usar a nova estrutura de Pedido e PedidoItem.
-     */
     private List<Pedido> criarPedidosFicticios() {
         List<Pedido> pedidos = new ArrayList<>();
         List<Ingrediente> ingredientesVazios = new ArrayList<>();
 
-        // --- Pedido 1 ---
         Cliente cliente1 = new Cliente("João Silva", LocalDate.of(1990, 5, 15), "Rua A, 123", "senha123", "joao@email.com");
         Prato prato1 = new Prato(45.00f, ingredientesVazios, "Pizza de Calabresa", "Pizza com calabresa e queijo", 10);
         Prato prato2 = new Prato(10.00f, ingredientesVazios, "Coca-Cola 2L", "Refrigerante", 20);
         Pagamento pag1 = new Pagamento(100.00f, "Dinheiro", "Dinheiro", 1);
-
-        // Cria o pedido e associa os itens
-        Pedido pedido1 = new Pedido(); // Assume construtor vazio
+        Pedido pedido1 = new Pedido();
         pedido1.setConsumidor(cliente1);
         pedido1.setPagamento(pag1);
         List<PedidoItem> itensPedido1 = new ArrayList<>();
-        itensPedido1.add(new PedidoItem(pedido1, prato1, 2)); // 2 x 45.00
-        itensPedido1.add(new PedidoItem(pedido1, prato2, 1)); // 1 x 10.00
-        pedido1.setItensPedido(itensPedido1); // Assume que este método existe
+        itensPedido1.add(new PedidoItem(pedido1, prato1, 2));
+        itensPedido1.add(new PedidoItem(pedido1, prato2, 1));
+        pedido1.setItensPedido(itensPedido1);
         pedidos.add(pedido1);
 
-        // --- Pedido 2 ---
         Cliente cliente2 = new Cliente("Maria Oliveira", LocalDate.of(1988, 10, 20), "Av. B, 456", "senha456", "maria@email.com");
         Prato prato3 = new Prato(35.00f, ingredientesVazios, "Salada Caesar", "Salada com frango grelhado", 15);
         Pagamento pag2 = new Pagamento(35.00f, "Cartão de Crédito", "Crédito", 1);
-
-        // Cria o pedido e associa os itens
         Pedido pedido2 = new Pedido();
         pedido2.setConsumidor(cliente2);
         pedido2.setPagamento(pag2);
         List<PedidoItem> itensPedido2 = new ArrayList<>();
-        itensPedido2.add(new PedidoItem(pedido2, prato3, 1)); // 1 x 35.00
+        itensPedido2.add(new PedidoItem(pedido2, prato3, 1));
         pedido2.setItensPedido(itensPedido2);
         pedidos.add(pedido2);
 
@@ -115,12 +111,55 @@ public class TelaGerenciarDelivery extends Tela {
         blocoTitulo.setPadding(new Insets(0, 0, 20, 0));
         layoutPrincipal.setTop(blocoTitulo);
 
+        // --- NOVO: Criação da barra de pesquisa e botão ---
+        TextField pesquisaNome = new TextField();
+        pesquisaNome.setPromptText("Pesquisar por nome");
+        pesquisaNome.setMinWidth(300);
+
+        Button limparPesquisa = new Button("Limpar");
+
+        HBox barraPesquisa = new HBox(10, pesquisaNome, limparPesquisa);
+        barraPesquisa.setAlignment(Pos.CENTER_LEFT); // Alinha à esquerda para um visual mais limpo
+        // --- FIM DO NOVO ---
+
         tabelaPedidos = criarTabelaPedidos();
-        layoutPrincipal.setCenter(tabelaPedidos);
+
+        // --- MUDANÇA: Coloca a barra de pesquisa e a tabela em um VBox ---
+        VBox centroContainer = new VBox(15, barraPesquisa, tabelaPedidos);
+        VBox.setVgrow(tabelaPedidos, Priority.ALWAYS);
+        layoutPrincipal.setCenter(centroContainer);
+        // --- FIM DA MUDANÇA ---
 
         VBox painelDetalhes = criarPainelDetalhes();
         layoutPrincipal.setRight(painelDetalhes);
         BorderPane.setMargin(painelDetalhes, new Insets(0, 0, 0, 20));
+
+        // --- MUDANÇA: Inicializa a FilteredList e a liga à tabela ---
+        this.filteredData = new FilteredList<>(masterData, p -> true);
+        tabelaPedidos.setItems(filteredData);
+        // --- FIM DA MUDANÇA ---
+
+
+        // --- NOVO: Lógica de filtragem e limpeza ---
+        pesquisaNome.textProperty().addListener((obs, oldVal, newVal) -> {
+            filteredData.setPredicate(pedido -> {
+                if (newVal == null || newVal.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newVal.toLowerCase();
+                if (pedido.getConsumidor() != null && pedido.getConsumidor().getNome() != null) {
+                    return pedido.getConsumidor().getNome().toLowerCase().contains(lowerCaseFilter);
+                }
+                return false; // Se não houver cliente/nome, não corresponde
+            });
+        });
+
+        limparPesquisa.setOnAction(e -> {
+            pesquisaNome.clear();
+            filteredData.setPredicate(p -> true);
+        });
+        // --- FIM DO NOVO ---
+
 
         tabelaPedidos.getSelectionModel().selectedItemProperty().addListener(
                 (obs, oldSelection, newSelection) -> {
@@ -132,7 +171,6 @@ public class TelaGerenciarDelivery extends Tela {
                 }
         );
 
-        carregarPedidosNaTabela();
 
         StackPane stackPane = new StackPane(layoutPrincipal);
         stackPane.setStyle("-fx-background-color: " + DARK_BACKGROUND_COLOR + ";");
@@ -145,7 +183,9 @@ public class TelaGerenciarDelivery extends Tela {
             String css = getTableViewStylesheet();
             String dataUri = "data:text/css," + URLEncoder.encode(css, StandardCharsets.UTF_8.name());
             scene.getStylesheets().add(dataUri);
-        } catch (UnsupportedEncodingException e) {
+            // --- NOVO: Adicionando o estilo do botão ---
+            scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
+        } catch (Exception e) { // MUDANÇA: Captura Exception genérica
             e.printStackTrace();
         }
 
@@ -153,6 +193,7 @@ public class TelaGerenciarDelivery extends Tela {
     }
 
     private TableView<Pedido> criarTabelaPedidos() {
+        // ... (o conteúdo deste método permanece o mesmo)
         TableView<Pedido> tabela = new TableView<>();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
         tabela.setPlaceholder(new Label("Nenhum pedido para exibir."));
@@ -190,6 +231,7 @@ public class TelaGerenciarDelivery extends Tela {
     }
 
     private VBox criarPainelDetalhes() {
+        // ... (o conteúdo deste método permanece o mesmo)
         VBox painel = new VBox(15);
         painel.setPadding(new Insets(15));
         painel.setPrefWidth(400);
@@ -255,11 +297,8 @@ public class TelaGerenciarDelivery extends Tela {
         return painel;
     }
 
-    /**
-     * CORREÇÃO AQUI:
-     * O método foi atualizado para iterar sobre a lista de PedidoItem.
-     */
     private void popularPainelDetalhes(Pedido pedido) {
+        // ... (o conteúdo deste método permanece o mesmo)
         clienteLabel.setText("Cliente: " + (pedido.getConsumidor() != null ? pedido.getConsumidor().getNome() : "N/A"));
         totalLabel.setText("Valor Total: " + (pedido.getPagamento() != null ? String.format("R$ %.2f", pedido.getPagamento().getPreco()) : "R$ 0,00"));
 
@@ -268,10 +307,10 @@ public class TelaGerenciarDelivery extends Tela {
         statusComboBox.setValue(statusAtual);
 
         detalhesListView.getItems().clear();
-        if (pedido.getItensPedido() != null && !pedido.getItensPedido().isEmpty()) { // Itera sobre a lista correta
+        if (pedido.getItensPedido() != null && !pedido.getItensPedido().isEmpty()) {
             for (PedidoItem item : pedido.getItensPedido()) {
-                Prato prato = item.getPrato(); // Assume que item.getPrato() existe
-                Integer quantidade = item.getQuantidade(); // Assume que item.getQuantidade() existe
+                Prato prato = item.getPrato();
+                Integer quantidade = item.getQuantidade();
                 if (prato != null) {
                     detalhesListView.getItems().add(String.format("%dx %s (R$ %.2f)", quantidade, prato.getNome(), prato.getPreco()));
                 }
@@ -283,6 +322,7 @@ public class TelaGerenciarDelivery extends Tela {
     }
 
     private void limparPainelDetalhes() {
+        // ... (o conteúdo deste método permanece o mesmo)
         clienteLabel.setText("Cliente: -");
         totalLabel.setText("Valor Total: -");
         statusAtualLabel.setText("Status Atual: -");
@@ -292,12 +332,11 @@ public class TelaGerenciarDelivery extends Tela {
         salvarStatusButton.setDisable(true);
     }
 
-    private void carregarPedidosNaTabela() {
-        ObservableList<Pedido> pedidosObservable = FXCollections.observableArrayList(this.listaDePedidos);
-        tabelaPedidos.setItems(pedidosObservable);
-    }
+    // --- MUDANÇA: Este método não é mais necessário, pois a tabela usa a FilteredList ---
+    // private void carregarPedidosNaTabela() { ... }
 
     private void salvarNovoStatus() {
+        // ... (o conteúdo deste método permanece o mesmo)
         Pedido pedidoSelecionado = tabelaPedidos.getSelectionModel().getSelectedItem();
         String novoStatus = statusComboBox.getValue();
 
@@ -319,6 +358,7 @@ public class TelaGerenciarDelivery extends Tela {
     }
 
     private String getTableViewStylesheet() {
+        // ... (o conteúdo deste método permanece o mesmo)
         return " .table-view { " +
                 "    -fx-background-color: " + PANEL_BACKGROUND_COLOR + "; " +
                 "    -fx-control-inner-background: " + PANEL_BACKGROUND_COLOR + "; " +
@@ -366,6 +406,7 @@ public class TelaGerenciarDelivery extends Tela {
     }
 
     private String darkenSlightly(String hexColor, double factor) {
+        // ... (o conteúdo deste método permanece o mesmo)
         Color color = Color.web(hexColor);
         if (factor > 0) {
             for (int i = 0; i < (int)(factor * 10); i++) color = color.darker();
@@ -379,6 +420,7 @@ public class TelaGerenciarDelivery extends Tela {
     }
 
     private void styleAlertDialog(Alert alert) {
+        // ... (o conteúdo deste método permanece o mesmo)
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.setStyle(
                 "-fx-background-color: " + PANEL_BACKGROUND_COLOR + ";" +

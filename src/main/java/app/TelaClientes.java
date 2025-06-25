@@ -3,6 +3,7 @@ package app;
 import classes.Cliente;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -27,7 +28,6 @@ public class TelaClientes extends Tela {
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
 
-        // --- Título Principal ---
         Label tituloPrincipal = new Label(Tela.emFrances ? "Clients" : "Clientes");
         tituloPrincipal.setFont(playfairFontTitulo);
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
@@ -37,15 +37,23 @@ public class TelaClientes extends Tela {
 
         VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
         blocoTitulo.setAlignment(Pos.CENTER);
-        VBox.setMargin(blocoTitulo, new Insets(20, 0, 30, 0));
+        VBox.setMargin(blocoTitulo, new Insets(20, 0, 20, 0));
 
-        // --- Tabela ---
+        TextField pesquisaNome = new TextField();
+        pesquisaNome.setPromptText(Tela.emFrances ? "Rechercher par nom" : "Pesquisar por nome");
+        pesquisaNome.setMinWidth(300);
+
+        Button limparPesquisa = new Button(Tela.emFrances ? "Nettoyer" : "Limpar");
+
+        HBox barraPesquisa = new HBox(10, pesquisaNome, limparPesquisa);
+        barraPesquisa.setAlignment(Pos.CENTER);
+        VBox.setMargin(barraPesquisa, new Insets(0, 0, 20, 0));
+
         TableView<Cliente> tabela = new TableView<>();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         TableColumn<Cliente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        TableColumn<Cliente, String> idColuna = new TableColumn<>("ID");
-        idColuna.setCellValueFactory(new PropertyValueFactory<>("Id"));
         TableColumn<Cliente, String> fidelidadeColuna = new TableColumn<>(Tela.emFrances ? "Fidelité" : "Fidelidade");
         fidelidadeColuna.setCellValueFactory(new PropertyValueFactory<>("fidelidade"));
         TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>(Tela.emFrances ? "Anniversaire" : "Aniversário");
@@ -53,13 +61,34 @@ public class TelaClientes extends Tela {
         TableColumn<Cliente, String> enderecoColuna = new TableColumn<>(Tela.emFrances ? "Adresse" : "Endereço");
         enderecoColuna.setCellValueFactory(new PropertyValueFactory<>("endereco"));
 
-        tabela.getColumns().addAll(nomeColuna, idColuna, fidelidadeColuna, aniversarioColuna, enderecoColuna);
+        tabela.getColumns().addAll(nomeColuna, fidelidadeColuna, aniversarioColuna, enderecoColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        Cliente test = new Cliente("Maria", LocalDate.of(2003, 2, 24), "Samambaia Norte q.2", "interdelixao", "mariazinha@outlook.com");
-        tabela.setItems(FXCollections.observableArrayList(test));
+        ObservableList<Cliente> masterData = FXCollections.observableArrayList(
+                new Cliente("Maria Silva", LocalDate.of(2003, 2, 24), "Samambaia Norte Q.2", "interdelixao", "mariazinha@outlook.com"),
+                new Cliente("João Santos", LocalDate.of(1995, 5, 10), "Asa Sul", "joao123", "joao.santos@email.com"),
+                new Cliente("Ana Pereira", LocalDate.of(1988, 9, 30), "Lago Norte", "ana.p", "ana.pereira@email.com"),
+                new Cliente("Carlos Souza", LocalDate.of(1999, 7, 15), "Taguatinga Centro", "carlos.souza", "carlos@email.com")
+        );
 
-        // --- Rodapé ---
+        FilteredList<Cliente> filteredData = new FilteredList<>(masterData, p -> true);
+        tabela.setItems(filteredData);
+
+        pesquisaNome.textProperty().addListener((obs, oldValue, newValue) -> {
+            filteredData.setPredicate(cliente -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return cliente.getNome().toLowerCase().contains(lowerCaseFilter);
+            });
+        });
+
+        limparPesquisa.setOnAction(event -> {
+            pesquisaNome.clear();
+            filteredData.setPredicate(p -> true);
+        });
+
         Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
         Label desc2 = new Label("Projetado para a excelência culinária francesa");
@@ -71,8 +100,7 @@ public class TelaClientes extends Tela {
         descricaoRodape.setAlignment(Pos.CENTER);
         VBox.setMargin(descricaoRodape, new Insets(20, 0, 20, 0));
 
-        // --- Layout Principal ---
-        VBox root = new VBox(10, blocoTitulo, tabela, descricaoRodape);
+        VBox root = new VBox(10, blocoTitulo, barraPesquisa, tabela, descricaoRodape);
         root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20));
         VBox.setVgrow(tabela, Priority.ALWAYS);
@@ -91,21 +119,15 @@ public class TelaClientes extends Tela {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        // --- MUDANÇAS PARA ADICIONAR O BOTÃO VOLTAR ---
-        // 1. Envolver o layout principal em um StackPane
         StackPane stackPane = new StackPane(scrollPane);
-        stackPane.setStyle("-fx-background-color: " + estiloFundoVinho); // Garante o fundo correto
+        stackPane.setStyle("-fx-background-color: " + estiloFundoVinho);
 
-        // 2. Definir a ação de voltar para a TelaGerente
         Runnable acaoVoltar = () -> new TelaGerente(super.getStage()).mostrarTela();
-
-        // 3. Adicionar o botão ao StackPane
         BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
 
-        // 4. Criar a cena com o StackPane como raiz
         Scene scene = new Scene(stackPane);
+        scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
 
-        // Lógica de responsividade
         scene.widthProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.doubleValue() < 1200) {
                 tituloPrincipal.setFont(Font.font(playfairFontTitulo.getFamily(), 42));

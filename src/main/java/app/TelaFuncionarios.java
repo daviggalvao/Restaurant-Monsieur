@@ -4,6 +4,7 @@ import classes.Funcionario;
 import classes.FuncionarioCargo;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -29,7 +30,6 @@ public class TelaFuncionarios extends Tela {
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
 
-        // --- Títulos ---
         Label tituloPrincipal = new Label(Tela.emFrances ? "Employés" : "Funcionários");
         tituloPrincipal.setFont(playfairFontTitulo);
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
@@ -40,21 +40,29 @@ public class TelaFuncionarios extends Tela {
         blocoTitulo.setAlignment(Pos.CENTER);
         VBox.setMargin(blocoTitulo, new Insets(20, 0, 30, 0));
 
-        // --- Painel de Promoção ---
         Label promotion = new Label(Tela.emFrances ? "Promotion" : "Promoção");
         promotion.setFont(playfairFontSubs);
         promotion.setStyle("-fx-text-fill: #FFC300;");
 
+        TextField pesquisaNome = new TextField();
+        pesquisaNome.setPromptText(Tela.emFrances ? "Rechercher par nom" : "Pesquisar por nome");
+        pesquisaNome.setMinWidth(300);
+        Button limparPesquisa = new Button(Tela.emFrances ? "Nettoyer" : "Limpar");
+        HBox barraPesquisa = new HBox(10, pesquisaNome, limparPesquisa);
+        barraPesquisa.setAlignment(Pos.CENTER);
+
         TableView<Funcionario> tabela = new TableView<>();
-        ObservableList<Funcionario> funcionarioList = FXCollections.observableArrayList();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         TableColumn<Funcionario, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
+
         TableColumn<Funcionario, FuncionarioCargo> cargoColuna = new TableColumn<>(Tela.emFrances ? "Position" : "Cargo");
-        cargoColuna.setCellValueFactory(new PropertyValueFactory<>("cargo"));
+        cargoColuna.setCellValueFactory(cellData -> cellData.getValue().getCargo());
+
         TableColumn<Funcionario, String> contratoColuna = new TableColumn<>(Tela.emFrances ? "Contracter" : "Contrato");
         contratoColuna.setCellValueFactory(new PropertyValueFactory<>("dataContrato"));
+
         TableColumn<Funcionario, Void> promoverColuna = new TableColumn<>(Tela.emFrances ? "Promouvoir" : "Promover");
         promoverColuna.setCellFactory(coluna -> new TableCell<>() {
             private final Button botao = new Button(Tela.emFrances ? "Promouvoir" : "Promover");
@@ -72,24 +80,60 @@ public class TelaFuncionarios extends Tela {
             }
         });
 
-        tabela.getColumns().addAll(nomeColuna, cargoColuna, contratoColuna, promoverColuna);
+        // --- NOVO: Coluna para demitir funcionário ---
+        TableColumn<Funcionario, Void> demitirColuna = new TableColumn<>(Tela.emFrances ? "Licencier" : "Demitir");
+        demitirColuna.setCellFactory(coluna -> new TableCell<>() {
+            private final Button botaoDemitir = new Button(Tela.emFrances ? "Licencier" : "Demitir");
+            {
+                botaoDemitir.setOnAction(event -> {
+                    Funcionario func = getTableView().getItems().get(getIndex());
+                    func.demitirFuncionario();
+                    getTableView().refresh();
+                });
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : botaoDemitir);
+            }
+        });
+        // --- FIM DO NOVO ---
+
+        // --- MUDANÇA: Adicionando a nova coluna à tabela ---
+        tabela.getColumns().addAll(nomeColuna, cargoColuna, contratoColuna, promoverColuna, demitirColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        Funcionario test = new Funcionario("Carlos", LocalDate.of(2003, 2, 24), "Rua pinheiros 12", FuncionarioCargo.ZELADOR, 500, "03/05/2000", "carlinhosmaia", "carlinhosmaia@orkut.com");
-        funcionarioList.add(test);
-        tabela.setItems(funcionarioList);
+        ObservableList<Funcionario> masterData = FXCollections.observableArrayList();
+        masterData.add(new Funcionario("Carlos Silva", LocalDate.of(2003, 2, 24), "Rua pinheiros 12", FuncionarioCargo.ZELADOR, 500, "03/05/2020", "carlinhosmaia", "carlinhosmaia@orkut.com"));
+        masterData.add(new Funcionario("Beatriz Costa", LocalDate.of(1995, 8, 15), "Avenida Central 33", FuncionarioCargo.GARCOM, 2500, "10/01/2022", "bia.costa", "beatriz@email.com"));
+        masterData.add(new Funcionario("Juliana Alves", LocalDate.of(1998, 11, 5), "Praça da Sé 4", FuncionarioCargo.CHEF, 3200, "25/07/2021", "juju.alves", "juliana@email.com"));
 
-        VBox promocaoBox = new VBox(20, promotion, tabela);
+        FilteredList<Funcionario> filteredData = new FilteredList<>(masterData, p -> true);
+        tabela.setItems(filteredData);
+
+        pesquisaNome.textProperty().addListener((obs, oldValue, newValue) -> {
+            filteredData.setPredicate(funcionario -> {
+                if (newValue == null || newValue.isEmpty()) {
+                    return true;
+                }
+                String lowerCaseFilter = newValue.toLowerCase();
+                return funcionario.getNome().toLowerCase().contains(lowerCaseFilter);
+            });
+        });
+        limparPesquisa.setOnAction(event -> {
+            pesquisaNome.clear();
+            filteredData.setPredicate(p -> true);
+        });
+
+        VBox promocaoBox = new VBox(20, promotion, barraPesquisa, tabela);
         promocaoBox.setAlignment(Pos.TOP_CENTER);
         promocaoBox.setPadding(new Insets(0, 10, 0, 10));
 
-        // --- Painel de Contratação ---
         Label register = new Label(Tela.emFrances ? "Embaucher" : "Contratar");
         register.setFont(playfairFontSubs);
         register.setStyle("-fx-text-fill: #FFC300;");
 
         GridPane inputs = new GridPane();
-        // ... Configuração do GridPane de inputs (existente) ...
         inputs.setHgap(20);
         inputs.setVgap(15);
         inputs.setAlignment(Pos.CENTER);
@@ -139,7 +183,7 @@ public class TelaFuncionarios extends Tela {
         Button confirm = new Button(Tela.emFrances ? "Confirmer l'embauche" : "Confirmar Contratação");
         confirm.getStyleClass().add("button");
         confirm.setOnAction(event -> {
-            // Lógica de contratação (existente)
+            // Lógica de contratação
         });
 
         VBox contratoBox = new VBox(20, register, inputs, confirm);
@@ -147,7 +191,6 @@ public class TelaFuncionarios extends Tela {
         contratoBox.setPadding(new Insets(0, 10, 0, 10));
         VBox.setVgrow(inputs, Priority.ALWAYS);
 
-        // --- Layout Total ---
         Rectangle divide = new Rectangle(5, 450);
         divide.setFill(Color.web("#FFC300"));
         HBox total = new HBox(20, promocaoBox, divide, contratoBox);
@@ -155,7 +198,6 @@ public class TelaFuncionarios extends Tela {
         HBox.setHgrow(promocaoBox, Priority.ALWAYS);
         HBox.setHgrow(contratoBox, Priority.ALWAYS);
 
-        // --- Rodapé ---
         Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
         Label desc2 = new Label("Projetado para a excelência culinária francesa");
@@ -167,7 +209,6 @@ public class TelaFuncionarios extends Tela {
         descricaoRodape.setAlignment(Pos.BOTTOM_CENTER);
         descricaoRodape.setPadding(new Insets(20, 0, 20, 0));
 
-        // --- Layout Raiz ---
         VBox root = new VBox(blocoTitulo, total, descricaoRodape);
         root.setAlignment(Pos.CENTER);
         VBox.setVgrow(total, Priority.ALWAYS);
@@ -181,18 +222,12 @@ public class TelaFuncionarios extends Tela {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle(estiloFundoVinho);
 
-        // --- MUDANÇAS PARA ADICIONAR O BOTÃO VOLTAR ---
-        // 1. Envolver o layout principal em um StackPane
         StackPane stackPane = new StackPane(scrollPane);
         stackPane.setStyle(estiloFundoVinho);
 
-        // 2. Definir a ação de voltar para a TelaGerente
         Runnable acaoVoltar = () -> new TelaGerente(super.getStage()).mostrarTela();
-
-        // 3. Adicionar o botão ao StackPane
         BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
 
-        // 4. Criar a cena com o StackPane como raiz
         Scene scene = new Scene(stackPane);
         scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
 
