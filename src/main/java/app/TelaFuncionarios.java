@@ -58,7 +58,6 @@ public class TelaFuncionarios extends Tela {
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
 
         TableColumn<Funcionario, FuncionarioCargo> cargoColuna = new TableColumn<>(Tela.emFrances ? "Position" : "Cargo");
-        // --- CORREÇÃO AQUI ---
         cargoColuna.setCellValueFactory(cellData -> cellData.getValue().getCargo());
 
         TableColumn<Funcionario, String> contratoColuna = new TableColumn<>(Tela.emFrances ? "Contracter" : "Contrato");
@@ -81,7 +80,27 @@ public class TelaFuncionarios extends Tela {
             }
         });
 
-        tabela.getColumns().addAll(nomeColuna, cargoColuna, contratoColuna, promoverColuna);
+        // --- NOVO: Coluna para demitir funcionário ---
+        TableColumn<Funcionario, Void> demitirColuna = new TableColumn<>(Tela.emFrances ? "Licencier" : "Demitir");
+        demitirColuna.setCellFactory(coluna -> new TableCell<>() {
+            private final Button botaoDemitir = new Button(Tela.emFrances ? "Licencier" : "Demitir");
+            {
+                botaoDemitir.setOnAction(event -> {
+                    Funcionario func = getTableView().getItems().get(getIndex());
+                    func.demitirFuncionario();
+                    getTableView().refresh();
+                });
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : botaoDemitir);
+            }
+        });
+        // --- FIM DO NOVO ---
+
+        // --- MUDANÇA: Adicionando a nova coluna à tabela ---
+        tabela.getColumns().addAll(nomeColuna, cargoColuna, contratoColuna, promoverColuna, demitirColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
         ObservableList<Funcionario> masterData = FXCollections.observableArrayList();

@@ -6,5 +6,6 @@ public enum FuncionarioCargo {
         SUPERVISOR,
         GARCOM,
         CHEF,
-        ZELADOR
+        ZELADOR,
+        DEMITIDO
 }

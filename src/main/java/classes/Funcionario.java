@@ -56,6 +56,11 @@ public class Funcionario extends Pessoa {
         }
     }
 
+    public void demitirFuncionario() {
+        this.cargo.set(FuncionarioCargo.DEMITIDO);
+        this.salario = 0;
+    }
+
     @Override
     public boolean ehAniversario() {
         LocalDate dataAniversario = super.getDataAniversario();
