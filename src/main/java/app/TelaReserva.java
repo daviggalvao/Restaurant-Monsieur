@@ -208,12 +208,12 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
                 Pagamento pagamentoReserva = new Pagamento(20.0f, name, pagamento, 1);
                 Reserva reservation = new Reserva(data, hora, cliente, qtdpessoas, chofer, pagamentoReserva);
                 reservation.querChofer();
-                reservation.ehMuitaGente();
+                reservation.calcular();
                 reservation.ehDiaSemana();
                 if(cliente.ehAniversario()){reservation.getPagamento().setPreco(reservation.getPagamento().getPreco()-5);}
                 Float desconto = cliente.descontoIdade(reservation.getPagamento().getPreco());
                 reservation.getPagamento().setPreco(desconto);
-                reservation.getPagamento().ehPix();
+                reservation.getPagamento().calcular();
                 em.getTransaction().begin();
                 em.persist(reservation);
                 em.getTransaction().commit();
