@@ -219,7 +219,7 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
                 em.getTransaction().commit();
                 mostrarAlerta(Alert.AlertType.INFORMATION, Tela.emFrances ? "Réservation effectuée" : "Reserva Realizada", Tela.emFrances ? "Réservation effectuée pour le client "+ name +" avec succès !" : "Reserva feita para o cliente " + name + " com sucesso!");
 
-                new TelaInicial(super.getStage()).mostrarTela(); // Exemplo de retorno
+                new TelaPagamento(getStage(), cliente.getEmail()).mostrarTela();
 
             }catch (NoResultException e) {
                 mostrarAlerta(Alert.AlertType.WARNING, Tela.emFrances ? "La recherche a renvoyé une erreur" : "Busca retornou erro", Tela.emFrances ? "Aucun compte avec" + email + " n'a été trouvé" : "Nenhuma conta com o" + email + " foi encontrada");
