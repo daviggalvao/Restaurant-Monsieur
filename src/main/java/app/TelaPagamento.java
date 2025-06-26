@@ -88,12 +88,6 @@ public class TelaPagamento extends Tela {
         }
     }
 
-    /**
-     * Calcula o subtotal de todos os pedidos do usuário.
-     * Assume que o método calcularPrecoTotal() em Pedido já calcula o total correto,
-     * incluindo itens e frete.
-     * @return O valor total dos pedidos.
-     */
     private double calcularSubtotalPedidos() {
         EntityManager em = JpaUtil.getFactory().createEntityManager();
         try {
@@ -183,9 +177,9 @@ public class TelaPagamento extends Tela {
                     VBox.setMargin(separator, new Insets(10, 0, 10, 0));
                     contentBox.getChildren().add(separator);
 
-                    Float valor = p.calcularPrecoTotal();
-                    if(p.getPagamento().getTipo().equalsIgnoreCase("Pix")){valor *= 0.9f;}
-                    totalPedidosCalculado += valor;
+                    if(p.getPagamento().getTipo().split(" ")[0].equalsIgnoreCase("Pix")){
+                        totalPedidosCalculado += (p.calcularPrecoTotal())*0.9f;
+;                    }else{totalPedidosCalculado += p.calcularPrecoTotal();}
                 }
 
                 Rectangle sublinhado = new Rectangle(325, 2);

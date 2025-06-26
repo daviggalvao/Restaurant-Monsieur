@@ -33,8 +33,11 @@ public class Pagamento{
     public void setParcelas(int parcelas){this.parcelas = parcelas;}
 
     public void ehPix(){
-        if(this.tipo.equalsIgnoreCase("Pix")){
-        this.preco *= 0.9f;}
+        if(this.tipo.equalsIgnoreCase("Pix")) {
+            this.preco *= 0.9f;
+        }else if(this.tipo.split(" ")[0].equalsIgnoreCase("Pix")){
+            this.preco *= 0.9f;
+        };
     }
 
     public void parcelamento(int num){

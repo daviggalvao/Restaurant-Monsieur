@@ -269,14 +269,14 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         tipoPagamentoComboBox = new ComboBox<>();
         tipoPagamentoComboBox.setPrefWidth(200);
         tipoPagamentoComboBox.getItems().addAll(
-                "Pix",
+                "Pix (10% Off)",
                 "Cartão de Crédito",
                 "Cartão de Débito",
                 "Talão de Cheque",
                 "Dinheiro Físico",
                 "Pagar Fiado"
         );
-        tipoPagamentoComboBox.setValue("Pix"); // Valor padrão// Ocupa a largura disponível
+        tipoPagamentoComboBox.setValue("Pix (10% Off)"); // Valor padrão// Ocupa a largura disponível
         tipoPagamentoComboBox.setStyle(
                 "-fx-background-color: #FFFFFF; " +
                         "-fx-border-color: " + BORDER_COLOR_PANEL + "; " +
@@ -630,7 +630,9 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         // Usa o tipo de pagamento selecionado da ComboBox
         Pagamento pagamentoFinal = new Pagamento(subtotalSimplesFinal,cliente.getNome(),tipoPagamentoSelecionado,1);
         pedidoFinal.setPagamento(pagamentoFinal);
-        pedidoFinal.getPagamento().ehPix();
+        pedidoFinal.getPagamento().getTipo().split(" ");
+        if(pedidoFinal.getPagamento().getTipo().split(" ")[0].equalsIgnoreCase("Pix")){
+            pedidoFinal.getPagamento().ehPix();}
         if(cliente.ehAniversario()){pedidoFinal.getPagamento().setPreco(pedidoFinal.getPagamento().getPreco()-5);}
         Float desconto = cliente.descontoIdade(pedidoFinal.getPagamento().getPreco());
         pedidoFinal.getPagamento().setPreco(desconto);
@@ -659,6 +661,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
                 tempEm.close(); // Always close the EntityManager
             }
         }
+
         sb.append(String.format("  - 1x Frete: R$ %d\n",pedidoFinal.getFrete()));
         sb.append(String.format("\nSubtotal dos Pratos: R$ %.2f", pedidoFinal.getPagamento().getPreco()));
         sb.append(String.format("\nTipo de Pagamento: %s", tipoPagamentoSelecionado)); // Adiciona o tipo de pagamento ao resumo

@@ -149,7 +149,7 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
         Label lblPagamento = new Label(Tela.emFrances ? "\uD83D\uDC64 Type de paiwment *" : "\uD83D\uDC64 Tipo de Pagamento *");
         lblPagamento.setStyle("-fx-text-fill: #FFC300;");
         ComboBox<String> cbPagamento = new ComboBox<>();
-        cbPagamento.getItems().addAll("Pix",Tela.emFrances ? "Carte de crédit" : "Cartão De Crédito",Tela.emFrances ? "Carte de débit" : "Cartão De Débito",
+        cbPagamento.getItems().addAll("Pix (10% Off)",Tela.emFrances ? "Carte de crédit" : "Cartão De Crédito",Tela.emFrances ? "Carte de débit" : "Cartão De Débito",
                 Tela.emFrances ? "Chéquier" : "Talão de Cheque",Tela.emFrances ? "Argent physique": "Dinheiro Físico",Tela.emFrances ? "Payer à crédit" : "Pagar Fiado");
         cbPagamento.setPromptText(Tela.emFrances ? "Sélectionnez le mode de paiement" : "Selecione o Método de Pagamento");
         cbPagamento.setPrefHeight(40);
@@ -217,7 +217,7 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
                 em.getTransaction().begin();
                 em.persist(reservation);
                 em.getTransaction().commit();
-                mostrarAlerta(Alert.AlertType.INFORMATION, Tela.emFrances ? "Réservation effectuée" : "Reserva Realizada", Tela.emFrances ? "Réservation effectuée pour le client "+ name +" avec succès !" : "Reserva feita para o cliente" + name + " com sucesso!");
+                mostrarAlerta(Alert.AlertType.INFORMATION, Tela.emFrances ? "Réservation effectuée" : "Reserva Realizada", Tela.emFrances ? "Réservation effectuée pour le client "+ name +" avec succès !" : "Reserva feita para o cliente " + name + " com sucesso!");
 
                 new TelaInicial(super.getStage()).mostrarTela(); // Exemplo de retorno
 
