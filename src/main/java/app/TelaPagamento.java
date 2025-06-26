@@ -100,7 +100,7 @@ public class TelaPagamento extends Tela {
             List<Pedido> pedidos = buscarPedidosPorEmailHQL(em);
             double total = 0.0;
             for (Pedido p : pedidos) {
-                total += p.calcularPrecoTotal();
+                total += p.getPagamento().getPreco();
             }
             return total;
         } finally {
@@ -183,7 +183,9 @@ public class TelaPagamento extends Tela {
                     VBox.setMargin(separator, new Insets(10, 0, 10, 0));
                     contentBox.getChildren().add(separator);
 
-                    totalPedidosCalculado += p.calcularPrecoTotal();
+                    Float valor = p.calcularPrecoTotal();
+                    if(p.getPagamento().getTipo().equalsIgnoreCase("Pix")){valor *= 0.9f;}
+                    totalPedidosCalculado += valor;
                 }
 
                 Rectangle sublinhado = new Rectangle(325, 2);
@@ -526,14 +528,15 @@ public class TelaPagamento extends Tela {
                         } catch (NoResultException ex) {
                             // Se não houver resultado, cria uma nova instância
                             contaJose = new ContaBancariaJose();
-                            emTransacao.persist(contaJose); // Persiste a nova instância
+                            emTransacao.persist(contaJose);
+                            emTransacao.flush();
                         }
 
                         // Atualiza os valores estáticos (que a JPA pode ou não persistir diretamente
                         // dependendo do setup, mas faremos para manter a lógica do código existente)
-                        ContaBancariaJose.setEntrada(ContaBancariaJose.getEntrada() + (float) totalGeral);
+                        contaJose.setEntrada(contaJose.getEntrada() + (float) totalGeral);
                         // Supondo que o saldo é entrada - saida
-                        ContaBancariaJose.setSaldo(ContaBancariaJose.getEntrada() - ContaBancariaJose.getSaida());
+                        contaJose.setSaldo(contaJose.getEntrada() - contaJose.getSaida());
 
                         // Para garantir que a entidade seja sincronizada com o banco, mesmo com campos estáticos
                         // se a JPA estiver monitorando o objeto 'contaJose'

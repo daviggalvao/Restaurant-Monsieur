@@ -1,6 +1,9 @@
 package classes;
 
+import database.JpaUtil;
 import jakarta.persistence.*;
+import javafx.scene.control.Alert;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.io.Serializable;
@@ -52,10 +55,43 @@ public class Prato implements Serializable {
     public void setDescricao(String descricao) {this.descricao = descricao;}
     public void setQuantidade(int quantidade) {this.quantidade = quantidade;}
 
-    public void entregaPrato(){
-        ContaBancariaJose.setEntrada(ContaBancariaJose.getEntrada() + this.preco);
-        this.quantidade--;
+    public void entregaPrato() {
+        EntityManager em = JpaUtil.getFactory().createEntityManager();
+        EntityTransaction transaction = null;
+        try {
+            transaction = em.getTransaction();
+            transaction.begin();
+            ContaBancariaJose contaJose;
+            try {
+                // Tenta buscar a única instância de ContaBancariaJose (assumindo que existe apenas uma)
+                TypedQuery<ContaBancariaJose> queryConta = em.createQuery("SELECT c FROM ContaBancariaJose c", ContaBancariaJose.class);
+                queryConta.setMaxResults(1); // Limita a 1 resultado
+                contaJose = queryConta.getSingleResult();
+            } catch (NoResultException ex) {
+                contaJose = new ContaBancariaJose();
+                em.persist(contaJose);
+                em.flush();
+            }
+            contaJose.setEntrada(contaJose.getEntrada() + this.preco);
+            this.quantidade--;
+        } catch (Exception ex) {
+            if (transaction != null && transaction.isActive()) {
+                transaction.rollback();
+            }
+            System.err.println("Erro ao achar ingrediente: " + ex.getMessage());
+            ex.printStackTrace();
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
+            errorAlert.setTitle("Erro");
+            errorAlert.setHeaderText("Falha ao achar ingrediente");
+            errorAlert.setContentText("Ocorreu um erro ao processar a transação. Por favor, tente novamente.\nDetalhes: " + ex.getMessage());
+            errorAlert.showAndWait();
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
     }
+
     public void fazPrato(){
         for(Ingrediente i : ingredientes){
             i.setQuantidade(i.getQuantidade() - 1);

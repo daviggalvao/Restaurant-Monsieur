@@ -660,7 +660,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
             }
         }
         sb.append(String.format("  - 1x Frete: R$ %d\n",pedidoFinal.getFrete()));
-        sb.append(String.format("\nSubtotal dos Pratos: R$ %.2f", subtotalSimplesFinal));
+        sb.append(String.format("\nSubtotal dos Pratos: R$ %.2f", pedidoFinal.getPagamento().getPreco()));
         sb.append(String.format("\nTipo de Pagamento: %s", tipoPagamentoSelecionado)); // Adiciona o tipo de pagamento ao resumo
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);

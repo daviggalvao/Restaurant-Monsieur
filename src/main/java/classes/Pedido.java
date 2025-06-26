@@ -45,7 +45,7 @@ public class Pedido implements Serializable {
     public void setPagamento(Pagamento pagamento){this.pagamento = pagamento;}
     public void setItensPedido(List<PedidoItem> itens){this.itensPedido = itens;}
     public void setConsumidor(Cliente consumidor){this.consumidor = consumidor;}
-    
+
     public void calcularFrete(){
         if(consumidor.getEndereco().equalsIgnoreCase("Centro")){
             this.frete = 10;
