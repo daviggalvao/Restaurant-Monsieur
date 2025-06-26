@@ -690,7 +690,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         carrinhoDaUI.clear();
 
         // Opcional: Voltar para Tela Inicial ou para a tela de serviços após o pedido
-        new TelaInicial(super.getStage()).mostrarTela(); // Exemplo de retorno
+        new TelaPagamento(super.getStage(), this.userEmail).mostrarTela(); // Exemplo de retorno
     }
 
     private void styleAlertDialog(Alert alert) {
