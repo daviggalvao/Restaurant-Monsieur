@@ -1,5 +1,6 @@
 package app;
 
+import classes.OrigemDaTela;
 import database.JpaUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
@@ -208,18 +209,18 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
                 Pagamento pagamentoReserva = new Pagamento(20.0f, name, pagamento, 1);
                 Reserva reservation = new Reserva(data, hora, cliente, qtdpessoas, chofer, pagamentoReserva);
                 reservation.querChofer();
-                reservation.ehMuitaGente();
+                reservation.calcular();
                 reservation.ehDiaSemana();
                 if(cliente.ehAniversario()){reservation.getPagamento().setPreco(reservation.getPagamento().getPreco()-5);}
                 Float desconto = cliente.descontoIdade(reservation.getPagamento().getPreco());
                 reservation.getPagamento().setPreco(desconto);
-                reservation.getPagamento().ehPix();
+                reservation.getPagamento().calcular();
                 em.getTransaction().begin();
                 em.persist(reservation);
                 em.getTransaction().commit();
                 mostrarAlerta(Alert.AlertType.INFORMATION, Tela.emFrances ? "Réservation effectuée" : "Reserva Realizada", Tela.emFrances ? "Réservation effectuée pour le client "+ name +" avec succès !" : "Reserva feita para o cliente " + name + " com sucesso!");
 
-                new TelaPagamento(getStage(), cliente.getEmail()).mostrarTela();
+                new TelaPagamento(getStage(), cliente.getEmail(), OrigemDaTela.TELA_RESERVA).mostrarTela();
 
             }catch (NoResultException e) {
                 mostrarAlerta(Alert.AlertType.WARNING, Tela.emFrances ? "La recherche a renvoyé une erreur" : "Busca retornou erro", Tela.emFrances ? "Aucun compte avec" + email + " n'a été trouvé" : "Nenhuma conta com o" + email + " foi encontrada");

@@ -8,12 +8,12 @@ public class App extends Application{
     @Override
     public void start(Stage primaryStage) {
         primaryStage.setTitle("Restaurant Monsieur-José - Sistema de Gestão");
-        //TelaInicial tela = new TelaInicial(primaryStage);
+        TelaInicial tela = new TelaInicial(primaryStage);
         //tela.mostrarTela();
         //TelaGerente tela = new TelaGerente(primaryStage);
         //tela.mostrarTela();
         //primaryStage.show();
-        TelaPagamento tela = new TelaPagamento(primaryStage,"rbcorreaneto@gmail.com");
+        //TelaPagamento tela = new TelaPagamento(primaryStage,"rbcorreaneto@gmail.com");
         tela.mostrarTela();
         primaryStage.show();
     }

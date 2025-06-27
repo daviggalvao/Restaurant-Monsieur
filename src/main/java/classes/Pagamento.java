@@ -4,7 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 
 @Embeddable
-public class Pagamento{
+public class Pagamento implements RegraDeCalculo{
     @Column(name = "pagamento_preco") // Nome da coluna na tabela da entidade que incorporar Pagamento
     private float preco;
     @Column(name = "pagamento_nome") // Nome da coluna
@@ -32,13 +32,22 @@ public class Pagamento{
     public void setTipo(String tipo){this.tipo = tipo;}
     public void setParcelas(int parcelas){this.parcelas = parcelas;}
 
-    public void ehPix(){
+    @Override
+    public void calcular(){
         if(this.tipo.equalsIgnoreCase("Pix")) {
             this.preco *= 0.9f;
         }else if(this.tipo.split(" ")[0].equalsIgnoreCase("Pix")){
             this.preco *= 0.9f;
         };
     }
+
+    /*public void ehPix(){
+        if(this.tipo.equalsIgnoreCase("Pix")) {
+            this.preco *= 0.9f;
+        }else if(this.tipo.split(" ")[0].equalsIgnoreCase("Pix")){
+            this.preco *= 0.9f;
+        };
+    }*/
 
     public void parcelamento(int num){
         for(int i=1; i<=num; i++){

@@ -1,6 +1,7 @@
 package app;
 
 import classes.ContaBancariaJose;
+import classes.OrigemDaTela;
 import classes.Pedido;
 import classes.PedidoItem;
 import classes.Prato;
@@ -13,6 +14,8 @@ import jakarta.persistence.TypedQuery;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.text.FontWeight;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -36,12 +39,14 @@ import java.util.Optional;
 
 public class TelaPagamento extends Tela {
     private String userEmail;
+    private OrigemDaTela origem;
     private String tituloDesc;
     private String tituloDesc2;
 
-    public TelaPagamento(Stage stage, String email) {
+    public TelaPagamento(Stage stage, String email, OrigemDaTela origem) {
         super(stage);
         this.userEmail = email;
+        this.origem = origem; // Armazena a origem recebida
     }
 
     /**
@@ -637,25 +642,33 @@ public class TelaPagamento extends Tela {
 
     @Override
     public Scene criarScene() {
+        // --- 1. CONFIGURAÇÃO DA ESTRUTURA PRINCIPAL E ESTILO DE FUNDO ---
+        String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)";
+
+        // O StackPane será o container raiz para aplicar o fundo e o botão de voltar
+        StackPane rootPane = new StackPane();
+        rootPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
+
+        // Usaremos um BorderPane para organizar o conteúdo principal e a barra de status
+        BorderPane layoutPrincipal = new BorderPane();
+        layoutPrincipal.setStyle("-fx-background-color: transparent;"); // Fundo transparente para ver o StackPane
+
+        // --- 2. CRIAÇÃO DO TÍTULO, CARDS E CONTEÚDO CENTRAL ---
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Label titulo = new Label("Finalizar Pagamento");
         titulo.setFont(playfairFont);
         titulo.setStyle("-fx-text-fill: #FFC300;");
 
-        // Calcula os subtotais e o total geral
         double subtotalReservas = calcularSubtotalReservas();
         double subtotalPedidos = calcularSubtotalPedidos();
         double totalGeral = subtotalReservas + subtotalPedidos;
 
         String corBordaCard = "#E4E9F0";
         String corTextoCard = "black";
-
         tituloDesc = "Detalhes do Pedido";
         tituloDesc2 = "Forma de Pagamento";
 
-        // Passa 0.0 para os subtotais/total no card de Informações, pois não são relevantes aqui.
         VBox cardInfo = createCard("/svg/package-svgrepo-com.svg", tituloDesc, "Informacoes", corBordaCard, corTextoCard, 0.0, 0.0, 0.0);
-        // Passa os valores calculados para o card de Pagamento
         VBox cardPagamento = createCard("/svg/credit-card-svgrepo-com.svg", tituloDesc2, "Pagamento", corBordaCard, corTextoCard, subtotalReservas, subtotalPedidos, totalGeral);
 
         HBox cardsContainer = new HBox(20);
@@ -665,19 +678,60 @@ public class TelaPagamento extends Tela {
         VBox contenedor = new VBox(25);
         contenedor.getChildren().addAll(titulo, cardsContainer);
         contenedor.setAlignment(Pos.CENTER);
-
-        String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)";
-        contenedor.setStyle("-fx-background-color:" + estiloFundoVinho + ";");
+        // O contenedor principal agora é transparente
+        contenedor.setStyle("-fx-background-color: transparent;");
+        // Adicionamos um padding para não colar nas bordas
+        contenedor.setPadding(new Insets(20));
 
         ScrollPane pane = new ScrollPane();
         pane.setContent(contenedor);
         pane.setFitToHeight(true);
         pane.setFitToWidth(true);
-        pane.setStyle("-fx-background-color:" + estiloFundoVinho + ";");
+        // O ScrollPane também precisa ser transparente
+        pane.setStyle("-fx-background-color: transparent; -fx-background: transparent;");
 
-        StackPane rootPane = new StackPane();
-        rootPane.getChildren().add(pane);
-        Scene scene = new Scene(rootPane);
+        // O ScrollPane com o conteúdo vai no centro do BorderPane
+        layoutPrincipal.setCenter(pane);
+
+
+        // --- 3. CRIAÇÃO DA BARRA DE STATUS INFERIOR (SEEMLHANTE À TELADELIVERY) ---
+        Label statusBar = new Label("Pronto para finalizar sua compra. Verifique os detalhes e a forma de pagamento.");
+        statusBar.setPadding(new Insets(8, 10, 8, 10));
+        statusBar.setMaxWidth(Double.MAX_VALUE);
+        statusBar.setAlignment(Pos.CENTER_LEFT);
+        statusBar.setFont(Font.font("Arial", FontWeight.NORMAL, 14)); // Usando fonte padrão, similar à FONT_TEXT_NORMAL
+        statusBar.setStyle(
+                "-fx-background-color: #5D0017;" + // Cor sólida que combina com o gradiente
+                        "-fx-text-fill: #FFC300;" +
+                        "-fx-border-color: #DAA520;" + // Cor de destaque dourada
+                        "-fx-border-width: 1 0 0 0;" // Borda apenas no topo
+        );
+
+        // A barra de status vai na parte de baixo do BorderPane
+        layoutPrincipal.setBottom(statusBar);
+
+        rootPane.getChildren().add(layoutPrincipal); // Adiciona o layout principal ao root
+
+        // 3. LÓGICA DINÂMICA PARA A AÇÃO DE VOLTAR
+        Runnable acaoVoltar;
+        switch (this.origem) {
+            case TELA_DELIVERY:
+                acaoVoltar = () -> new TelaDelivery(getStage(), this.userEmail).mostrarTela();
+                break;
+            case TELA_RESERVA:
+                acaoVoltar = () -> new TelaReserva(getStage()).mostrarTela();
+                break;
+            default:
+                // Fallback para a tela inicial, caso a origem seja desconhecida
+                acaoVoltar = () -> new TelaInicial(getStage()).mostrarTela();
+                break;
+        }
+
+        // Cria e posiciona o botão de voltar com a ação dinâmica
+        BotaoVoltar.criarEPosicionar(rootPane, acaoVoltar);
+
+        Scene scene = new Scene(rootPane, 1024, 768); // Ajustado o tamanho da cena que estava faltando
         return scene;
     }
+
 }

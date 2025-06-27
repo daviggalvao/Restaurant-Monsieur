@@ -114,8 +114,9 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
     public Scene criarScene() {
         BorderPane layoutPrincipal = new BorderPane();
         layoutPrincipal.setPadding(new Insets(20));
-        String estiloFundoVinho = "-fx-background-color: linear-gradient(to right, #30000C, #800020);";
-        layoutPrincipal.setStyle(estiloFundoVinho);
+        // REMOVA a linha de estilo daqui
+        // String estiloFundoVinho = "-fx-background-color: linear-gradient(to right, #30000C, #800020);";
+        // layoutPrincipal.setStyle(estiloFundoVinho); // <-- REMOVER ESTA LINHA
 
         // --- INÍCIO DA MODIFICAÇÃO DO TÍTULO ---
 
@@ -149,13 +150,17 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         VBox painelCarrinho = criarPainelCarrinhoDaUI();
         layoutPrincipal.setCenter(painelCarrinho);
 
+        // ATENÇÃO: A lógica da barra de status precisa ser ajustada, pois o fundo dela
+        // dependia do 'estiloFundoVinho'
+        String estiloFundoVinho = "-fx-background-color: linear-gradient(to right, #30000C, #800020);";
+
         statusLabelUI = new Label("Bem-vindo! Escolha seus pratos e adicione ao carrinho.");
         statusLabelUI.setPadding(new Insets(8, 10, 8, 10));
         statusLabelUI.setMaxWidth(Double.MAX_VALUE);
         statusLabelUI.setAlignment(Pos.CENTER_LEFT);
         statusLabelUI.setFont(FONT_TEXT_NORMAL);
         statusLabelUI.setStyle(
-                estiloFundoVinho +
+                "-fx-background-color: #5D0017;" + // Usando uma cor sólida aproximada do gradiente para a barra
                         "-fx-text-fill: #FFC300; " +
                         "-fx-border-color: " + ACCENT_COLOR_GOLD + "; " +
                         "-fx-border-width: 1 0 0 0;"
@@ -163,6 +168,13 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         layoutPrincipal.setBottom(statusLabelUI);
 
         StackPane stackPane = new StackPane();
+        // APLIQUE O ESTILO DE FUNDO DIRETAMENTE NO STACKPANE
+        stackPane.setStyle(estiloFundoVinho); // <-- ADICIONAR ESTA LINHA
+
+        // O layoutPrincipal agora não precisa mais de fundo,
+        // então o tornamos transparente para ver o fundo do StackPane
+        layoutPrincipal.setStyle("-fx-background-color: transparent;");
+
         stackPane.getChildren().add(layoutPrincipal);
 
         BotaoVoltar.criarEPosicionar(stackPane, () -> {
@@ -632,7 +644,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         pedidoFinal.setPagamento(pagamentoFinal);
         pedidoFinal.getPagamento().getTipo().split(" ");
         if(pedidoFinal.getPagamento().getTipo().split(" ")[0].equalsIgnoreCase("Pix")){
-            pedidoFinal.getPagamento().ehPix();}
+            pedidoFinal.getPagamento().calcular();}
         if(cliente.ehAniversario()){pedidoFinal.getPagamento().setPreco(pedidoFinal.getPagamento().getPreco()-5);}
         Float desconto = cliente.descontoIdade(pedidoFinal.getPagamento().getPreco());
         pedidoFinal.getPagamento().setPreco(desconto);
@@ -690,7 +702,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         carrinhoDaUI.clear();
 
         // Opcional: Voltar para Tela Inicial ou para a tela de serviços após o pedido
-        new TelaPagamento(super.getStage(), this.userEmail).mostrarTela(); // Exemplo de retorno
+        new TelaPagamento(super.getStage(), this.userEmail, OrigemDaTela.TELA_DELIVERY).mostrarTela(); // Exemplo de retorno
     }
 
     private void styleAlertDialog(Alert alert) {

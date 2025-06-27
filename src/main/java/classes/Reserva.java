@@ -6,7 +6,7 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "reservas")
-    public class Reserva{
+    public class Reserva implements RegraDeCalculo{
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         private int id;
@@ -60,13 +60,22 @@ import jakarta.persistence.*;
             }
         }
 
-        public void ehMuitaGente(){
+        @Override
+        public void calcular(){
+            if(this.qtdPessoas > 5){
+                this.pagamento.setPreco(this.pagamento.getPreco()/2);
+            }else{
+                this.pagamento.setPreco(this.pagamento.getPreco());
+            }
+        }
+
+        /*public void ehMuitaGente(){
             if(this.qtdPessoas > 5){
                 this.pagamento.setPreco(this.pagamento.getPreco()/2);
             }else{ 
                 this.pagamento.setPreco(this.pagamento.getPreco());
             }
-        }
+        }*/
 
         public void querChofer(){
             if (!this.chofer) return;
