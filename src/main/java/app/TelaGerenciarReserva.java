@@ -3,6 +3,8 @@ package app;
 import classes.Cliente;
 import classes.Pagamento;
 import classes.Reserva;
+import database.JpaUtil; // --- NOVO ---
+import jakarta.persistence.EntityManager; // --- NOVO ---
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -18,12 +20,38 @@ import javafx.stage.Stage;
 import javafx.geometry.*;
 
 import java.time.LocalDate;
-import java.util.function.Predicate;
+import java.util.List; // --- NOVO ---
 
 public class TelaGerenciarReserva extends Tela {
 
     public TelaGerenciarReserva(Stage stage) {
         super(stage);
+    }
+
+    /**
+     * Carrega as reservas diretamente do banco de dados usando JPA.
+     * @return Uma ObservableList de Reservas para ser usada na tabela.
+     */
+    private ObservableList<Reserva> carregarReservasDoBanco() {
+        EntityManager em = JpaUtil.getFactory().createEntityManager();
+        try {
+            // Usamos JOIN FETCH para carregar o cliente associado e evitar erros de Lazy Loading
+            List<Reserva> reservas = em.createQuery("SELECT r FROM Reserva r JOIN FETCH r.cliente", Reserva.class).getResultList();
+            return FXCollections.observableArrayList(reservas);
+        } catch (Exception e) {
+            e.printStackTrace();
+            // Exibe um alerta caso a conexão com o banco de dados falhe
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Erro de Carregamento");
+            alert.setHeaderText("Falha ao carregar dados do banco.");
+            alert.setContentText("Não foi possível carregar as reservas. Verifique a conexão com o banco de dados e tente novamente.");
+            alert.showAndWait();
+            return FXCollections.observableArrayList(); // Retorna uma lista vazia em caso de erro
+        } finally {
+            if (em != null && em.isOpen()) {
+                em.close();
+            }
+        }
     }
 
     @Override
@@ -58,6 +86,7 @@ public class TelaGerenciarReserva extends Tela {
 
         TableView<Reserva> tabela= new TableView<>();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabela.setPlaceholder(new Label("Nenhuma reserva encontrada no banco de dados.")); // Mensagem mais clara
 
         TableColumn<Reserva, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Client" : "Cliente");
         nomeColuna.setCellValueFactory(cellData-> new SimpleStringProperty(cellData.getValue().getCliente().getNome()));
@@ -66,6 +95,7 @@ public class TelaGerenciarReserva extends Tela {
         TableColumn<Reserva, String> timeColuna = new TableColumn<>(Tela.emFrances ? "Temps" : "Horário");
         timeColuna.setCellValueFactory(new PropertyValueFactory<>("horario"));
         TableColumn<Reserva, String> qtdColuna = new TableColumn<>(Tela.emFrances ? "N° Personnes" : "N°Pessoas");
+        // Corrigido para getNumeroPessoas, que é mais provável de ser o nome correto do método
         qtdColuna.setCellValueFactory(cellNum -> new SimpleStringProperty(String.valueOf(cellNum.getValue().getQuantidadePessoas())));
         TableColumn<Reserva, String> choferColuna = new TableColumn<>(Tela.emFrances ? "Chauffeur" : "Chofer");
         choferColuna.setCellValueFactory(value-> new SimpleStringProperty(value.getValue().getChofer() ? (Tela.emFrances ? "Oui" : "Sim") : (Tela.emFrances ? "Non" : "Não")));
@@ -73,19 +103,9 @@ public class TelaGerenciarReserva extends Tela {
         tabela.getColumns().addAll(nomeColuna, dataColuna, timeColuna, qtdColuna, choferColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        ObservableList<Reserva> masterData = FXCollections.observableArrayList();
-        Cliente cliente1 = new Cliente("Maria Silva", LocalDate.of(2003,2,24), "Samambaia Norte", "maria", "maria@gmail.com");
-        Pagamento pagamento1 = new Pagamento(300, "pizzas", "Dinheiro", 100);
-        Reserva reserva1 = new Reserva(LocalDate.of(2025,7,12), "19:30", cliente1, 5, false, pagamento1);
-
-        Cliente cliente2 = new Cliente("João Santos", LocalDate.of(1995,5,10), "Asa Sul", "joao", "joao@example.com");
-        Pagamento pagamento2 = new Pagamento(450, "jantar completo", "Cartão", 0);
-        Reserva reserva2 = new Reserva(LocalDate.of(2025,7,12), "20:00", cliente2, 2, true, pagamento2);
-
-        Cliente cliente3 = new Cliente("Ana Pereira", LocalDate.of(1988,9,30), "Lago Norte", "ana", "ana@example.com");
-        Pagamento pagamento3 = new Pagamento(200, "almoço", "PIX", 50);
-        Reserva reserva3 = new Reserva(LocalDate.of(2025,8,15), "12:30", cliente3, 4, false, pagamento3);
-        masterData.addAll(reserva1, reserva2, reserva3);
+        // --- MUDANÇA PRINCIPAL: Carrega dados do banco em vez de usar dados fictícios ---
+        ObservableList<Reserva> masterData = carregarReservasDoBanco();
+        // --- FIM DA MUDANÇA ---
 
         FilteredList<Reserva> filteredData = new FilteredList<>(masterData, p -> true);
         tabela.setItems(filteredData);
@@ -152,8 +172,6 @@ public class TelaGerenciarReserva extends Tela {
             }
         });
 
-        // --- MUDANÇA ---
-        // Adicionando a folha de estilo dos botões à cena inteira.
         scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
 
         return scene;
@@ -161,13 +179,28 @@ public class TelaGerenciarReserva extends Tela {
 
     private void definirPredicadoFiltro(FilteredList<Reserva> filteredData, String nome, LocalDate data) {
         filteredData.setPredicate(reserva -> {
-            if ((nome == null || nome.isEmpty()) && data == null) {
+            // Se ambos os filtros estiverem vazios, mostra tudo
+            boolean nomeOk = (nome == null || nome.isEmpty());
+            boolean dataOk = (data == null);
+
+            if (nomeOk && dataOk) {
                 return true;
             }
-            String lowerCaseFilter = nome.toLowerCase();
-            boolean nomeCorresponde = nome == null || nome.isEmpty() || reserva.getCliente().getNome().toLowerCase().contains(lowerCaseFilter);
-            boolean dataCorresponde = data == null || reserva.getData().equals(data);
-            return nomeCorresponde && dataCorresponde;
+
+            // Verifica se o nome corresponde (se o filtro de nome foi preenchido)
+            boolean nomeCorresponde = nomeOk || reserva.getCliente().getNome().toLowerCase().contains(nome.toLowerCase());
+
+            // Verifica se a data corresponde (se o filtro de data foi preenchido)
+            boolean dataCorresponde = dataOk || reserva.getData().equals(data);
+
+            // A reserva é exibida se corresponder aos filtros que foram preenchidos
+            if (!nomeOk && !dataOk) { // Ambos os filtros estão ativos
+                return nomeCorresponde && dataCorresponde;
+            } else if (!nomeOk) { // Apenas o filtro de nome está ativo
+                return nomeCorresponde;
+            } else { // Apenas o filtro de data está ativo
+                return dataCorresponde;
+            }
         });
     }
 }

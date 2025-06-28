@@ -42,6 +42,7 @@ public class TelaPagamento extends Tela {
     private OrigemDaTela origem;
     private String tituloDesc;
     private String tituloDesc2;
+    private static final String TEXT_COLOR_ON_PANEL = "#3D2B1F";
 
     public TelaPagamento(Stage stage, String email, OrigemDaTela origem) {
         super(stage);
@@ -114,6 +115,8 @@ public class TelaPagamento extends Tela {
      */
     private void updateContent(String selectedItem, VBox contentBox) {
         contentBox.getChildren().clear(); // Limpa o conteúdo anterior
+        String styleText = "-fx-font-size: 13px; -fx-text-fill: " + TEXT_COLOR_ON_PANEL + ";";
+        String styleTextBold = "-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: " + TEXT_COLOR_ON_PANEL + ";";
 
         if (selectedItem.equals("Pedidos")) {
             EntityManager tempEm = JpaUtil.getFactory().createEntityManager();
@@ -128,7 +131,7 @@ public class TelaPagamento extends Tela {
             } else {
                 for (Pedido p : pedidos) {
                     Label pedidoHeader = new Label("Pedido #" + p.getId());
-                    pedidoHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold;");
+                    pedidoHeader.setStyle("-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: " + TEXT_COLOR_ON_PANEL + ";");
                     contentBox.getChildren().add(pedidoHeader);
 
                     // Adicionar os itens do pedido
@@ -141,14 +144,14 @@ public class TelaPagamento extends Tela {
 
                                 HBox itemRow = new HBox();
                                 Label itemLabel = new Label(itemText);
-                                itemLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+                                itemLabel.setStyle(styleText);
                                 itemLabel.setWrapText(true);
 
                                 Region spacer = new Region();
                                 HBox.setHgrow(spacer, Priority.ALWAYS);
 
                                 Label precoLabel = new Label(precoItemText);
-                                precoLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+                                precoLabel.setStyle(styleText);
 
                                 itemRow.getChildren().addAll(itemLabel, spacer, precoLabel);
                                 itemRow.setAlignment(Pos.BASELINE_LEFT);
@@ -164,14 +167,14 @@ public class TelaPagamento extends Tela {
                     // Adicionar taxa de entrega específica do pedido
                     HBox taxaEntregaRow = new HBox();
                     Label taxaEntregaTextLabel = new Label("Taxa de entrega");
-                    taxaEntregaTextLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+                    taxaEntregaTextLabel.setStyle(styleText);
                     taxaEntregaTextLabel.setWrapText(true);
 
                     Region spacerTaxa = new Region();
                     HBox.setHgrow(spacerTaxa, Priority.ALWAYS);
 
                     Label taxaEntregaPrecoLabel = new Label(String.format("R$ %.2f", (double) p.getFrete()));
-                    taxaEntregaPrecoLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+                    taxaEntregaPrecoLabel.setStyle(styleText);
 
                     taxaEntregaRow.getChildren().addAll(taxaEntregaTextLabel, spacerTaxa, taxaEntregaPrecoLabel);
                     taxaEntregaRow.setAlignment(Pos.BASELINE_LEFT);
@@ -192,7 +195,7 @@ public class TelaPagamento extends Tela {
                 contentBox.getChildren().add(sublinhado);
 
                 Label subtotalGeralLabel = new Label("Subtotal Geral:");
-                subtotalGeralLabel.setStyle("-fx-font-weight: bold; -fx-fill: black; -fx-font-size: 17px; ");
+                subtotalGeralLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: " + TEXT_COLOR_ON_PANEL + "; -fx-font-size: 17px;");
                 subtotalGeralLabel.setAlignment(Pos.CENTER_LEFT);
 
                 Region spacerTotalGeral = new Region();
@@ -257,14 +260,14 @@ public class TelaPagamento extends Tela {
                             String.format(" - Reserva para %s às %s do dia %s-%s",
                                     nomeCliente, r.getHorario(), dia, mes)
                     );
-                    reservationTextLabel.setStyle("-fx-font-size: 13px; -fx-font-weight: mediumbold;");
+                    reservationTextLabel.setStyle(styleText);
                     reservationTextLabel.setWrapText(true);
 
                     Region spacerReserva = new Region();
                     HBox.setHgrow(spacerReserva, Priority.ALWAYS);
 
                     Label reservationPriceLabel = new Label(String.format("(R$ %.2f)", valorPagamento));
-                    reservationPriceLabel.setStyle("-fx-font-size: 14px; -fx-font-weight: mediumbold;");
+                    reservationPriceLabel.setStyle(styleText);
 
                     reservationRow.getChildren().addAll(reservationTextLabel, spacerReserva, reservationPriceLabel);
                     reservationRow.setAlignment(Pos.BASELINE_LEFT);
@@ -278,7 +281,7 @@ public class TelaPagamento extends Tela {
 
 
                 Label subtotal = new Label("Subtotal:");
-                subtotal.setStyle("-fx-font-weight: bold; -fx-fill: black; -fx-font-size: 17px; ");
+                subtotal.setStyle("-fx-font-weight: bold; -fx-text-fill: " + TEXT_COLOR_ON_PANEL + "; -fx-font-size: 17px;");
                 subtotal.setAlignment(Pos.CENTER_LEFT);
 
                 Region spacerReservaSubtotal = new Region();
@@ -312,43 +315,44 @@ public class TelaPagamento extends Tela {
      */
     private void updateContent2(String selectedItem, VBox contentBox, double subtotalReservas, double subtotalPedidos, double totalGeral) {
         contentBox.getChildren().clear();
-
         contentBox.setPadding(new Insets(20));
+        contentBox.setSpacing(8); // Adiciona um espaçamento para ficar mais legível
         contentBox.setStyle("-fx-background-color: #FAFAFA; -fx-border-color: #E0E0E0; -fx-border-radius: 8; -fx-background-radius: 8;");
 
+        // Estilos para os textos
+        String styleBold = "-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: " + TEXT_COLOR_ON_PANEL + ";";
+        String styleNormal = "-fx-font-size: 14px; -fx-text-fill: " + TEXT_COLOR_ON_PANEL + ";";
+
         Label titulo = new Label("Resumo do Pagamento:");
-        titulo.setFont(Font.font("System", FontWeight.BOLD, 16));
+        titulo.setStyle(styleBold);
 
-        // Exibe os subtotais de reserva e pedido separadamente
         Label labelSubtotalReserva = new Label(String.format("Subtotal da Reserva: R$ %.2f", subtotalReservas));
-        labelSubtotalReserva.setFont(Font.font("System", 14));
-        Label labelSubtotalPedido = new Label(String.format("Subtotal dos Pedidos: R$ %.2f", subtotalPedidos));
-        labelSubtotalPedido.setFont(Font.font("System", 14));
+        labelSubtotalReserva.setStyle(styleNormal);
 
+        Label labelSubtotalPedido = new Label(String.format("Subtotal dos Pedidos: R$ %.2f", subtotalPedidos));
+        labelSubtotalPedido.setStyle(styleNormal);
 
         Label valorTotal = new Label(String.format("Valor total: R$ %.2f", totalGeral));
-        valorTotal.setFont(Font.font("System", FontWeight.BOLD, 14)); // Mantido como negrito para destaque
+        valorTotal.setStyle(styleBold); // Mantido como negrito para destaque
 
         String[] partesParcelamento = selectedItem.split("x de ");
         int numParcelas = Integer.parseInt(partesParcelamento[0].trim());
-        double valorPorParcela = totalGeral / numParcelas;
+        double valorPorParcela = (totalGeral > 0 && numParcelas > 0) ? totalGeral / numParcelas : 0;
 
         Label parcelas = new Label(String.format("Parcelas: %dx", numParcelas));
-        parcelas.setFont(Font.font("System", 14));
+        parcelas.setStyle(styleNormal);
 
         Label valorParcela = new Label(String.format("Valor por parcela: R$ %.2f", valorPorParcela));
-        valorParcela.setFont(Font.font("System", FontWeight.BOLD, 14));
-
+        valorParcela.setStyle(styleBold);
 
         contentBox.getChildren().addAll(titulo, labelSubtotalReserva, labelSubtotalPedido, valorTotal, parcelas, valorParcela);
 
         if (numParcelas == 1) {
             Label pagamentoAVista = new Label("✓ Pagamento à vista");
-            pagamentoAVista.setTextFill(Color.GREEN);
+            pagamentoAVista.setTextFill(Color.GREEN); // Cor verde já está boa
             pagamentoAVista.setFont(Font.font("System", 14));
             contentBox.getChildren().add(pagamentoAVista);
         }
-        contentBox.setAlignment(Pos.BASELINE_LEFT);
     }
 
 
