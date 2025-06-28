@@ -381,7 +381,17 @@ public class TelaInicial extends Tela {
                         "-fx-faint-focus-color: transparent;"
         );
 
-        Scene scene = new Scene(scrollPane);
+        // --- MUDANÇAS PARA ADICIONAR O BOTÃO VOLTAR ---
+        StackPane stackPane = new StackPane(scrollPane);
+        stackPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
+
+        Runnable acaoVoltar = () -> System.exit(0);
+        BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
+
+        Scene scene = new Scene(stackPane);
+        scene.widthProperty().addListener((obs, oldVal, newVal) -> {
+            // ... (lógica de responsividade existente)
+        });
         scene.setFill(Color.web("#30000C"));
 
         scene.widthProperty().addListener((obs, oldVal, newVal) -> {

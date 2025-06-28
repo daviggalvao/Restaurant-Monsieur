@@ -23,6 +23,6 @@ public abstract class Tela {
         stage.setScene(scene);
         stage.setMinWidth(800);
         stage.setMinHeight(600);
-        stage.setMaximized(true);
+        stage.setFullScreen(true);
     }
 }
