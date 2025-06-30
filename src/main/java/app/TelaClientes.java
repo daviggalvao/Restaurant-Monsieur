@@ -112,9 +112,9 @@ public class TelaClientes extends Tela {
         });
 
         // ... (o restante do seu código para rodapé, layout, scene, etc., permanece o mesmo)
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
+        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
-        Label desc2 = new Label("Projetado para a excelência culinária francesa");
+        Label desc2 = new Label(Tela.emFrances ? "Conçu pour l'excellence culinaire française" : "Projetado para a excelência culinária francesa");
         desc2.setFont(interfontRodape2);
         desc1.setStyle("-fx-text-fill: white;");
         desc2.setStyle("-fx-text-fill: white;");
