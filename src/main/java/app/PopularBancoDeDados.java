@@ -49,6 +49,16 @@ public class PopularBancoDeDados {
         em.persist(cliente2);
         em.persist(funcionario);
         em.persist(funcionario2);
+        em.persist(ingrediente);
+        em.persist(ingrediente2);
+        em.persist(ingrediente3);
+        em.persist(ingrediente4);
+        em.persist(ingrediente5);
+        em.persist(ingrediente6);
+        em.persist(ingrediente7);
+        em.persist(ingrediente8);
+        em.persist(ingrediente9);
+        em.persist(ingrediente10);
         em.persist(prato);
         em.persist(prato2);
         em.persist(prato3);
