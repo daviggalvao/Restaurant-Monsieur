@@ -228,7 +228,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
         ListView<Prato> menuListView = new ListView<>(pratosDisponiveisNoMenu);
         menuListView.setCellFactory(param -> new PratoListCell());
-        menuListView.setPrefHeight(600);
+        VBox.setVgrow(menuListView, Priority.ALWAYS);
         menuListView.setStyle("-fx-background-color: transparent; -fx-control-inner-background: " + PANEL_BACKGROUND_COLOR + ";");
 
 
@@ -419,15 +419,51 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         @Override
         protected void updateItem(Prato prato, boolean empty) {
             super.updateItem(prato, empty);
+
             if (empty || prato == null) {
-                setGraphic(null);
-                if (content != null) content.setStyle(defaultContentStyle);
+                setGraphic(null); // Limpa a célula se não houver prato
             } else {
+                // 1. Configura as informações visuais como antes
                 nomeLabel.setText(prato.getNome());
                 descricaoText.setText(prato.getDescricao());
                 precoLabel.setText(String.format("R$ %.2f", prato.getPreco()));
-                setGraphic(content);
-                content.setStyle(defaultContentStyle);
+                setGraphic(content); // Mostra o conteúdo na célula
+
+                // --- LÓGICA PRINCIPAL DA SOLUÇÃO ---
+
+                // 2. Obtém a quantidade disponível do objeto Prato
+                //    (Assumindo que você tem um método getQuantidade() na sua classe Prato)
+                int quantidadeDisponivel = prato.getQuantidade();
+
+                // 3. Acessa a "fábrica de valores" do Spinner para poder configurá-la
+                SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory =
+                        (SpinnerValueFactory.IntegerSpinnerValueFactory) quantidadeSpinner.getValueFactory();
+
+                // 4. Verifica se o prato está em estoque
+                if (quantidadeDisponivel > 0) {
+                    // Se houver estoque, define o valor máximo do spinner
+                    valueFactory.setMax(quantidadeDisponivel);
+
+                    // Garante que o valor atual do spinner não seja maior que o estoque
+                    if (valueFactory.getValue() > quantidadeDisponivel) {
+                        valueFactory.setValue(1); // Reseta para 1 se for o caso
+                    }
+
+                    // Habilita os controles para o cliente poder adicionar ao carrinho
+                    quantidadeSpinner.setDisable(false);
+                    addButton.setDisable(false);
+                    addButton.setText("Adicionar");
+
+                } else {
+                    // Se não houver estoque (quantidade é 0)
+                    valueFactory.setMax(0); // O máximo é 0
+                    valueFactory.setValue(0); // O valor é 0
+
+                    // Desabilita os controles para impedir a adição de um item indisponível
+                    quantidadeSpinner.setDisable(true);
+                    addButton.setDisable(true);
+                    addButton.setText("Indisponível"); // Informa o usuário visualmente
+                }
             }
         }
     }

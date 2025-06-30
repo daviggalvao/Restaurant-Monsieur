@@ -13,7 +13,7 @@ import jakarta.persistence.EntityTransaction; // Usando jakarta.persistence
 @Table(name = "pratos")
 public class Prato implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType   .IDENTITY)
     private Long id;
 
     @Column(name = "preco", nullable = false)
