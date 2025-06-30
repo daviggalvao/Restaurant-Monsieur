@@ -21,8 +21,6 @@ public abstract class Tela {
     public void mostrarTela() {
         Scene scene = criarScene();
         stage.setScene(scene);
-        stage.setMinWidth(800);
-        stage.setMinHeight(600);
-        stage.setFullScreen(true);
+        stage.setMaximized(true);
     }
 }

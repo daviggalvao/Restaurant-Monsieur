@@ -11,7 +11,7 @@ public class App extends Application{
         PopularBancoDeDados popularBancoDeDados = new PopularBancoDeDados();
         popularBancoDeDados.popular();
         primaryStage.setTitle("Restaurant Monsieur-José - Sistema de Gestão");
-        TelaFuncionarios tela = new TelaFuncionarios(primaryStage);
+        TelaServicos tela = new TelaServicos(primaryStage);
         tela.mostrarTela();
         primaryStage.show();
     }
