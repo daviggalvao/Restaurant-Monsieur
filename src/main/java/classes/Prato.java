@@ -16,7 +16,7 @@ public class Prato implements Serializable {
     @Column(name = "preco", nullable = false)
     private float preco;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY,cascade = CascadeType.PERSIST)
     @JoinTable(
             name = "prato_ingrediente",
             joinColumns = @ JoinColumn(name = "prato_id"), // Coluna na tabela de junção que referencia Prato

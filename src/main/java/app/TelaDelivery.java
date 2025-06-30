@@ -648,6 +648,9 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         if(cliente.ehAniversario()){pedidoFinal.getPagamento().setPreco(pedidoFinal.getPagamento().getPreco()-5);}
         Float desconto = cliente.descontoIdade(pedidoFinal.getPagamento().getPreco());
         pedidoFinal.getPagamento().setPreco(desconto);
+        pedidoFinal.fidelidade(cliente);
+        Integer num = cliente.getFidelidade();
+        cliente.setFidelidade(num+1);
 
 
         EntityManager tempEm = JpaUtil.getFactory().createEntityManager(); // Use a new EM for this transaction

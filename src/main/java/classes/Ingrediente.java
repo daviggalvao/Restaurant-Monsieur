@@ -4,6 +4,7 @@ import database.JpaUtil;
 import jakarta.persistence.*;
 import javafx.scene.control.Alert;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,11 +21,9 @@ public class Ingrediente {
     @Column
     private int quantidade;
     @Column
-    private String validade;
+    private LocalDate validade;
 
-    // Construtores, Getters e Setters (permanecem iguais)
-    public Ingrediente(Long id, String nome, float preco, int quantidade, String validade) {
-        this.id = id;
+    public Ingrediente(String nome, float preco, int quantidade, LocalDate validade) {
         this.nome = nome;
         this.preco = preco;
         this.quantidade = quantidade;
@@ -35,12 +34,12 @@ public class Ingrediente {
     public String getNome() { return nome; }
     public float getPreco() { return preco; }
     public int getQuantidade() { return quantidade; }
-    public String getValidade() { return validade; }
+    public LocalDate getValidade() { return validade; }
     public void setId(Long id) { this.id = id; }
     public void setNome(String nome) { this.nome = nome; }
     public void setPreco(float preco) { this.preco = preco; }
     public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
-    public void setValidade(String validade) { this.validade = validade; }
+    public void setValidade(LocalDate validade) { this.validade = validade; }
 
     // --- MUDANÇA 1: MÉTODO ESTÁTICO PARA BUSCAR TODOS OS INGREDIENTES ---
     /**
