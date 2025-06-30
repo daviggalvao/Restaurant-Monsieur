@@ -1,6 +1,7 @@
 package app;
 
 import classes.Cliente;
+import database.JpaUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
@@ -13,7 +14,6 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Font;
 import javafx.scene.web.WebView;
 import javafx.stage.Stage;
-import database.JpaUtil;
 import javafx.util.Pair;
 
 import java.time.LocalDate;
@@ -184,7 +184,6 @@ public class TelaCriarConta extends Tela {
         confirmar.setMaxWidth(Double.MAX_VALUE);
 
         confirmar.setOnAction(event -> {
-            // ... (Lógica de confirmação existente)
             String nome = nomeTF.getText();
             String email = emailTF.getText();
             String senha = senhaTF.getText();
@@ -265,7 +264,6 @@ public class TelaCriarConta extends Tela {
         btnEntrar.getStyleClass().add("button");
         btnEntrar.setMaxWidth(Double.MAX_VALUE);
         btnEntrar.setOnAction(event -> {
-            // ... (Lógica de login existente)
             String email = emailTFLogin.getText();
             String senha = senhaTFLogin.getText();
 
@@ -319,6 +317,10 @@ public class TelaCriarConta extends Tela {
 
         // --- Container Raiz com Botão Voltar ---
         StackPane root = new StackPane(painelPrincipal);
+
+        // --- MUDANÇA: Adicionando espaçamento vertical ao container principal ---
+        root.setPadding(new Insets(50, 0, 50, 0));
+
         root.setAlignment(Pos.CENTER);
         root.setStyle(estiloFundoVinho);
 
