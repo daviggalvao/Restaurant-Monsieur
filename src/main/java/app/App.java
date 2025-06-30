@@ -29,7 +29,7 @@ public class App extends Application{
             em.close();
         }
         primaryStage.setTitle("Restaurant Monsieur-José - Sistema de Gestão");
-        TelaFuncionarios tela = new TelaFuncionarios(primaryStage);
+        TelaServicos tela = new TelaServicos(primaryStage);
         tela.mostrarTela();
         primaryStage.show();
     }
