@@ -104,7 +104,7 @@ public class TelaCardapio extends Tela {
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 12);
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 10);
 
-        Label tituloPrincipal = new Label("Cardápio");
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Menu" : "Cardápio");
         tituloPrincipal.setFont(playfairFontTitulo);
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
 
@@ -123,17 +123,34 @@ public class TelaCardapio extends Tela {
         pratosContainer.setPadding(new Insets(10, 120, 20, 120));
 
         pratosContainer.getChildren().addAll(
-                createPratoCard("Kylian Mbappé", "95,79", "Uma explosão de sabor e velocidade no paladar, finalização impecável. Acompanha purê de batatas trufado.", corBordaCardRequintado, corTextoCard),
-                createPratoCard("Antoine Griezmann", "88,59", "Elegância e visão de jogo em cada garfada. Um prato versátil com molho hollandaise e aspargos frescos.", corBordaCardRequintado, corTextoCard),
-                createPratoCard("Aurélien Tchouaméni", "82,99", "Solidez e força que protegem o meio-campo do seu apetite. Medalhão de filé mignon ao molho de vinho do Porto.", corBordaCardRequintado, corTextoCard),
-                createPratoCard("Thierry Henry", "99,99", "Um clássico atemporal com um toque de genialidade. Lagosta grelhada com manteiga de ervas finas.", corBordaCardRequintado, corTextoCard),
-                createPratoCard("Ousmane Dembélé", "78,79", (Tela.emFrances) ? "Des notes déconcertantes d'agrumes et de saveurs épicées. Ceviche de bar aux fruits de la passion et au piment." : "Dribles desconcertantes de sabores cítricos e picantes. Ceviche de robalo com maracujá e pimenta dedo-de-moça.", corBordaCardRequintado, corTextoCard),
-                createPratoCard("Dimitri Payet", "85,49", (Tela.emFrances) ? "Précision et créativité dans un plat qui enchante. Risotto au safran, Saint-Jacques sautées et une touche de magie." : "Precisão e criatividade em um prato que encanta. Risoto de açafrão com vieiras salteadas e um toque de magia.", corBordaCardRequintado, corTextoCard)
+                createPratoCard("Kylian Mbappé", "95,79",
+                        (Tela.emFrances) ? "Une explosion de saveur et de vitesse en bouche, une finition impeccable. Accompagné de purée de pommes de terre truffée." : "Uma explosão de sabor e velocidade no paladar, finalização impecável. Acompanha purê de batatas trufado.",
+                        corBordaCardRequintado, corTextoCard),
+
+                createPratoCard("Antoine Griezmann", "88,59",
+                        (Tela.emFrances) ? "Élégance et vision de jeu à chaque bouchée. Un plat polyvalent avec sauce hollandaise et asperges fraîches." : "Elegância e visão de jogo em cada garfada. Um prato versátil com molho hollandaise e aspargos frescos.",
+                        corBordaCardRequintado, corTextoCard),
+
+                createPratoCard("Aurélien Tchouaméni", "82,99",
+                        (Tela.emFrances) ? "Solidité et force qui protègent le milieu de terrain de votre appétit. Médaillon de filet mignon à la sauce au porto." : "Solidez e força que protegem o meio-campo do seu apetite. Medalhão de filé mignon ao molho de vinho do Porto.",
+                        corBordaCardRequintado, corTextoCard),
+
+                createPratoCard("Thierry Henry", "99,99",
+                        (Tela.emFrances) ? "Un classique intemporel avec une touche de génie. Homard grillé au beurre d'herbes fines." : "Um clássico atemporal com um toque de genialidade. Lagosta grelhada com manteiga de ervas finas.",
+                        corBordaCardRequintado, corTextoCard),
+
+                createPratoCard("Ousmane Dembélé", "78,79",
+                        (Tela.emFrances) ? "Des notes déconcertantes d'agrumes et de saveurs épicées. Ceviche de bar aux fruits de la passion et au piment." : "Dribles desconcertantes de sabores cítricos e picantes. Ceviche de robalo com maracujá e pimenta dedo-de-moça.",
+                        corBordaCardRequintado, corTextoCard),
+
+                createPratoCard("Dimitri Payet", "85,49",
+                        (Tela.emFrances) ? "Précision et créativité dans un plat qui enchante. Risotto au safran, Saint-Jacques sautées et une touche de magie." : "Precisão e criatividade em um prato que encanta. Risoto de açafrão com vieiras salteadas e um toque de magia.",
+                        corBordaCardRequintado, corTextoCard)
         );
 
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
+        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
-        Label desc2 = new Label("Projetado para a excelência culinária francesa");
+        Label desc2 = new Label(Tela.emFrances ? "Conçu pour l'excellence culinaire française" : "Projetado para a excelência culinária francesa");
         desc2.setFont(interfontRodape2);
         desc1.setStyle("-fx-text-fill: white;");
         desc2.setStyle("-fx-text-fill: white;");

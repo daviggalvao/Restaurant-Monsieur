@@ -73,17 +73,16 @@ public class TelaEstoque extends Tela {
      * Cria o painel esquerdo com a tabela de ingredientes.
      */
     private VBox criarPainelIngredientes() {
-        // --- MUDANÇA: Definição da fonte do subtítulo ---
         Font playfairFontSubtitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30);
 
-        Label tituloIngredientes = new Label("Ingredientes");
+        // --- TRADUÇÃO ---
+        Label tituloIngredientes = new Label(Tela.emFrances ? "Ingrédients" : "Ingredientes");
         tituloIngredientes.setFont(playfairFontSubtitulo);
         tituloIngredientes.setStyle("-fx-text-fill: #FFC300;");
 
-        // --- MUDANÇA: Criação do sublinhado para o subtítulo ---
         Rectangle sublinhado = new Rectangle(180, 2);
         sublinhado.setFill(Color.web("#FFC300"));
-        sublinhado.widthProperty().bind(tituloIngredientes.widthProperty()); // O sublinhado adapta-se ao tamanho do texto
+        sublinhado.widthProperty().bind(tituloIngredientes.widthProperty());
 
         VBox blocoSubtitulo = new VBox(5, tituloIngredientes, sublinhado);
         blocoSubtitulo.setAlignment(Pos.CENTER);
@@ -92,17 +91,16 @@ public class TelaEstoque extends Tela {
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        TableColumn<Ingrediente, String> nomeColuna = new TableColumn<>("Nome");
+        // --- TRADUÇÃO ---
+        TableColumn<Ingrediente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
-
-        // --- MUDANÇA: Alteração do texto da coluna de "Qtd." para "Quantidade" ---
-        TableColumn<Ingrediente, Integer> qtdColuna = new TableColumn<>("Quantidade");
+        TableColumn<Ingrediente, Integer> qtdColuna = new TableColumn<>(Tela.emFrances ? "Quantité" : "Quantidade");
         qtdColuna.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
-
-        TableColumn<Ingrediente, Void> abastecerColuna = new TableColumn<>("Abastecer");
+        TableColumn<Ingrediente, Void> abastecerColuna = new TableColumn<>(Tela.emFrances ? "Réapprovisionner" : "Abastecer");
 
         abastecerColuna.setCellFactory(col -> new TableCell<>() {
-            private final Button botao = new Button("Pedir");
+            // --- TRADUÇÃO ---
+            private final Button botao = new Button(Tela.emFrances ? "Commander" : "Pedir");
             {
                 botao.getStyleClass().add("button");
                 botao.setOnAction(event -> {
@@ -110,7 +108,8 @@ public class TelaEstoque extends Tela {
                     if (ing.encomendaIngrediente(10)) {
                         getTableView().refresh();
                     } else {
-                        new Alert(Alert.AlertType.WARNING, "Falha ao encomendar o ingrediente.").show();
+                        // --- TRADUÇÃO ---
+                        new Alert(Alert.AlertType.WARNING, Tela.emFrances ? "Échec de la commande de l'ingrédient." : "Falha ao encomendar o ingrediente.").show();
                     }
                 });
             }
@@ -137,14 +136,13 @@ public class TelaEstoque extends Tela {
      * Cria o painel direito com a tabela de pratos.
      */
     private VBox criarPainelPratos() {
-        // --- MUDANÇA: Definição da fonte do subtítulo ---
         Font playfairFontSubtitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30);
 
-        Label tituloPratos = new Label("Pratos");
+        // --- TRADUÇÃO ---
+        Label tituloPratos = new Label(Tela.emFrances ? "Plats" : "Pratos");
         tituloPratos.setFont(playfairFontSubtitulo);
         tituloPratos.setStyle("-fx-text-fill: #FFC300;");
 
-        // --- MUDANÇA: Criação do sublinhado para o subtítulo ---
         Rectangle sublinhado = new Rectangle(180, 2);
         sublinhado.setFill(Color.web("#FFC300"));
         sublinhado.widthProperty().bind(tituloPratos.widthProperty());
@@ -156,14 +154,16 @@ public class TelaEstoque extends Tela {
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        TableColumn<Prato, String> nomeColuna = new TableColumn<>("Nome");
+        // --- TRADUÇÃO ---
+        TableColumn<Prato, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        TableColumn<Prato, Integer> qtdColuna = new TableColumn<>("Estoque");
+        TableColumn<Prato, Integer> qtdColuna = new TableColumn<>(Tela.emFrances ? "Stock" : "Estoque");
         qtdColuna.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
-        TableColumn<Prato, Void> cozinharColuna = new TableColumn<>("Ação");
+        TableColumn<Prato, Void> cozinharColuna = new TableColumn<>(Tela.emFrances ? "Action" : "Ação");
 
         cozinharColuna.setCellFactory(col -> new TableCell<>() {
-            private final Button botao = new Button("Cozinhar");
+            // --- TRADUÇÃO ---
+            private final Button botao = new Button(Tela.emFrances ? "Cuisiner" : "Cozinhar");
             {
                 botao.getStyleClass().add("button");
                 botao.setOnAction(event -> {
@@ -172,7 +172,8 @@ public class TelaEstoque extends Tela {
                         getTableView().refresh();
                         masterDataIngredientes.setAll(Ingrediente.listarTodos());
                     } else {
-                        new Alert(Alert.AlertType.ERROR, "Não foi possível cozinhar o prato. Verifique o estoque de ingredientes.").show();
+                        // --- TRADUÇÃO ---
+                        new Alert(Alert.AlertType.ERROR, Tela.emFrances ? "Impossible de cuisiner le plat. Vérifiez le stock d'ingrédients." : "Não foi possível cozinhar o prato. Verifique o estoque de ingredientes.").show();
                     }
                 });
             }

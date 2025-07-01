@@ -9,6 +9,7 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -28,47 +29,42 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
+public class TelaDelivery extends Tela {
 
     private ObservableList<Prato> pratosDisponiveisNoMenu;
     private EntityManager em = JpaUtil.getFactory().createEntityManager();
-
     private ObservableList<ItemCarrinhoUI> carrinhoDaUI;
-
     private ListView<ItemCarrinhoUI> carrinhoListViewUI;
     private Label totalLabelUI;
     private Label statusLabelUI;
     private String userEmail;
-    // Adicionada a ComboBox para o tipo de pagamento
     private ComboBox<String> tipoPagamentoComboBox;
 
-
-    // --- BEGIN STYLE CONSTANTS ---
-    private static final String DARK_BACKGROUND_COLOR = "#4B3832";
+    // --- Constantes de Estilo ---
+    private static final String DARK_BACKGROUND_COLOR = "linear-gradient(to right, #30000C, #800020)";
     private static final String PANEL_BACKGROUND_COLOR = "#FAF0E6";
     private static final String ACCENT_COLOR_GOLD = "#DAA520";
+
+    // --- LINHA ADICIONADA PARA CORRIGIR O ERRO ---
+    private static final String BORDER_COLOR_PANEL = "#DAA520";
+
     private static final String ACCENT_COLOR_DARK_GOLD = "#B8860B";
     private static final String TEXT_COLOR_ON_PANEL = "#3D2B1F";
-    private static final String TEXT_COLOR_LIGHT = "#F5F5F5";
-    private static final String BORDER_COLOR_PANEL = "#C8A67B";
     private static final String BUTTON_TEXT_COLOR = "#FFFFFF";
 
     private static final Font FONT_TITLE = Font.font("Arial", FontWeight.BOLD, 24);
-    private static final Font FONT_SUBTITLE = Font.font("Arial", FontWeight.BOLD, 20);
     private static final Font FONT_LABEL_BOLD = Font.font("Arial", FontWeight.BOLD, 16);
     private static final Font FONT_TEXT_NORMAL = Font.font("Arial", FontWeight.NORMAL, 14);
     private static final Font FONT_BUTTON = Font.font("Arial", FontWeight.BOLD, 14);
     private static final Font FONT_ITEM_NAME = Font.font("Arial", FontWeight.BOLD, 16);
     private static final Font FONT_ITEM_DETAILS = Font.font("Arial", FontWeight.NORMAL, 13);
     private static final Font FONT_ITEM_PRICE = Font.font("Arial", FontWeight.BOLD, 15);
-    // --- END STYLE CONSTANTS ---
+
 
     public TelaDelivery(Stage stage,String userEmail) {
         super(stage);
         this.userEmail = userEmail;
         this.pratosDisponiveisNoMenu = FXCollections.observableArrayList();
-        carregarPratosDoBancoDeDados();
-
         this.carrinhoDaUI = FXCollections.observableArrayList(item ->
                 new Observable[]{
                         item.quantidadeNoCarrinhoProperty(),
@@ -78,35 +74,34 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
     private void carregarPratosDoBancoDeDados() {
         if (em == null || !em.isOpen()) {
-            Platform.runLater(() -> statusLabelUI.setText("Erro: EntityManager não está ativo ou inicializado. Não foi possível carregar o cardápio."));
+            Platform.runLater(() -> statusLabelUI.setText(Tela.emFrances ? "Erreur : EntityManager n'est pas actif." : "Erro: EntityManager não está ativo."));
             return;
         }
-
         try {
             em.getTransaction().begin();
-
             List<Prato> pratosDoBanco = em.createQuery("SELECT p FROM Prato p", Prato.class).getResultList();
-
             pratosDisponiveisNoMenu.clear();
             pratosDisponiveisNoMenu.addAll(pratosDoBanco);
-
             em.getTransaction().commit();
 
             Platform.runLater(() -> {
-                if (pratosDisponiveisNoMenu.isEmpty()) {
-                    statusLabelUI.setText("Nenhum prato disponível no cardápio.");
-                } else {
-                    statusLabelUI.setText("Cardápio carregado com " + pratosDisponiveisNoMenu.size() + " pratos.");
+                if(statusLabelUI != null) {
+                    if (pratosDisponiveisNoMenu.isEmpty()) {
+                        statusLabelUI.setText(Tela.emFrances ? "Aucun plat disponible au menu." : "Nenhum prato disponível no cardápio.");
+                    } else {
+                        statusLabelUI.setText((Tela.emFrances ? "Menu chargé avec " : "Cardápio carregado com ") + pratosDisponiveisNoMenu.size() + (Tela.emFrances ? " plats." : " pratos."));
+                    }
                 }
             });
 
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            System.err.println("Erro ao carregar pratos do banco de dados: " + e.getMessage());
+            if (em.getTransaction().isActive()) em.getTransaction().rollback();
             e.printStackTrace();
-            Platform.runLater(() -> statusLabelUI.setText("Erro ao carregar cardápio: " + e.getMessage()));
+            Platform.runLater(() -> {
+                if(statusLabelUI != null) {
+                    statusLabelUI.setText((Tela.emFrances ? "Erreur lors du chargement du menu: " : "Erro ao carregar cardápio: ") + e.getMessage());
+                }
+            });
         }
     }
 
@@ -114,34 +109,18 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
     public Scene criarScene() {
         BorderPane layoutPrincipal = new BorderPane();
         layoutPrincipal.setPadding(new Insets(20));
-        // REMOVA a linha de estilo daqui
-        // String estiloFundoVinho = "-fx-background-color: linear-gradient(to right, #30000C, #800020);";
-        // layoutPrincipal.setStyle(estiloFundoVinho); // <-- REMOVER ESTA LINHA
 
-        // --- INÍCIO DA MODIFICAÇÃO DO TÍTULO ---
-
-        // 1. Carregar a fonte e criar o Label principal
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 62);
-        // Usamos a variável estática 'emFrances' para a tradução, assim como na outra tela
         Label tituloPrincipal = new Label(Tela.emFrances ? "Livraison" : "Delivery");
         tituloPrincipal.setFont(playfairFontTitulo);
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
-
-        // 2. Criar o sublinhado
-        Rectangle sublinhado = new Rectangle(230, 4); // A largura inicial é ajustada pelo 'bind'
+        Rectangle sublinhado = new Rectangle(230, 4);
         sublinhado.setFill(Color.web("#FFC300"));
-        // A largura do sublinhado se ajusta automaticamente à largura do texto
         sublinhado.widthProperty().bind(tituloPrincipal.widthProperty());
-
-        // 3. Agrupar o título e o sublinhado em um VBox
         VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
         blocoTitulo.setAlignment(Pos.CENTER);
-        blocoTitulo.setPadding(new Insets(0, 0, 20, 0)); // Adiciona um espaço abaixo do título
-
-        // 4. Posicionar o bloco do título no topo do layout
+        blocoTitulo.setPadding(new Insets(0, 0, 20, 0));
         layoutPrincipal.setTop(blocoTitulo);
-
-        // --- FIM DA MODIFICAÇÃO DO TÍTULO ---
 
         VBox painelMenu = criarPainelMenu();
         layoutPrincipal.setLeft(painelMenu);
@@ -150,40 +129,33 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         VBox painelCarrinho = criarPainelCarrinhoDaUI();
         layoutPrincipal.setCenter(painelCarrinho);
 
-        // ATENÇÃO: A lógica da barra de status precisa ser ajustada, pois o fundo dela
-        // dependia do 'estiloFundoVinho'
-        String estiloFundoVinho = "-fx-background-color: linear-gradient(to right, #30000C, #800020);";
-
-        statusLabelUI = new Label("Bem-vindo! Escolha seus pratos e adicione ao carrinho.");
+        statusLabelUI = new Label(Tela.emFrances ? "Bienvenue ! Choisissez vos plats et ajoutez-les au panier." : "Bem-vindo! Escolha seus pratos e adicione ao carrinho.");
         statusLabelUI.setPadding(new Insets(8, 10, 8, 10));
         statusLabelUI.setMaxWidth(Double.MAX_VALUE);
         statusLabelUI.setAlignment(Pos.CENTER_LEFT);
         statusLabelUI.setFont(FONT_TEXT_NORMAL);
         statusLabelUI.setStyle(
-                "-fx-background-color: #5D0017;" + // Usando uma cor sólida aproximada do gradiente para a barra
+                "-fx-background-color: #5D0017;" +
                         "-fx-text-fill: #FFC300; " +
                         "-fx-border-color: " + ACCENT_COLOR_GOLD + "; " +
                         "-fx-border-width: 1 0 0 0;"
         );
         layoutPrincipal.setBottom(statusLabelUI);
 
+        carregarPratosDoBancoDeDados(); // Carregar os pratos após a UI ser inicializada
+
         StackPane stackPane = new StackPane();
-        // APLIQUE O ESTILO DE FUNDO DIRETAMENTE NO STACKPANE
-        stackPane.setStyle(estiloFundoVinho); // <-- ADICIONAR ESTA LINHA
-
-        // O layoutPrincipal agora não precisa mais de fundo,
-        // então o tornamos transparente para ver o fundo do StackPane
+        stackPane.setStyle("-fx-background-color: " + DARK_BACKGROUND_COLOR + ";");
         layoutPrincipal.setStyle("-fx-background-color: transparent;");
-
         stackPane.getChildren().add(layoutPrincipal);
 
-        BotaoVoltar.criarEPosicionar(stackPane, () -> {
-            new TelaInicial(super.getStage()).mostrarTela();
-        });
+        BotaoVoltar.criarEPosicionar(stackPane, () -> new TelaInicial(super.getStage()).mostrarTela());
 
         Scene scene = new Scene(stackPane, 1024, 768);
         return scene;
     }
+
+    // ... (O resto do código permanece o mesmo) ...
 
     public void fecharRecursosJPA() {
         if (em != null && em.isOpen()) {
@@ -219,7 +191,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         );
         painel.setPrefWidth(480);
 
-        Label tituloMenu = new Label("Cardápio");
+        Label tituloMenu = new Label(Tela.emFrances ? "Menu" : "Cardápio");
         tituloMenu.setFont(FONT_TITLE);
         tituloMenu.setStyle("-fx-text-fill: " + TEXT_COLOR_ON_PANEL);
         tituloMenu.setMaxWidth(Double.MAX_VALUE);
@@ -247,7 +219,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
                         "-fx-background-radius: 8;"
         );
 
-        Label tituloCarrinho = new Label("Seu Pedido");
+        Label tituloCarrinho = new Label(Tela.emFrances ? "Votre Commande" : "Seu Pedido");
         tituloCarrinho.setFont(FONT_TITLE);
         tituloCarrinho.setStyle("-fx-text-fill: " + TEXT_COLOR_ON_PANEL);
         tituloCarrinho.setMaxWidth(Double.MAX_VALUE);
@@ -264,7 +236,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         HBox totalBox = new HBox(10);
         totalBox.setAlignment(Pos.CENTER_RIGHT);
         totalBox.setPadding(new Insets(10, 0, 10, 0));
-        Label totalTextoLabel = new Label("Total:");
+        Label totalTextoLabel = new Label(Tela.emFrances ? "Total :" : "Total:");
         totalTextoLabel.setFont(FONT_LABEL_BOLD);
         totalTextoLabel.setTextFill(Color.web(TEXT_COLOR_ON_PANEL));
         totalLabelUI = new Label("R$ 0,00");
@@ -272,23 +244,21 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         totalLabelUI.setStyle("-fx-text-fill: " + ACCENT_COLOR_DARK_GOLD);
         totalBox.getChildren().addAll(totalTextoLabel, totalLabelUI);
 
-
-        // --- INÍCIO DA ADIÇÃO DA COMBOBOX DE TIPO DE PAGAMENTO ---
-        Label labelTipoPagamento = new Label("Tipo de Pagamento:");
+        Label labelTipoPagamento = new Label(Tela.emFrances ? "Type de Paiement :" : "Tipo de Pagamento:");
         labelTipoPagamento.setFont(FONT_LABEL_BOLD);
         labelTipoPagamento.setTextFill(Color.web(TEXT_COLOR_ON_PANEL));
 
         tipoPagamentoComboBox = new ComboBox<>();
         tipoPagamentoComboBox.setPrefWidth(200);
         tipoPagamentoComboBox.getItems().addAll(
-                "Pix (10% Off)",
-                "Cartão de Crédito",
-                "Cartão de Débito",
-                "Talão de Cheque",
-                "Dinheiro Físico",
-                "Pagar Fiado"
+                Tela.emFrances ? "Pix (10% de réduction)" : "Pix (10% Off)",
+                Tela.emFrances ? "Carte de Crédit" : "Cartão de Crédito",
+                Tela.emFrances ? "Carte de Débit" : "Cartão de Débito",
+                Tela.emFrances ? "Chèque" : "Talão de Cheque",
+                Tela.emFrances ? "Espèces" : "Dinheiro Físico",
+                Tela.emFrances ? "Payer à crédit" : "Pagar Fiado"
         );
-        tipoPagamentoComboBox.setValue("Pix (10% Off)"); // Valor padrão// Ocupa a largura disponível
+        tipoPagamentoComboBox.setValue(Tela.emFrances ? "Pix (10% de réduction)" : "Pix (10% Off)");
         tipoPagamentoComboBox.setStyle(
                 "-fx-background-color: #FFFFFF; " +
                         "-fx-border-color: " + BORDER_COLOR_PANEL + "; " +
@@ -299,11 +269,9 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
         VBox tipoPagamentoBox = new VBox(5, labelTipoPagamento, tipoPagamentoComboBox);
         tipoPagamentoBox.setAlignment(Pos.CENTER_RIGHT);
-        tipoPagamentoBox.setPadding(new Insets(10, 0, 0, 0)); // Espaçamento acima do botão
-        // --- FIM DA ADIÇÃO DA COMBOBOX DE TIPO DE PAGAMENTO ---
+        tipoPagamentoBox.setPadding(new Insets(10, 0, 0, 0));
 
-
-        Button btnFinalizarPedido = new Button("Finalizar Pedido");
+        Button btnFinalizarPedido = new Button(Tela.emFrances ? "Finaliser la Commande" : "Finalizar Pedido");
         btnFinalizarPedido.setFont(FONT_BUTTON);
         btnFinalizarPedido.setStyle(
                 "-fx-background-color: " + ACCENT_COLOR_GOLD + "; " +
@@ -323,7 +291,6 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
                         "-fx-background-radius: 5; " +
                         "-fx-padding: 10 20 10 20;"
         ));
-
         btnFinalizarPedido.setPrefWidth(200);
         btnFinalizarPedido.setOnAction(e -> handleFinalizarPedido());
 
@@ -331,7 +298,6 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         finalizarBox.setAlignment(Pos.CENTER_RIGHT);
         finalizarBox.setPadding(new Insets(10,0,0,0));
 
-        // Adiciona a ComboBox ao painel, antes do botão de finalizar
         painel.getChildren().addAll(tituloCarrinho, carrinhoListViewUI, totalBox, finalizarBox);
         atualizarTotalDaUI();
         return painel;
@@ -366,10 +332,10 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
             quantidadeSpinner = new Spinner<>(1, 10, 1);
             quantidadeSpinner.setPrefWidth(70);
-            quantidadeSpinner.getEditor().setStyle("-fx-background-color: #FFFFFF;" + "-fx-text-fill: " + TEXT_COLOR_ON_PANEL + ";" + "-fx-border-color: " + BORDER_COLOR_PANEL + "; -fx-border-width: 1;");
+            quantidadeSpinner.getEditor().setStyle("-fx-background-color: #FFFFFF;" + "-fx-text-fill: " + TEXT_COLOR_ON_PANEL + "; -fx-border-color: " + BORDER_COLOR_PANEL + "; -fx-border-width: 1;");
 
 
-            addButton = new Button("Adicionar");
+            addButton = new Button(Tela.emFrances ? "Ajouter" : "Adicionar");
             addButton.setFont(Font.font("Arial", FontWeight.BOLD, 12));
             addButton.setStyle(
                     "-fx-background-color: " + ACCENT_COLOR_GOLD + "; " +
@@ -421,48 +387,32 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
             super.updateItem(prato, empty);
 
             if (empty || prato == null) {
-                setGraphic(null); // Limpa a célula se não houver prato
+                setGraphic(null);
             } else {
-                // 1. Configura as informações visuais como antes
                 nomeLabel.setText(prato.getNome());
                 descricaoText.setText(prato.getDescricao());
                 precoLabel.setText(String.format("R$ %.2f", prato.getPreco()));
-                setGraphic(content); // Mostra o conteúdo na célula
+                setGraphic(content);
 
-                // --- LÓGICA PRINCIPAL DA SOLUÇÃO ---
-
-                // 2. Obtém a quantidade disponível do objeto Prato
-                //    (Assumindo que você tem um método getQuantidade() na sua classe Prato)
                 int quantidadeDisponivel = prato.getQuantidade();
-
-                // 3. Acessa a "fábrica de valores" do Spinner para poder configurá-la
                 SpinnerValueFactory.IntegerSpinnerValueFactory valueFactory =
                         (SpinnerValueFactory.IntegerSpinnerValueFactory) quantidadeSpinner.getValueFactory();
 
-                // 4. Verifica se o prato está em estoque
                 if (quantidadeDisponivel > 0) {
-                    // Se houver estoque, define o valor máximo do spinner
                     valueFactory.setMax(quantidadeDisponivel);
-
-                    // Garante que o valor atual do spinner não seja maior que o estoque
                     if (valueFactory.getValue() > quantidadeDisponivel) {
-                        valueFactory.setValue(1); // Reseta para 1 se for o caso
+                        valueFactory.setValue(1);
                     }
-
-                    // Habilita os controles para o cliente poder adicionar ao carrinho
                     quantidadeSpinner.setDisable(false);
                     addButton.setDisable(false);
-                    addButton.setText("Adicionar");
+                    addButton.setText(Tela.emFrances ? "Ajouter" : "Adicionar");
 
                 } else {
-                    // Se não houver estoque (quantidade é 0)
-                    valueFactory.setMax(0); // O máximo é 0
-                    valueFactory.setValue(0); // O valor é 0
-
-                    // Desabilita os controles para impedir a adição de um item indisponível
+                    valueFactory.setMax(0);
+                    valueFactory.setValue(0);
                     quantidadeSpinner.setDisable(true);
                     addButton.setDisable(true);
-                    addButton.setText("Indisponível"); // Informa o usuário visualmente
+                    addButton.setText(Tela.emFrances ? "Indisponible" : "Indisponível");
                 }
             }
         }
@@ -481,7 +431,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         } else {
             carrinhoDaUI.add(new ItemCarrinhoUI(prato, quantidade));
         }
-        statusLabelUI.setText(quantidade + "x " + prato.getNome() + " adicionado(s) ao carrinho.");
+        statusLabelUI.setText(quantidade + "x " + prato.getNome() + (Tela.emFrances ? " ajouté(s) au panier." : " adicionado(s) ao carrinho."));
         Platform.runLater(() -> {
             if (!carrinhoDaUI.isEmpty()) {
                 carrinhoListViewUI.scrollTo(carrinhoDaUI.size() -1);
@@ -520,10 +470,10 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
                         if (currentItem != null) {
                             if (newValue <= 0) {
                                 carrinhoDaUI.remove(currentItem);
-                                statusLabelUI.setText(currentItem.getPrato().getNome() + " removido do carrinho.");
+                                statusLabelUI.setText(currentItem.getPrato().getNome() + (Tela.emFrances ? " retiré du panier." : " removido do carrinho."));
                             } else {
                                 currentItem.setQuantidadeNoCarrinho(newValue);
-                                statusLabelUI.setText("Quantidade de " + currentItem.getPrato().getNome() + " atualizada para " + newValue + ".");
+                                statusLabelUI.setText((Tela.emFrances ? "Quantité de " : "Quantidade de ") + currentItem.getPrato().getNome() + (Tela.emFrances ? " mise à jour à " : " atualizada para ") + newValue + ".");
                             }
                         }
                     });
@@ -532,7 +482,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
                         ItemCarrinhoUI currentItem = getItem();
                         if(currentItem != null) {
                             carrinhoDaUI.remove(currentItem);
-                            statusLabelUI.setText(currentItem.getPrato().getNome() + " removido do carrinho.");
+                            statusLabelUI.setText(currentItem.getPrato().getNome() + (Tela.emFrances ? " retiré du panier." : " removido do carrinho."));
                         }
                     });
                 }
@@ -564,7 +514,7 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
                 ItemCarrinhoUI item = getItem();
                 if (item != null) {
                     carrinhoDaUI.remove(item);
-                    statusLabelUI.setText(item.getPrato().getNome() + " removido do carrinho.");
+                    statusLabelUI.setText(item.getPrato().getNome() + (Tela.emFrances ? " retiré du panier." : " removido do carrinho."));
                 }
             });
 
@@ -619,24 +569,23 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
 
     private void handleFinalizarPedido() {
         if (carrinhoDaUI.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Seu carrinho está vazio!\nPor favor, adicione itens antes de finalizar o pedido.", ButtonType.OK);
-            alert.setHeaderText("Carrinho Vazio");
-            alert.setTitle("Atenção");
+            Alert alert = new Alert(Alert.AlertType.WARNING, Tela.emFrances ? "Votre panier est vide !\nVeuillez ajouter des articles avant de finaliser la commande." : "Seu carrinho está vazio!\nPor favor, adicione itens antes de finalizar o pedido.", ButtonType.OK);
+            alert.setHeaderText(Tela.emFrances ? "Panier Vide" : "Carrinho Vazio");
+            alert.setTitle(Tela.emFrances ? "Attention" : "Atenção");
             styleAlertDialog(alert);
             alert.showAndWait();
-            statusLabelUI.setText("Tentativa de finalizar pedido com carrinho vazio.");
+            statusLabelUI.setText(Tela.emFrances ? "Tentative de finaliser une commande avec un panier vide." : "Tentativa de finalizar pedido com carrinho vazio.");
             return;
         }
 
-        // Obtém o tipo de pagamento selecionado na ComboBox
         String tipoPagamentoSelecionado = tipoPagamentoComboBox.getValue();
         if (tipoPagamentoSelecionado == null || tipoPagamentoSelecionado.isEmpty()) {
-            Alert alert = new Alert(Alert.AlertType.WARNING, "Por favor, selecione um tipo de pagamento antes de finalizar o pedido.", ButtonType.OK);
-            alert.setHeaderText("Tipo de Pagamento Não Selecionado");
-            alert.setTitle("Atenção");
+            Alert alert = new Alert(Alert.AlertType.WARNING, Tela.emFrances ? "Veuillez sélectionner un type de paiement avant de finaliser la commande." : "Por favor, selecione um tipo de pagamento antes de finalizar o pedido.", ButtonType.OK);
+            alert.setHeaderText(Tela.emFrances ? "Type de Paiement Non Sélectionné" : "Tipo de Pagamento Não Selecionado");
+            alert.setTitle(Tela.emFrances ? "Attention" : "Atenção");
             styleAlertDialog(alert);
             alert.showAndWait();
-            statusLabelUI.setText("Tipo de pagamento não selecionado.");
+            statusLabelUI.setText(Tela.emFrances ? "Type de paiement non sélectionné." : "Tipo de pagamento não selecionado.");
             return;
         }
 
@@ -656,8 +605,8 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
             pedidoItems.add(item);
         }
 
-        StringBuilder sb = new StringBuilder("Seu pedido foi preparado para envio:\n\n");
-        sb.append("Itens do Pedido:\n");
+        StringBuilder sb = new StringBuilder(Tela.emFrances ? "Votre commande a été préparée pour l'envoi :\n\n" : "Seu pedido foi preparado para envio:\n\n");
+        sb.append(Tela.emFrances ? "Articles de la Commande :\n" : "Itens do Pedido:\n");
         for( int j = 0;j < pedidoItems.size();j++) {
             if (pedidoItems.get(j).getPrato() != null) {
                 Prato p = pedidoItems.get(j).getPrato();
@@ -675,7 +624,6 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         pedidoFinal.setItensPedido(pedidoItems);
         Float subtotalSimplesFinal = pedidoFinal.calcularPrecoTotal();
 
-        // Usa o tipo de pagamento selecionado da ComboBox
         Pagamento pagamentoFinal = new Pagamento(subtotalSimplesFinal,cliente.getNome(),tipoPagamentoSelecionado,1);
         pedidoFinal.setPagamento(pagamentoFinal);
         pedidoFinal.getPagamento().getTipo().split(" ");
@@ -689,37 +637,37 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         cliente.setFidelidade(num+1);
 
 
-        EntityManager tempEm = JpaUtil.getFactory().createEntityManager(); // Use a new EM for this transaction
+        EntityManager tempEm = JpaUtil.getFactory().createEntityManager();
         try {
             tempEm.getTransaction().begin();
             tempEm.persist(pedidoFinal);
             tempEm.getTransaction().commit();
-            statusLabelUI.setText("Pedido finalizado e salvo com sucesso! O carrinho foi limpo.");
-            carrinhoDaUI.clear(); // Clear cart only after successful save
+            statusLabelUI.setText(Tela.emFrances ? "Commande finalisée et enregistrée avec succès ! Le panier a été vidé." : "Pedido finalizado e salvo com sucesso! O carrinho foi limpo.");
+            carrinhoDaUI.clear();
         } catch (Exception e) {
             if (tempEm.getTransaction().isActive()) {
                 tempEm.getTransaction().rollback();
             }
             System.err.println("Erro ao salvar o pedido: " + e.getMessage());
             e.printStackTrace();
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR, "Erro ao salvar o pedido no banco de dados. Por favor, tente novamente.", ButtonType.OK);
-            errorAlert.setHeaderText("Erro de Persistência");
+            Alert errorAlert = new Alert(Alert.AlertType.ERROR, Tela.emFrances ? "Erreur lors de l'enregistrement de la commande dans la base de données. Veuillez réessayer." : "Erro ao salvar o pedido no banco de dados. Por favor, tente novamente.", ButtonType.OK);
+            errorAlert.setHeaderText(Tela.emFrances ? "Erreur de Persistance" : "Erro de Persistência");
             styleAlertDialog(errorAlert);
             errorAlert.showAndWait();
-            statusLabelUI.setText("Erro ao finalizar o pedido.");
+            statusLabelUI.setText(Tela.emFrances ? "Erreur lors de la finalisation de la commande." : "Erro ao finalizar o pedido.");
         } finally {
             if (tempEm != null && tempEm.isOpen()) {
-                tempEm.close(); // Always close the EntityManager
+                tempEm.close();
             }
         }
 
-        sb.append(String.format("  - 1x Frete: R$ %d\n",pedidoFinal.getFrete()));
-        sb.append(String.format("\nSubtotal dos Pratos: R$ %.2f", pedidoFinal.getPagamento().getPreco()));
-        sb.append(String.format("\nTipo de Pagamento: %s", tipoPagamentoSelecionado)); // Adiciona o tipo de pagamento ao resumo
+        sb.append(String.format((Tela.emFrances ? "  - 1x Livraison : R$ %d\n" : "  - 1x Frete: R$ %d\n"),pedidoFinal.getFrete()));
+        sb.append(String.format((Tela.emFrances ? "\nSous-total des Plats : R$ %.2f" : "\nSubtotal dos Pratos: R$ %.2f"), pedidoFinal.getPagamento().getPreco()));
+        sb.append(String.format((Tela.emFrances ? "\nType de Paiement : %s" : "\nTipo de Pagamento: %s"), tipoPagamentoSelecionado));
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Pedido Finalizado");
-        alert.setHeaderText("Confirmação do Pedido");
+        alert.setTitle(Tela.emFrances ? "Commande Finalisée" : "Pedido Finalizado");
+        alert.setHeaderText(Tela.emFrances ? "Confirmation de la Commande" : "Confirmação do Pedido");
 
         TextArea textArea = new TextArea(sb.toString());
         textArea.setEditable(false);
@@ -737,11 +685,9 @@ public class TelaDelivery extends Tela { // 1. Garante que herda de Tela
         styleAlertDialog(alert);
         alert.showAndWait();
 
-        statusLabelUI.setText("Pedido finalizado com sucesso! O carrinho foi limpo.");
         carrinhoDaUI.clear();
 
-        // Opcional: Voltar para Tela Inicial ou para a tela de serviços após o pedido
-        new TelaPagamento(super.getStage(), this.userEmail, OrigemDaTela.TELA_DELIVERY).mostrarTela(); // Exemplo de retorno
+        new TelaPagamento(super.getStage(), this.userEmail, OrigemDaTela.TELA_DELIVERY).mostrarTela();
     }
 
     private void styleAlertDialog(Alert alert) {
