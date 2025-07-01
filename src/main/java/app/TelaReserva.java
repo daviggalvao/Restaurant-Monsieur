@@ -242,7 +242,7 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
         // --- INÍCIO DA MODIFICAÇÃO ---
         // 1. Criar um StackPane para ser o novo root da cena
         StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(root); // Adiciona o VBox original
+        stackPane.getChildren().add(root); // Adiciona o VBox o riginal
 
         // 2. Criar e posicionar o botão de voltar
         BotaoVoltar.criarEPosicionar(stackPane, () -> {

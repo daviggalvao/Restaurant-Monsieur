@@ -1,9 +1,9 @@
 package app;
 
 import classes.Ingrediente;
+import classes.Prato;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -15,7 +15,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
+import java.util.List;
+
 public class TelaEstoque extends Tela {
+
+    // Listas observáveis para as duas tabelas
+    private ObservableList<Ingrediente> masterDataIngredientes;
+    private ObservableList<Prato> masterDataPratos;
 
     public TelaEstoque(Stage stage) {
         super(stage);
@@ -24,136 +30,168 @@ public class TelaEstoque extends Tela {
     @Override
     public Scene criarScene() {
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
-        Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
-        Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
 
-        Label tituloPrincipal = new Label(Tela.emFrances ? "Stock" : "Estoque");
+        Label tituloPrincipal = new Label(Tela.emFrances ? "Stock et Cuisine" : "Estoque e Cozinha");
         tituloPrincipal.setFont(playfairFontTitulo);
         tituloPrincipal.setStyle("-fx-text-fill: #FFC300;");
-
-        Rectangle sublinhado = new Rectangle(190, 3);
+        Rectangle sublinhado = new Rectangle(500, 3);
         sublinhado.setFill(Color.web("#FFC300"));
-
         VBox blocoTitulo = new VBox(5, tituloPrincipal, sublinhado);
         blocoTitulo.setAlignment(Pos.CENTER);
         VBox.setMargin(blocoTitulo, new Insets(20, 0, 20, 0));
 
-        // --- MUDANÇA: Ajuste no texto e adição do botão limpar ---
-        TextField pesquisaNome = new TextField();
-        // 1. Texto do campo de pesquisa alterado para ser mais simples
-        pesquisaNome.setPromptText(Tela.emFrances ? "Rechercher par nom" : "Pesquisar por nome");
-        pesquisaNome.setMinWidth(300); // Ajustei a largura mínima
+        // --- CRIAÇÃO DOS DOIS PAINÉIS ---
+        VBox painelIngredientes = criarPainelIngredientes();
+        VBox painelPratos = criarPainelPratos();
 
-        // 2. Criação do botão Limpar
-        Button limparPesquisa = new Button(Tela.emFrances ? "Nettoyer" : "Limpar");
+        Rectangle divide = new Rectangle(5, 550);
+        divide.setFill(Color.web("#FFC300"));
 
-        // 3. Adição do botão ao HBox, com espaçamento
-        HBox barraPesquisa = new HBox(10, pesquisaNome, limparPesquisa);
-        barraPesquisa.setAlignment(Pos.CENTER);
-        VBox.setMargin(barraPesquisa, new Insets(0, 0, 20, 0));
-        // --- FIM DA MUDANÇA ---
+        HBox layoutDuplo = new HBox(30, painelIngredientes, divide, painelPratos);
+        layoutDuplo.setAlignment(Pos.CENTER);
+        HBox.setHgrow(painelIngredientes, Priority.ALWAYS);
+        HBox.setHgrow(painelPratos, Priority.ALWAYS);
+
+        // Layout principal que organiza tudo
+        VBox layoutPrincipal = new VBox(20, blocoTitulo, layoutDuplo);
+        layoutPrincipal.setPadding(new Insets(20));
+        VBox.setVgrow(layoutDuplo, Priority.ALWAYS);
+
+        StackPane stackPane = new StackPane(layoutPrincipal);
+        stackPane.setStyle("-fx-background-color: linear-gradient(to right, #30000C, #800020);");
+
+        Runnable acaoVoltar = () -> new TelaServicos(super.getStage()).mostrarTela();
+        BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
+
+        Scene scene = new Scene(stackPane, 1400, 800);
+        scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
+
+        return scene;
+    }
+
+    /**
+     * Cria o painel esquerdo com a tabela de ingredientes.
+     */
+    private VBox criarPainelIngredientes() {
+        // --- MUDANÇA: Definição da fonte do subtítulo ---
+        Font playfairFontSubtitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30);
+
+        Label tituloIngredientes = new Label("Ingredientes");
+        tituloIngredientes.setFont(playfairFontSubtitulo);
+        tituloIngredientes.setStyle("-fx-text-fill: #FFC300;");
+
+        // --- MUDANÇA: Criação do sublinhado para o subtítulo ---
+        Rectangle sublinhado = new Rectangle(180, 2);
+        sublinhado.setFill(Color.web("#FFC300"));
+        sublinhado.widthProperty().bind(tituloIngredientes.widthProperty()); // O sublinhado adapta-se ao tamanho do texto
+
+        VBox blocoSubtitulo = new VBox(5, tituloIngredientes, sublinhado);
+        blocoSubtitulo.setAlignment(Pos.CENTER);
 
         TableView<Ingrediente> tabela = new TableView<>();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+        tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        TableColumn<Ingrediente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Ingredient" : "Ingrediente");
+        TableColumn<Ingrediente, String> nomeColuna = new TableColumn<>("Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        TableColumn<Ingrediente, Float> precoColuna = new TableColumn<>(Tela.emFrances ? "Prix (R$)" : "Preço (R$)");
-        precoColuna.setCellValueFactory(new PropertyValueFactory<>("preco"));
-        TableColumn<Ingrediente, Integer> quantidadeColuna = new TableColumn<>(Tela.emFrances ? "Montant" : "Quantidade");
-        quantidadeColuna.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
-        TableColumn<Ingrediente, Void> pedirColuna = new TableColumn<>(Tela.emFrances ? "Carburant" : "Abastecer");
-        pedirColuna.setCellFactory(coluna -> new TableCell<>() {
-            private final Button botao = new Button(Tela.emFrances ? "Carburant" : "Abastecer");
+
+        // --- MUDANÇA: Alteração do texto da coluna de "Qtd." para "Quantidade" ---
+        TableColumn<Ingrediente, Integer> qtdColuna = new TableColumn<>("Quantidade");
+        qtdColuna.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+
+        TableColumn<Ingrediente, Void> abastecerColuna = new TableColumn<>("Abastecer");
+
+        abastecerColuna.setCellFactory(col -> new TableCell<>() {
+            private final Button botao = new Button("Pedir");
             {
+                botao.getStyleClass().add("button");
                 botao.setOnAction(event -> {
-                    Ingrediente inc = getTableView().getItems().get(getIndex());
-                    if(inc.precisaRepor())
-                        inc.encomendaIngrediente(10);
-                    getTableView().refresh();
+                    Ingrediente ing = getTableView().getItems().get(getIndex());
+                    if (ing.encomendaIngrediente(10)) {
+                        getTableView().refresh();
+                    } else {
+                        new Alert(Alert.AlertType.WARNING, "Falha ao encomendar o ingrediente.").show();
+                    }
                 });
             }
             @Override
             protected void updateItem(Void item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
-                    setGraphic(null);
-                } else {
-                    setGraphic(botao);
-                }
+                setGraphic(empty ? null : botao);
             }
         });
 
-        tabela.getColumns().addAll(nomeColuna, precoColuna, quantidadeColuna, pedirColuna);
+        tabela.getColumns().addAll(nomeColuna, qtdColuna, abastecerColuna);
+
+        List<Ingrediente> ingredientesDoBanco = Ingrediente.listarTodos();
+        masterDataIngredientes = FXCollections.observableArrayList(ingredientesDoBanco);
+        tabela.setItems(masterDataIngredientes);
+
+        VBox painel = new VBox(10, blocoSubtitulo, tabela);
+        painel.setAlignment(Pos.TOP_CENTER);
+
+        return painel;
+    }
+
+    /**
+     * Cria o painel direito com a tabela de pratos.
+     */
+    private VBox criarPainelPratos() {
+        // --- MUDANÇA: Definição da fonte do subtítulo ---
+        Font playfairFontSubtitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30);
+
+        Label tituloPratos = new Label("Pratos");
+        tituloPratos.setFont(playfairFontSubtitulo);
+        tituloPratos.setStyle("-fx-text-fill: #FFC300;");
+
+        // --- MUDANÇA: Criação do sublinhado para o subtítulo ---
+        Rectangle sublinhado = new Rectangle(180, 2);
+        sublinhado.setFill(Color.web("#FFC300"));
+        sublinhado.widthProperty().bind(tituloPratos.widthProperty());
+
+        VBox blocoSubtitulo = new VBox(5, tituloPratos, sublinhado);
+        blocoSubtitulo.setAlignment(Pos.CENTER);
+
+        TableView<Prato> tabela = new TableView<>();
+        tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        ObservableList<Ingrediente> masterData = FXCollections.observableArrayList(
-                new Ingrediente(1L, "Tomate Italiano", 8.50f, 0, "15/06/2025"),
-                new Ingrediente(2L, "Queijo Mussarela", 45.00f, 15, "30/07/2025"),
-                new Ingrediente(3L, "Farinha de Trigo", 5.20f, 50, "01/12/2026"),
-                new Ingrediente(4L, "Azeite de Oliva", 25.50f, 30, "01/01/2027")
-        );
+        TableColumn<Prato, String> nomeColuna = new TableColumn<>("Nome");
+        nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
+        TableColumn<Prato, Integer> qtdColuna = new TableColumn<>("Estoque");
+        qtdColuna.setCellValueFactory(new PropertyValueFactory<>("quantidade"));
+        TableColumn<Prato, Void> cozinharColuna = new TableColumn<>("Ação");
 
-        FilteredList<Ingrediente> filteredData = new FilteredList<>(masterData, p -> true);
-        tabela.setItems(filteredData);
-
-        pesquisaNome.textProperty().addListener((obs, oldValue, newValue) -> {
-            filteredData.setPredicate(ingrediente -> {
-                if (newValue == null || newValue.isEmpty()) {
-                    return true;
-                }
-                String lowerCaseFilter = newValue.toLowerCase();
-                return ingrediente.getNome().toLowerCase().contains(lowerCaseFilter);
-            });
+        cozinharColuna.setCellFactory(col -> new TableCell<>() {
+            private final Button botao = new Button("Cozinhar");
+            {
+                botao.getStyleClass().add("button");
+                botao.setOnAction(event -> {
+                    Prato prato = getTableView().getItems().get(getIndex());
+                    if (prato.fazPrato()) {
+                        getTableView().refresh();
+                        masterDataIngredientes.setAll(Ingrediente.listarTodos());
+                    } else {
+                        new Alert(Alert.AlertType.ERROR, "Não foi possível cozinhar o prato. Verifique o estoque de ingredientes.").show();
+                    }
+                });
+            }
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                setGraphic(empty ? null : botao);
+            }
         });
 
-        // --- MUDANÇA: Adicionando a ação para o botão de limpar ---
-        limparPesquisa.setOnAction(event -> {
-            pesquisaNome.clear(); // Limpa o campo de texto
-            filteredData.setPredicate(p -> true); // Reseta o filtro para mostrar tudo
-        });
-        // --- FIM DA MUDANÇA ---
+        tabela.getColumns().addAll(nomeColuna, qtdColuna, cozinharColuna);
 
-        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
-        desc1.setFont(interfontRodape1);
-        Label desc2 = new Label(Tela.emFrances ? "Conçu pour l'excellence culinaire française" : "Projetado para a excelência culinária francesa");
-        desc2.setFont(interfontRodape2);
-        String corTextoRodape = "white";
-        desc1.setStyle("-fx-text-fill: " + corTextoRodape + ";");
-        desc2.setStyle("-fx-text-fill: " + corTextoRodape + ";");
+        List<Prato> pratosDoBanco = Prato.listarTodosComIngredientes();
+        masterDataPratos = FXCollections.observableArrayList(pratosDoBanco);
+        tabela.setItems(masterDataPratos);
 
-        VBox descricaoRodape = new VBox(5, desc1, desc2);
-        descricaoRodape.setAlignment(Pos.CENTER);
-        VBox.setMargin(descricaoRodape, new Insets(20, 0, 20, 0));
+        VBox painel = new VBox(10, blocoSubtitulo, tabela);
+        painel.setAlignment(Pos.TOP_CENTER);
 
-        VBox root = new VBox(10, blocoTitulo, barraPesquisa, tabela, descricaoRodape);
-        root.setAlignment(Pos.CENTER);
-        root.setPadding(new Insets(20));
-        VBox.setVgrow(tabela, Priority.ALWAYS);
-
-        GridPane grid = new GridPane();
-        grid.setAlignment(Pos.CENTER);
-        grid.getColumnConstraints().add(new ColumnConstraints(1000));
-        grid.add(root, 0, 0);
-
-        String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)";
-        grid.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
-
-        ScrollPane scrollPane = new ScrollPane(grid);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setFitToHeight(true);
-        scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
-
-        StackPane stackPane = new StackPane(scrollPane);
-        stackPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
-
-        Runnable acaoVoltar = () -> new TelaServicos(super.getStage()).mostrarTela();
-        BotaoVoltar.criarEPosicionar(stackPane, acaoVoltar);
-
-        Scene scene = new Scene(stackPane);
-        scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
-
-        return scene;
+        return painel;
     }
 }

@@ -4,6 +4,10 @@ import database.JpaUtil;
 import jakarta.persistence.*;
 import javafx.scene.control.Alert;
 
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+
 @Entity
 @Table(name = "ingredientes")
 public class Ingrediente {
@@ -17,57 +21,47 @@ public class Ingrediente {
     @Column
     private int quantidade;
     @Column
-    private String validade;
+    private LocalDate validade;
 
-    public Ingrediente(Long id, String nome, float preco, int quantidade, String validade) {
-        this.id = id;
+    public Ingrediente(String nome, float preco, int quantidade, LocalDate validade) {
         this.nome = nome;
         this.preco = preco;
         this.quantidade = quantidade;
         this.validade = validade;
     }
+    public Ingrediente() {}
+    public Long getId() { return id; }
+    public String getNome() { return nome; }
+    public float getPreco() { return preco; }
+    public int getQuantidade() { return quantidade; }
+    public LocalDate getValidade() { return validade; }
+    public void setId(Long id) { this.id = id; }
+    public void setNome(String nome) { this.nome = nome; }
+    public void setPreco(float preco) { this.preco = preco; }
+    public void setQuantidade(int quantidade) { this.quantidade = quantidade; }
+    public void setValidade(LocalDate validade) { this.validade = validade; }
 
-    public Ingrediente() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public String getNome() {
-        return nome;
-    }
-
-    public float getPreco() {
-        return preco;
-    }
-
-    public int getQuantidade() {
-        return quantidade;
-    }
-
-    public String getValidade() {
-        return validade;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public void setPreco(float preco) {
-        this.preco = preco;
-    }
-
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    public void setValidade(String validade) {
-        this.validade = validade;
+    // --- MUDANÇA 1: MÉTODO ESTÁTICO PARA BUSCAR TODOS OS INGREDIENTES ---
+    /**
+     * Busca no banco de dados e retorna uma lista de todos os ingredientes.
+     * Este método é estático, o que significa que pode ser chamado diretamente
+     * da classe (ex: Ingrediente.listarTodos()) sem precisar de um objeto.
+     * @return Uma lista de Ingredientes.
+     */
+    public static List<Ingrediente> listarTodos() {
+        EntityManager em = JpaUtil.getFactory().createEntityManager();
+        try {
+            TypedQuery<Ingrediente> query = em.createQuery("SELECT i FROM Ingrediente i", Ingrediente.class);
+            return query.getResultList();
+        } catch (Exception e) {
+            System.err.println("Erro ao listar ingredientes: " + e.getMessage());
+            e.printStackTrace();
+            return Collections.emptyList(); // Retorna uma lista vazia em caso de erro
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
     }
 
     @Transient
@@ -75,47 +69,62 @@ public class Ingrediente {
         return this.quantidade < 10;
     }
 
+    // --- MUDANÇA 2: CORREÇÃO DO MÉTODO DE ENCOMENDA ---
+    /**
+     * Processa a encomenda de uma certa quantidade do ingrediente, atualizando
+     * o banco de dados.
+     * @param quantidadeAComprar A quantidade a ser encomendada.
+     * @return true se a compra foi bem-sucedida, false caso contrário (ex: saldo insuficiente).
+     */
     @Transient
-    public void encomendaIngrediente(int quantidade) {
+    public boolean encomendaIngrediente(int quantidadeAComprar) {
         EntityManager em = JpaUtil.getFactory().createEntityManager();
-        EntityTransaction transaction = null;
+        EntityTransaction transaction = em.getTransaction();
         try {
-            transaction = em.getTransaction();
             transaction.begin();
             ContaBancariaJose contaJose;
             try {
-                // Tenta buscar a única instância de ContaBancariaJose (assumindo que existe apenas uma)
                 TypedQuery<ContaBancariaJose> queryConta = em.createQuery("SELECT c FROM ContaBancariaJose c", ContaBancariaJose.class);
-                queryConta.setMaxResults(1); // Limita a 1 resultado
-                contaJose = queryConta.getSingleResult();
+                contaJose = queryConta.setMaxResults(1).getSingleResult();
             } catch (NoResultException ex) {
-                contaJose = new ContaBancariaJose();
-                em.persist(contaJose);
-                em.flush();
+                // Se não houver conta, a compra não pode ser efetuada.
+                System.err.println("Conta bancária não encontrada. Impossível realizar a compra.");
+                transaction.rollback();
+                return false;
             }
 
-            float precoEncomenda = quantidade * this.preco;
-            if (contaJose.getSaldo() > precoEncomenda){
+            float precoEncomenda = quantidadeAComprar * this.preco;
+            if (contaJose.getSaldo() >= precoEncomenda) {
+                // Atualiza os valores nos objetos
                 contaJose.setSaida(contaJose.getSaida() + precoEncomenda);
                 contaJose.setSaldo(contaJose.getSaldo() - precoEncomenda);
-                this.quantidade += quantidade;
+                this.quantidade += quantidadeAComprar;
+
+                // **CORREÇÃO**: Persiste as alterações no banco de dados usando merge()
+                em.merge(contaJose);
+                em.merge(this);
+
+                // **CORREÇÃO**: Confirma a transação para salvar as mudanças
+                transaction.commit();
+                return true; // Sucesso
+            } else {
+                // Saldo insuficiente, desfaz a transação
+                transaction.rollback();
+                System.out.println("Saldo insuficiente para realizar a encomenda.");
+                return false; // Falha
             }
         } catch (Exception ex) {
-            if (transaction != null && transaction.isActive()) {
+            if (transaction.isActive()) {
                 transaction.rollback();
             }
-            System.err.println("Erro ao achar ingrediente: " + ex.getMessage());
+            // A lógica de alerta foi mantida, mas a exceção é tratada
+            System.err.println("Erro ao processar encomenda: " + ex.getMessage());
             ex.printStackTrace();
-            Alert errorAlert = new Alert(Alert.AlertType.ERROR);
-            errorAlert.setTitle("Erro");
-            errorAlert.setHeaderText("Falha ao achar ingrediente");
-            errorAlert.setContentText("Ocorreu um erro ao processar a transação. Por favor, tente novamente.\nDetalhes: " + ex.getMessage());
-            errorAlert.showAndWait();
+            return false; // Falha
         } finally {
-            if (em != null && em.isOpen()) {
+            if (em.isOpen()) {
                 em.close();
             }
         }
     }
 }
-

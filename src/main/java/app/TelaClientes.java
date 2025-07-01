@@ -13,8 +13,11 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.geometry.*;
+import jakarta.persistence.EntityManager; // <-- MUDANÇA
+import database.JpaUtil;             // <-- MUDANÇA
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class TelaClientes extends Tela {
 
@@ -24,6 +27,7 @@ public class TelaClientes extends Tela {
 
     @Override
     public Scene criarScene() {
+        // ... (seu código de configuração de fontes, títulos, etc. permanece o mesmo)
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
@@ -54,8 +58,8 @@ public class TelaClientes extends Tela {
 
         TableColumn<Cliente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
-        TableColumn<Cliente, String> fidelidadeColuna = new TableColumn<>(Tela.emFrances ? "Fidelité" : "Fidelidade");
-        fidelidadeColuna.setCellValueFactory(new PropertyValueFactory<>("fidelidade"));
+        TableColumn<Cliente, String> fidelidadeColuna = new TableColumn<>("Email");
+        fidelidadeColuna.setCellValueFactory(new PropertyValueFactory<>("email"));
         TableColumn<Cliente, String> aniversarioColuna = new TableColumn<>(Tela.emFrances ? "Anniversaire" : "Aniversário");
         aniversarioColuna.setCellValueFactory(new PropertyValueFactory<>("dataAniversario"));
         TableColumn<Cliente, String> enderecoColuna = new TableColumn<>(Tela.emFrances ? "Adresse" : "Endereço");
@@ -64,12 +68,30 @@ public class TelaClientes extends Tela {
         tabela.getColumns().addAll(nomeColuna, fidelidadeColuna, aniversarioColuna, enderecoColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        ObservableList<Cliente> masterData = FXCollections.observableArrayList(
-                new Cliente("Maria Silva", LocalDate.of(2003, 2, 24), "Samambaia Norte Q.2", "interdelixao", "mariazinha@outlook.com"),
-                new Cliente("João Santos", LocalDate.of(1995, 5, 10), "Asa Sul", "joao123", "joao.santos@email.com"),
-                new Cliente("Ana Pereira", LocalDate.of(1988, 9, 30), "Lago Norte", "ana.p", "ana.pereira@email.com"),
-                new Cliente("Carlos Souza", LocalDate.of(1999, 7, 15), "Taguatinga Centro", "carlos.souza", "carlos@email.com")
-        );
+        ObservableList<Cliente> masterData = FXCollections.observableArrayList();
+        EntityManager em = JpaUtil.getFactory().createEntityManager();
+
+        try {
+            // Bloco para popular o banco de dados com dados iniciais se estiver vazio
+            em.getTransaction().begin();
+            long totalClientes = em.createQuery("SELECT COUNT(c) FROM Cliente c", Long.class).getSingleResult();
+            if (totalClientes == 0) {
+                System.out.println("Banco de dados vazio. Populando com dados iniciais...");
+                em.persist(new Cliente("Maria Silva", LocalDate.of(2003, 2, 24), "Samambaia Norte Q.2", "Ouro", "mariazinha@outlook.com"));
+                em.persist(new Cliente("João Santos", LocalDate.of(1995, 5, 10), "Asa Sul", "Prata", "joao.santos@email.com"));
+                em.persist(new Cliente("Ana Pereira", LocalDate.of(1988, 9, 30), "Lago Norte", "Bronze", "ana.pereira@email.com"));
+                em.persist(new Cliente("Carlos Souza", LocalDate.of(1999, 7, 15), "Taguatinga Centro", "Ouro", "carlos@email.com"));
+            }
+            em.getTransaction().commit();
+            List<Cliente> clientesDoBanco = em.createQuery("SELECT c FROM Cliente c", Cliente.class).getResultList();
+
+            masterData.addAll(clientesDoBanco);
+
+        } finally {
+            if (em != null) {
+                em.close();
+            }
+        }
 
         FilteredList<Cliente> filteredData = new FilteredList<>(masterData, p -> true);
         tabela.setItems(filteredData);
@@ -89,9 +111,10 @@ public class TelaClientes extends Tela {
             filteredData.setPredicate(p -> true);
         });
 
-        Label desc1 = new Label("© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
+        // ... (o restante do seu código para rodapé, layout, scene, etc., permanece o mesmo)
+        Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
-        Label desc2 = new Label("Projetado para a excelência culinária francesa");
+        Label desc2 = new Label(Tela.emFrances ? "Conçu pour l'excellence culinaire française" : "Projetado para a excelência culinária francesa");
         desc2.setFont(interfontRodape2);
         desc1.setStyle("-fx-text-fill: white;");
         desc2.setStyle("-fx-text-fill: white;");
