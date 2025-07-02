@@ -112,3 +112,6 @@ Certifique-se de ter as seguintes ferramentas instaladas:
         java -jar target/nome-do-seu-jar.jar
         ```
         *(Substitua `nome-do-seu-jar.jar` pelo nome real do arquivo JAR gerado.)*
+
+8.  **Imagem de Referência Tela Inicial:**
+    ![Alt text](./TelaInicial.png)
