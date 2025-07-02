@@ -2,7 +2,7 @@
 
 ## Visão Geral do Projeto
 
-Este projeto, desenvolvido para a disciplina de Técnicas de Programação 1 (TP1), é uma aplicação em Java focada no aprendizado e aplicação de conceitos fundamentais de Programação Orientada a Objetos (POO). Ele também explora a criação de interfaces gráficas de usuário (GUI) utilizando JavaFX, e a persistência de dados através de tecnologias como Maven como builder, ORM (Hibernate), banco de dados MySQL e Docker para gerenciamento do ambiente de banco de dados.
+Este projeto, desenvolvido para a disciplina de Técnicas de Programação 1 (TP1), é uma aplicação em Java focada no aprendizado e aplicação de conceitos fundamentais de Programação Orientada a Objetos (POO). Ele também explora a criação de interfaces gráficas de usuário (GUI) utilizando JavaFX, e a persistência de dados através de tecnologias como Maven como builder, ORM (Hibernate), banco de dados MySQL e Docker para gerenciamento do ambiente de banco de dados. A senha de Administrador no programa é PSG5-0
 
 ## Objetivos de Aprendizagem
 
