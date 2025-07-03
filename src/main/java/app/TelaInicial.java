@@ -299,7 +299,7 @@ public class TelaInicial extends Tela {
                 String password = senha.getText();
                 if (password.equals("PSG5-0")){
                     stage.close();
-                    new TelaServicos(super.getStage()).mostrarTela(); // Chama mostrarTela() da base
+                    new TelaServicos(super.getStage()).mostrarTela();
                 }
                 else{error.setVisible(true);}});
         });
@@ -324,14 +324,13 @@ public class TelaInicial extends Tela {
         card1 = createCard( "/svg/calendar-time-svgrepo-com.svg", txtCard1Title, txtCard1Desc, "#F0F0F0","#000000");
         card2 = createCard("/svg/delivery-svgrepo-com.svg", txtCard2Title,txtCard2Desc , "#F0F0F0","#000000");
 
-        // *** AQUI É ONDE MUDAMOS PARA A NOVA LÓGICA DE NAVEGAÇÃO PARA CRIAÇÃO DE CONTA ***
         card1.setOnMouseClicked(mouseEvent -> {
-            Tela.proximaTelaAposLogin = "Reserva"; // Define o destino
-            new TelaCriarConta(super.getStage()).mostrarTela(); // Vai para a tela de login/cadastro
+            Tela.proximaTelaAposLogin = "Reserva";
+            new TelaCriarConta(super.getStage()).mostrarTela();
         });
         card2.setOnMouseClicked(mouseEvent->{
-            Tela.proximaTelaAposLogin = "Delivery"; // Define o destino
-            new TelaCriarConta(super.getStage()).mostrarTela(); // Vai para a tela de login/cadastro
+            Tela.proximaTelaAposLogin = "Delivery";
+            new TelaCriarConta(super.getStage()).mostrarTela();
         });
 
         HBox cardBox = new HBox(20, card1, card2);
@@ -381,7 +380,6 @@ public class TelaInicial extends Tela {
                         "-fx-faint-focus-color: transparent;"
         );
 
-        // --- MUDANÇAS PARA ADICIONAR O BOTÃO VOLTAR ---
         StackPane stackPane = new StackPane(scrollPane);
         stackPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
@@ -390,7 +388,6 @@ public class TelaInicial extends Tela {
 
         Scene scene = new Scene(stackPane);
         scene.widthProperty().addListener((obs, oldVal, newVal) -> {
-            // ... (lógica de responsividade existente)
         });
         scene.setFill(Color.web("#30000C"));
 
@@ -417,7 +414,6 @@ public class TelaInicial extends Tela {
             }
         });
 
-        // Este método é chamado pela classe base Tela. O stage.setScene e show são tratados lá.
         return scene;
     }
 }

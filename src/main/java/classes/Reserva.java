@@ -18,8 +18,8 @@ import jakarta.persistence.*;
         private boolean chofer;
         @Column
         private int qtdPessoas;
-        @ManyToOne(fetch = FetchType.LAZY) // Muitos (Reservas) para Um (Cliente)
-        @JoinColumn(name = "id_cliente", nullable = false) // Define a chave estrangeira
+        @ManyToOne(fetch = FetchType.LAZY)
+        @JoinColumn(name = "id_cliente", nullable = false)
         private Cliente cliente;
 
         @Embedded
@@ -68,14 +68,6 @@ import jakarta.persistence.*;
                 this.pagamento.setPreco(this.pagamento.getPreco());
             }
         }
-
-        /*public void ehMuitaGente(){
-            if(this.qtdPessoas > 5){
-                this.pagamento.setPreco(this.pagamento.getPreco()/2);
-            }else{ 
-                this.pagamento.setPreco(this.pagamento.getPreco());
-            }
-        }*/
 
         public void querChofer(){
             if (!this.chofer) return;

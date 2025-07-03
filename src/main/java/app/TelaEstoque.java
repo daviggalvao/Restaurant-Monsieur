@@ -19,7 +19,6 @@ import java.util.List;
 
 public class TelaEstoque extends Tela {
 
-    // Listas observáveis para as duas tabelas
     private ObservableList<Ingrediente> masterDataIngredientes;
     private ObservableList<Prato> masterDataPratos;
 
@@ -40,7 +39,6 @@ public class TelaEstoque extends Tela {
         blocoTitulo.setAlignment(Pos.CENTER);
         VBox.setMargin(blocoTitulo, new Insets(20, 0, 20, 0));
 
-        // --- CRIAÇÃO DOS DOIS PAINÉIS ---
         VBox painelIngredientes = criarPainelIngredientes();
         VBox painelPratos = criarPainelPratos();
 
@@ -52,7 +50,6 @@ public class TelaEstoque extends Tela {
         HBox.setHgrow(painelIngredientes, Priority.ALWAYS);
         HBox.setHgrow(painelPratos, Priority.ALWAYS);
 
-        // Layout principal que organiza tudo
         VBox layoutPrincipal = new VBox(20, blocoTitulo, layoutDuplo);
         layoutPrincipal.setPadding(new Insets(20));
         VBox.setVgrow(layoutDuplo, Priority.ALWAYS);
@@ -69,13 +66,9 @@ public class TelaEstoque extends Tela {
         return scene;
     }
 
-    /**
-     * Cria o painel esquerdo com a tabela de ingredientes.
-     */
     private VBox criarPainelIngredientes() {
         Font playfairFontSubtitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30);
 
-        // --- TRADUÇÃO ---
         Label tituloIngredientes = new Label(Tela.emFrances ? "Ingrédients" : "Ingredientes");
         tituloIngredientes.setFont(playfairFontSubtitulo);
         tituloIngredientes.setStyle("-fx-text-fill: #FFC300;");
@@ -91,7 +84,6 @@ public class TelaEstoque extends Tela {
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        // --- TRADUÇÃO ---
         TableColumn<Ingrediente, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
         TableColumn<Ingrediente, Integer> qtdColuna = new TableColumn<>(Tela.emFrances ? "Quantité" : "Quantidade");
@@ -99,7 +91,6 @@ public class TelaEstoque extends Tela {
         TableColumn<Ingrediente, Void> abastecerColuna = new TableColumn<>(Tela.emFrances ? "Réapprovisionner" : "Abastecer");
 
         abastecerColuna.setCellFactory(col -> new TableCell<>() {
-            // --- TRADUÇÃO ---
             private final Button botao = new Button(Tela.emFrances ? "Commander" : "Pedir");
             {
                 botao.getStyleClass().add("button");
@@ -108,7 +99,6 @@ public class TelaEstoque extends Tela {
                     if (ing.encomendaIngrediente(10)) {
                         getTableView().refresh();
                     } else {
-                        // --- TRADUÇÃO ---
                         new Alert(Alert.AlertType.WARNING, Tela.emFrances ? "Échec de la commande de l'ingrédient." : "Falha ao encomendar o ingrediente.").show();
                     }
                 });
@@ -132,13 +122,9 @@ public class TelaEstoque extends Tela {
         return painel;
     }
 
-    /**
-     * Cria o painel direito com a tabela de pratos.
-     */
     private VBox criarPainelPratos() {
         Font playfairFontSubtitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30);
 
-        // --- TRADUÇÃO ---
         Label tituloPratos = new Label(Tela.emFrances ? "Plats" : "Pratos");
         tituloPratos.setFont(playfairFontSubtitulo);
         tituloPratos.setStyle("-fx-text-fill: #FFC300;");
@@ -154,7 +140,6 @@ public class TelaEstoque extends Tela {
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        // --- TRADUÇÃO ---
         TableColumn<Prato, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
         TableColumn<Prato, Integer> qtdColuna = new TableColumn<>(Tela.emFrances ? "Stock" : "Estoque");
@@ -162,7 +147,6 @@ public class TelaEstoque extends Tela {
         TableColumn<Prato, Void> cozinharColuna = new TableColumn<>(Tela.emFrances ? "Action" : "Ação");
 
         cozinharColuna.setCellFactory(col -> new TableCell<>() {
-            // --- TRADUÇÃO ---
             private final Button botao = new Button(Tela.emFrances ? "Cuisiner" : "Cozinhar");
             {
                 botao.getStyleClass().add("button");
@@ -172,7 +156,6 @@ public class TelaEstoque extends Tela {
                         getTableView().refresh();
                         masterDataIngredientes.setAll(Ingrediente.listarTodos());
                     } else {
-                        // --- TRADUÇÃO ---
                         new Alert(Alert.AlertType.ERROR, Tela.emFrances ? "Impossible de cuisiner le plat. Vérifiez le stock d'ingrédients." : "Não foi possível cozinhar o prato. Verifique o estoque de ingredientes.").show();
                     }
                 });

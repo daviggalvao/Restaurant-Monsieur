@@ -26,7 +26,6 @@ public class TelaCriarConta extends Tela {
     }
 
     public WebView criarWebview(String svgPath){
-        // ... (código do webview sem alterações)
         WebView webView = new WebView();
         webView.setMinSize(25, 25);
         webView.setPrefSize(25, 25);
@@ -52,11 +51,9 @@ public class TelaCriarConta extends Tela {
 
     private void mostrarDialogoResetSenha() {
         Dialog<Pair<String, String>> dialog = new Dialog<>();
-        // --- TRADUÇÃO ---
         dialog.setTitle(Tela.emFrances ? "Réinitialiser le mot de passe" : "Redefinir Senha");
         dialog.setHeaderText(Tela.emFrances ? "Veuillez saisir votre e-mail et le nouveau mot de passe souhaité." : "Por favor, insira seu e-mail e a nova senha desejada.");
 
-        // --- TRADUÇÃO ---
         ButtonType confirmarButtonType = new ButtonType(Tela.emFrances ? "Confirmer" : "Confirmar", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(confirmarButtonType, ButtonType.CANCEL);
 
@@ -68,13 +65,10 @@ public class TelaCriarConta extends Tela {
         TextField emailField = new TextField();
         emailField.setPromptText("seu.email@exemplo.com");
         PasswordField novaSenhaField = new PasswordField();
-        // --- TRADUÇÃO ---
         novaSenhaField.setPromptText(Tela.emFrances ? "Saisissez le nouveau mot de passe" : "Digite a nova senha");
         PasswordField confirmarSenhaField = new PasswordField();
-        // --- TRADUÇÃO ---
         confirmarSenhaField.setPromptText(Tela.emFrances ? "Confirmez le nouveau mot de passe" : "Confirme a nova senha");
 
-        // --- TRADUÇÃO ---
         grid.add(new Label("E-mail:"), 0, 0);
         grid.add(emailField, 1, 0);
         grid.add(new Label(Tela.emFrances ? "Nouveau Mot de passe :" : "Nova Senha:"), 0, 1);
@@ -84,7 +78,6 @@ public class TelaCriarConta extends Tela {
 
         dialog.getDialogPane().setContent(grid);
 
-        // ... (lógica de validação sem alterações de texto)
         Node confirmarButton = dialog.getDialogPane().lookupButton(confirmarButtonType);
         confirmarButton.setDisable(true);
         Runnable validacao = () -> {
@@ -120,17 +113,14 @@ public class TelaCriarConta extends Tela {
                 cliente.setSenha(novaSenha);
                 em.merge(cliente);
                 em.getTransaction().commit();
-                // --- TRADUÇÃO ---
                 mostrarAlerta(Alert.AlertType.INFORMATION, Tela.emFrances ? "Succès" : "Sucesso", Tela.emFrances ? "Votre mot de passe a été modifié avec succès !" : "Sua senha foi alterada com sucesso!");
 
             } catch (NoResultException e) {
-                // --- TRADUÇÃO ---
                 mostrarAlerta(Alert.AlertType.ERROR, Tela.emFrances ? "Erreur" : "Erro", (Tela.emFrances ? "Aucun client trouvé avec l'e-mail : " : "Nenhum cliente encontrado com o e-mail: ") + email);
                 if (em.getTransaction().isActive()) em.getTransaction().rollback();
             }
             catch (Exception e) {
                 e.printStackTrace();
-                // --- TRADUÇÃO ---
                 mostrarAlerta(Alert.AlertType.ERROR, Tela.emFrances ? "Erreur de Mise à Jour" : "Erro de Atualização", Tela.emFrances ? "Une erreur inattendue est survenue." : "Ocorreu um erro inesperado.");
                 if (em.getTransaction().isActive()) em.getTransaction().rollback();
             } finally {
@@ -148,42 +138,33 @@ public class TelaCriarConta extends Tela {
         String estiloFundoVinho = " -fx-background-color: linear-gradient(to right, #30000C, #800020)";
         String estiloPainelBranco = "-fx-background-color: white; -fx-background-radius: 10; -fx-padding: 30;";
 
-        // --- Painel de Criar Conta ---
-        // --- TRADUÇÃO ---
         Label title = new Label(Tela.emFrances ? "Créer un Compte" : "Criar Conta");
         title.setFont(playfairFont);
         title.setStyle("-fx-text-fill: #FFC300");
 
-        // --- TRADUÇÃO ---
         Label subtitle = new Label(Tela.emFrances ? "Remplissez vos données pour vous inscrire" : "Preencha seus dados para se cadastrar");
         subtitle.setFont(interfont1);
         VBox titulos = new VBox(5, title, subtitle);
         titulos.setAlignment(Pos.CENTER);
 
-        // Campos de texto para criar conta...
         TextField nomeTF = new TextField();
-        // --- TRADUÇÃO ---
         nomeTF.setPromptText(Tela.emFrances ? "Saisissez votre nom complet" : "Digite seu nome completo");
         VBox nomes = new VBox(5, new HBox(5, criarWebview("/svg/profile-1335-svgrepo-com.svg"), new Label(Tela.emFrances ? "Nom Complet" : "Nome Completo")), nomeTF);
 
         DatePicker dataAniversarioDP = new DatePicker();
-        // --- TRADUÇÃO ---
         dataAniversarioDP.setPromptText(Tela.emFrances ? "Sélectionnez votre date de naissance" : "Selecione sua data de nascimento");
         dataAniversarioDP.setMaxWidth(Double.MAX_VALUE);
         VBox datas = new VBox(5, new HBox(5, criarWebview("/svg/calendar-time-svgrepo-com.svg"), new Label(Tela.emFrances ? "Date de Naissance" : "Data de Aniversário")), dataAniversarioDP);
 
         TextField enderecoTF = new TextField();
-        // --- TRADUÇÃO ---
         enderecoTF.setPromptText(Tela.emFrances ? "Saisissez votre adresse" : "Digite seu endereço");
         VBox enderecos = new VBox(5, new HBox(5, criarWebview("/svg/location-2-svgrepo-com.svg"), new Label(Tela.emFrances ? "Adresse" : "Endereço")), enderecoTF);
 
         TextField emailTF = new TextField();
-        // --- TRADUÇÃO ---
         emailTF.setPromptText(Tela.emFrances ? "Saisissez votre e-mail" : "Digite seu e-mail");
         VBox emails = new VBox(5, new HBox(5, criarWebview("/svg/email-svgrepo-com.svg"), new Label("E-mail")), emailTF);
 
         PasswordField senhaTF = new PasswordField();
-        // --- TRADUÇÃO ---
         senhaTF.setPromptText(Tela.emFrances ? "Saisissez votre mot de passe" : "Digite sua senha");
         VBox senhas = new VBox(5, new HBox(5, criarWebview("/svg/padlock-svgrepo-com.svg"), new Label(Tela.emFrances ? "Mot de passe" : "Senha")), senhaTF);
 
@@ -193,7 +174,6 @@ public class TelaCriarConta extends Tela {
         emailTF.setStyle(inputStyle);
         senhaTF.setStyle(inputStyle);
 
-        // --- TRADUÇÃO ---
         Button confirmar = new Button(Tela.emFrances ? "Créer un Compte" : "Criar Conta");
         confirmar.getStyleClass().add("button");
         confirmar.setMaxWidth(Double.MAX_VALUE);
@@ -206,7 +186,6 @@ public class TelaCriarConta extends Tela {
             LocalDate dateAniversario = dataAniversarioDP.getValue();
 
             if (nome.trim().isEmpty() || email.trim().isEmpty() || senha.trim().isEmpty() || dateAniversario == null) {
-                // --- TRADUÇÃO ---
                 mostrarAlerta(Alert.AlertType.WARNING, Tela.emFrances ? "Champs Obligatoires" : "Campos Obrigatórios", Tela.emFrances ? "Veuillez remplir tous les champs." : "Por favor, preencha todos os campos.");
                 return;
             }
@@ -216,14 +195,12 @@ public class TelaCriarConta extends Tela {
                 TypedQuery<Long> query = em.createQuery("SELECT COUNT(c) FROM Cliente c WHERE c.email = :email", Long.class);
                 query.setParameter("email", email);
                 if (query.getSingleResult() > 0) {
-                    // --- TRADUÇÃO ---
                     mostrarAlerta(Alert.AlertType.WARNING, Tela.emFrances ? "Avertissement" : "Aviso", (Tela.emFrances ? "L'e-mail '" : "O email '") + email + (Tela.emFrances ? "' est déjà utilisé." : "' já está em uso."));
                 } else {
                     Cliente novoCliente = new Cliente(nome, dateAniversario, endereco, email, senha);
                     em.getTransaction().begin();
                     em.persist(novoCliente);
                     em.getTransaction().commit();
-                    // --- TRADUÇÃO ---
                     mostrarAlerta(Alert.AlertType.INFORMATION, Tela.emFrances ? "Succès" : "Sucesso", (Tela.emFrances ? "Client '" : "Cliente '") + nome + (Tela.emFrances ? "' enregistré avec succès !" : "' cadastrado com sucesso!"));
 
                     if ("Reserva".equals(Tela.proximaTelaAposLogin)) {
@@ -238,7 +215,6 @@ public class TelaCriarConta extends Tela {
             } catch (Exception e) {
                 if (em.getTransaction().isActive()) em.getTransaction().rollback();
                 e.printStackTrace();
-                // --- TRADUÇÃO ---
                 mostrarAlerta(Alert.AlertType.ERROR, Tela.emFrances ? "Erreur" : "Erro", Tela.emFrances ? "Erreur lors de l'enregistrement du client." : "Erro ao cadastrar o cliente.");
             } finally {
                 if (em != null) em.close();
@@ -250,32 +226,25 @@ public class TelaCriarConta extends Tela {
         painelCriarConta.setMaxWidth(400);
         painelCriarConta.setStyle(estiloPainelBranco);
 
-        // --- Painel de Login ---
-        // --- TRADUÇÃO ---
         Label loginTitle = new Label(Tela.emFrances ? "Se Connecter" : "Entrar");
         loginTitle.setFont(playfairFont);
         loginTitle.setStyle("-fx-text-fill: #FFC300");
-        // --- TRADUÇÃO ---
         Label loginSubtitle = new Label(Tela.emFrances ? "Accédez à votre compte" : "Acesse sua conta");
         loginSubtitle.setFont(interfont1);
         VBox loginTitulos = new VBox(5, loginTitle, loginSubtitle);
         loginTitulos.setAlignment(Pos.CENTER);
 
-        // Campos de login...
         TextField emailTFLogin = new TextField();
-        // --- TRADUÇÃO ---
         emailTFLogin.setPromptText(Tela.emFrances ? "Saisissez votre e-mail" : "Digite seu e-mail");
         VBox emailLoginVbox = new VBox(5, new HBox(5, criarWebview("/svg/email-svgrepo-com.svg"), new Label("E-mail")), emailTFLogin);
 
         PasswordField senhaTFLogin = new PasswordField();
-        // --- TRADUÇÃO ---
         senhaTFLogin.setPromptText(Tela.emFrances ? "Saisissez votre mot de passe" : "Digite sua senha");
         VBox senhaLoginVbox = new VBox(5, new HBox(5, criarWebview("/svg/padlock-svgrepo-com.svg"), new Label(Tela.emFrances ? "Mot de passe" : "Senha")), senhaTFLogin);
 
         emailTFLogin.setStyle(inputStyle);
         senhaTFLogin.setStyle(inputStyle);
 
-        // --- TRADUÇÃO ---
         CheckBox lembrarCb = new CheckBox(Tela.emFrances ? "Se souvenir de moi" : "Lembrar de mim");
         Hyperlink esqueceuLink = new Hyperlink(Tela.emFrances ? "Mot de passe oublié ?" : "Esqueceu a senha?");
         esqueceuLink.setOnAction(event -> mostrarDialogoResetSenha());
@@ -284,7 +253,6 @@ public class TelaCriarConta extends Tela {
         HBox lembrarHbox = new HBox(lembrarCb, spacer, esqueceuLink);
         lembrarHbox.setAlignment(Pos.CENTER_LEFT);
 
-        // --- TRADUÇÃO ---
         Button btnEntrar = new Button(Tela.emFrances ? "Entrer" : "Entrar");
         btnEntrar.getStyleClass().add("button");
         btnEntrar.setMaxWidth(Double.MAX_VALUE);
@@ -293,7 +261,6 @@ public class TelaCriarConta extends Tela {
             String senha = senhaTFLogin.getText();
 
             if (email.trim().isEmpty() || senha.trim().isEmpty()) {
-                // --- TRADUÇÃO ---
                 mostrarAlerta(Alert.AlertType.WARNING, Tela.emFrances ? "Champs Vides" : "Campos Vazios", Tela.emFrances ? "Veuillez saisir votre e-mail et votre mot de passe." : "Por favor, digite seu e-mail e senha.");
                 return;
             }
@@ -305,7 +272,6 @@ public class TelaCriarConta extends Tela {
                 query.setParameter("senha", senha);
 
                 Cliente cliente = query.getSingleResult();
-                // --- TRADUÇÃO ---
                 mostrarAlerta(Alert.AlertType.INFORMATION, Tela.emFrances ? "Connexion Réussie" : "Login Bem-sucedido", (Tela.emFrances ? "Bienvenue, " : "Bem-vindo(a) de volta, ") + cliente.getNome() + "!");
 
                 if ("Reserva".equals(Tela.proximaTelaAposLogin)) {
@@ -318,11 +284,9 @@ public class TelaCriarConta extends Tela {
                 Tela.proximaTelaAposLogin = null;
 
             } catch (NoResultException e) {
-                // --- TRADUÇÃO ---
                 mostrarAlerta(Alert.AlertType.ERROR, Tela.emFrances ? "Erreur de Connexion" : "Erro de Login", Tela.emFrances ? "E-mail ou mot de passe incorrect." : "E-mail ou senha incorretos.");
             } catch (Exception e) {
                 e.printStackTrace();
-                // --- TRADUÇÃO ---
                 mostrarAlerta(Alert.AlertType.ERROR, Tela.emFrances ? "Erreur" : "Erro", Tela.emFrances ? "Une erreur inattendue est survenue." : "Ocorreu um erro inesperado.");
             } finally {
                 if (em != null) em.close();
@@ -335,7 +299,6 @@ public class TelaCriarConta extends Tela {
         painelLogin.setStyle(estiloPainelBranco);
         painelLogin.getChildren().addAll(loginTitulos, emailLoginVbox, senhaLoginVbox, lembrarHbox, btnEntrar);
 
-        // --- Layout Principal com Separador ---
         Region separadorCustomizado = new Region();
         separadorCustomizado.setPrefWidth(3);
         separadorCustomizado.setMaxHeight(550);
@@ -344,7 +307,6 @@ public class TelaCriarConta extends Tela {
         HBox painelPrincipal = new HBox(40, painelCriarConta, separadorCustomizado, painelLogin);
         painelPrincipal.setAlignment(Pos.CENTER);
 
-        // --- Container Raiz com Botão Voltar ---
         StackPane root = new StackPane(painelPrincipal);
 
         root.setPadding(new Insets(50, 0, 50, 0));

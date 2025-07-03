@@ -4,21 +4,21 @@
 }
 
 .table-view .column-header-background {
-    -fx-background-color: transparent; /* Cor de fundo do cabeçalho */
+    -fx-background-color: transparent;
     -fx-border-color: transparent;
 }
 
 .table-view .column-header {
-    -fx-background-color: transparent; /* Cor de cada célula de cabeçalho */
+    -fx-background-color: transparent;
     -fx-border-color: "FFC300";
-    -fx-border-width: 0 0 1 0; /* Borda inferior */
+    -fx-border-width: 0 0 1 0;
     -fx-padding: 5 10 5 10;
 }
 
 .table-view .column-header .label {
-    -fx-text-fill: "#FFC300"; /* Cor do texto */
-    -fx-font-weight: bold; /* Negrito */
-    -fx-alignment: CENTER; /* Centralizar texto */
+    -fx-text-fill: "#FFC300";
+    -fx-font-weight: bold;
+    -fx-alignment: CENTER;
     -fx-border-color: transparent;
     -fx-font-size: 20;
     -fx-font-family: "fonte1";
@@ -27,8 +27,8 @@
 
 .table-view .column-value .label {
     -fx-background-color: transparent;
-    -fx-text-fill: "#FFC300"; /* Cor do texto */
-    -fx-alignment: CENTER; /* Centralizar texto */
+    -fx-text-fill: "#FFC300";
+    -fx-alignment: CENTER;
     -fx-font-size: 15;
     -fx-font-family: "Inter";
 }
@@ -37,15 +37,15 @@
     -fx-background-color: transparent;
     -fx-border-color: transparent;
     -fx-alignment: CENTER;
-    -fx-text-fill: "#FFC300"; /* Cor do texto */
+    -fx-text-fill: "#FFC300";
     -fx-font-size: 15;
     -fx-font-family: "fonte1";
     -fx-label-padding: 5 10 5 10;
 }
 
 .table-view .cell:hover{
-    -fx-text-fill: "#FFC300"; /* Cor do texto */
-    -fx-alignment: CENTER; /* Centralizar texto */
+    -fx-text-fill: "#FFC300";
+    -fx-alignment: CENTER;
     -fx-font-weight: bold;
     -fx-font-size: 17;
     -fx-font-family: "fonte1";

@@ -71,7 +71,6 @@ public class TelaConta extends Tela {
         String estiloFundoVinho = "linear-gradient(to right, #30000C, #800020)";
         rootPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        // --- MUDANÇAS PARA ADICIONAR O BOTÃO VOLTAR ---
         StackPane stackPane = new StackPane(rootPane);
         stackPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 

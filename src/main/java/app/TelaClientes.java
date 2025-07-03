@@ -13,8 +13,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.geometry.*;
-import jakarta.persistence.EntityManager; // <-- MUDANÇA
-import database.JpaUtil;             // <-- MUDANÇA
+import jakarta.persistence.EntityManager;
+import database.JpaUtil;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,7 +27,6 @@ public class TelaClientes extends Tela {
 
     @Override
     public Scene criarScene() {
-        // ... (seu código de configuração de fontes, títulos, etc. permanece o mesmo)
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
         Font interfontRodape2 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 17);
@@ -72,7 +71,6 @@ public class TelaClientes extends Tela {
         EntityManager em = JpaUtil.getFactory().createEntityManager();
 
         try {
-            // Bloco para popular o banco de dados com dados iniciais se estiver vazio
             em.getTransaction().begin();
             long totalClientes = em.createQuery("SELECT COUNT(c) FROM Cliente c", Long.class).getSingleResult();
             if (totalClientes == 0) {
@@ -111,7 +109,6 @@ public class TelaClientes extends Tela {
             filteredData.setPredicate(p -> true);
         });
 
-        // ... (o restante do seu código para rodapé, layout, scene, etc., permanece o mesmo)
         Label desc1 = new Label(Tela.emFrances ? "© 2025 Restaurant Monsieur-José - Système de gestion de restaurant" : "© 2025 Restaurant Monsieur-José - Sistema de Gestão de Restaurante");
         desc1.setFont(interfontRodape1);
         Label desc2 = new Label(Tela.emFrances ? "Conçu pour l'excellence culinaire française" : "Projetado para a excelência culinária francesa");

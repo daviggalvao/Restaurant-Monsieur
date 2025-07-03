@@ -4,8 +4,7 @@ import database.JpaUtil;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
-// <<<--- ESTA É A LINHA QUE FOI CORRIGIDA ---<<<
-import jakarta.persistence.EntityTransaction; // Alterado de javax.persistence para jakarta.persistence
+import jakarta.persistence.EntityTransaction;
 
 @Entity
 @Table(name = "funcionario")
@@ -31,17 +30,9 @@ public class Funcionario extends Pessoa {
         this.dataContrato = dataContrato;
     }
 
-    // --- MÉTODOS DE ACESSO AO BANCO DE DADOS ---
-
-    /**
-     * Busca todos os funcionários (incluindo demitidos) no banco de dados.
-     * @return Uma lista de todos os funcionários.
-     */
     public static List<Funcionario> listarTodos() {
         EntityManager em = JpaUtil.getFactory().createEntityManager();
         try {
-            // A cláusula WHERE foi removida para listar TODOS os funcionários,
-            // tratando DEMITIDO como um cargo normal.
             TypedQuery<Funcionario> query = em.createQuery(
                     "SELECT f FROM Funcionario f", Funcionario.class
             );
@@ -51,11 +42,6 @@ public class Funcionario extends Pessoa {
         }
     }
 
-    /**
-     * Salva o estado atual do objeto no banco de dados.
-     * Se o funcionário for novo (sem ID), ele é criado (persist).
-     * Se o funcionário já existe (com ID), ele é atualizado (merge).
-     */
     public void salvar() {
         EntityManager em = JpaUtil.getFactory().createEntityManager();
         EntityTransaction transaction = em.getTransaction();
@@ -77,7 +63,6 @@ public class Funcionario extends Pessoa {
         }
     }
 
-    // --- MÉTODOS DE NEGÓCIO (LÓGICA DA APLICAÇÃO) ---
     public FuncionarioCargo getCargo() { return cargo; }
     public void setCargo(FuncionarioCargo cargo) { this.cargo = cargo; }
     public float getSalario() { return salario; }
@@ -99,10 +84,6 @@ public class Funcionario extends Pessoa {
         }
     }
 
-    /**
-     * Altera o cargo do funcionário para DEMITIDO e zera o seu salário.
-     * Esta alteração precisa ser persistida com uma chamada ao método salvar().
-     */
     public void demitirFuncionario() {
         this.setCargo(FuncionarioCargo.DEMITIDO);
         this.setSalario(0);

@@ -5,7 +5,7 @@ import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.persistence.EntityTransaction; // Usando jakarta.persistence
+import jakarta.persistence.EntityTransaction;
 
 @Entity
 @Table(name = "pedidos")
@@ -46,20 +46,9 @@ public class Pedido implements Serializable {
         this.status = PedidoStatus.RECEBIDO;
     }
 
-    // --- MÉTODO DE ACESSO AO BANCO DE DADOS ---
-
-    /**
-     * Busca todos os pedidos no banco de dados.
-     * Usa JOIN FETCH para carregar os clientes e os itens/pratos associados na mesma consulta,
-     * resolvendo o problema do Lazy Loading.
-     * @return Uma lista de todos os Pedidos.
-     */
     public static List<Pedido> listarTodos() {
         EntityManager em = JpaUtil.getFactory().createEntityManager();
         try {
-            // --- CORREÇÃO AQUI ---
-            // Esta query foi melhorada para buscar os pedidos, seus consumidores,
-            // seus itens e os pratos de cada item, tudo numa única consulta ao banco.
             TypedQuery<Pedido> query = em.createQuery(
                     "SELECT DISTINCT p FROM Pedido p LEFT JOIN FETCH p.consumidor LEFT JOIN FETCH p.itensPedido pi LEFT JOIN FETCH pi.prato", Pedido.class
             );
@@ -69,9 +58,6 @@ public class Pedido implements Serializable {
         }
     }
 
-    /**
-     * Salva (atualiza) o estado atual do pedido no banco de dados.
-     */
     public void salvar() {
         EntityManager em = JpaUtil.getFactory().createEntityManager();
         EntityTransaction transaction = em.getTransaction();
@@ -89,7 +75,6 @@ public class Pedido implements Serializable {
         }
     }
 
-    // --- Getters, Setters e outros métodos (sem alterações) ---
     public Long getId() {return id;}
     public Pagamento getPagamento(){return this.pagamento;}
     public List<PedidoItem> getItensPedido(){return this.itensPedido;}

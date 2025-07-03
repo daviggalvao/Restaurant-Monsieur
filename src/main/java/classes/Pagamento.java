@@ -5,13 +5,13 @@ import jakarta.persistence.Embeddable;
 
 @Embeddable
 public class Pagamento implements RegraDeCalculo{
-    @Column(name = "pagamento_preco") // Nome da coluna na tabela da entidade que incorporar Pagamento
+    @Column(name = "pagamento_preco")
     private float preco;
-    @Column(name = "pagamento_nome") // Nome da coluna
+    @Column(name = "pagamento_nome")
     private String nome;
-    @Column(name = "pagamento_tipo") // Nome da coluna
+    @Column(name = "pagamento_tipo")
     private String tipo;
-    @Column(name = "pagamento_parcelas") // Nome da coluna
+    @Column(name = "pagamento_parcelas")
     private int parcelas;
 
     public Pagamento(){}
@@ -40,14 +40,6 @@ public class Pagamento implements RegraDeCalculo{
             this.preco *= 0.9f;
         };
     }
-
-    /*public void ehPix(){
-        if(this.tipo.equalsIgnoreCase("Pix")) {
-            this.preco *= 0.9f;
-        }else if(this.tipo.split(" ")[0].equalsIgnoreCase("Pix")){
-            this.preco *= 0.9f;
-        };
-    }*/
 
     public void parcelamento(int num){
         for(int i=1; i<=num; i++){

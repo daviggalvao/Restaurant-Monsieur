@@ -40,12 +40,10 @@ public class TelaDelivery extends Tela {
     private String userEmail;
     private ComboBox<String> tipoPagamentoComboBox;
 
-    // --- Constantes de Estilo ---
     private static final String DARK_BACKGROUND_COLOR = "linear-gradient(to right, #30000C, #800020)";
     private static final String PANEL_BACKGROUND_COLOR = "#FAF0E6";
     private static final String ACCENT_COLOR_GOLD = "#DAA520";
 
-    // --- LINHA ADICIONADA PARA CORRIGIR O ERRO ---
     private static final String BORDER_COLOR_PANEL = "#DAA520";
 
     private static final String ACCENT_COLOR_DARK_GOLD = "#B8860B";
@@ -142,7 +140,7 @@ public class TelaDelivery extends Tela {
         );
         layoutPrincipal.setBottom(statusLabelUI);
 
-        carregarPratosDoBancoDeDados(); // Carregar os pratos após a UI ser inicializada
+        carregarPratosDoBancoDeDados();
 
         StackPane stackPane = new StackPane();
         stackPane.setStyle("-fx-background-color: " + DARK_BACKGROUND_COLOR + ";");
@@ -154,8 +152,6 @@ public class TelaDelivery extends Tela {
         Scene scene = new Scene(stackPane, 1024, 768);
         return scene;
     }
-
-    // ... (O resto do código permanece o mesmo) ...
 
     public void fecharRecursosJPA() {
         if (em != null && em.isOpen()) {

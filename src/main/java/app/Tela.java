@@ -6,7 +6,7 @@ import javafx.stage.Stage;
 public abstract class Tela {
     protected Stage stage;
     public static boolean emFrances = false;
-    public static String proximaTelaAposLogin = null; // Variável estática para o destino
+    public static String proximaTelaAposLogin = null;
 
     public Tela(Stage stage) {
         this.stage = stage;

@@ -7,7 +7,7 @@ import javafx.scene.control.Alert;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.persistence.EntityTransaction; // Usando jakarta.persistence
+import jakarta.persistence.EntityTransaction;
 
 @Entity
 @Table(name = "pratos")
@@ -43,8 +43,6 @@ public class Prato implements Serializable {
     }
     public Prato() {}
 
-    // --- MÉTODOS DE ACESSO AO BANCO DE DADOS ---
-
     public static List<Prato> listarTodosComIngredientes() {
         EntityManager em = JpaUtil.getFactory().createEntityManager();
         try {
@@ -55,13 +53,6 @@ public class Prato implements Serializable {
         }
     }
 
-    // --- LÓGICA DE NEGÓCIO COM PERSISTÊNCIA ---
-
-    /**
-     * COZINHAR: Consome ingredientes para AUMENTAR o estoque do prato.
-     * Salva todas as alterações no banco de dados.
-     * @return true se o prato foi feito com sucesso, false caso contrário.
-     */
     public boolean fazPrato() {
         for (Ingrediente i : this.getIngredientes()) {
             if (i.getQuantidade() <= 0) {
@@ -91,13 +82,7 @@ public class Prato implements Serializable {
         }
     }
 
-    /**
-     * VENDER/ENTREGAR: Retira um prato do estoque para DIMINUIR o estoque e registra o pagamento.
-     * Salva todas as alterações no banco de dados.
-     * @return true se a entrega foi processada com sucesso, false se não houver estoque.
-     */
     public boolean entregaPrato() {
-        // Passo 1: Verificar se há pratos prontos no estoque
         if (this.getQuantidade() <= 0) {
             System.out.println("Não é possível entregar " + this.nome + ". Sem estoque de pratos prontos.");
             return false;
@@ -108,41 +93,31 @@ public class Prato implements Serializable {
         try {
             transaction.begin();
 
-            // Passo 2: Buscar a conta bancária para registrar a entrada
             ContaBancariaJose contaJose;
             try {
                 TypedQuery<ContaBancariaJose> queryConta = em.createQuery("SELECT c FROM ContaBancariaJose c", ContaBancariaJose.class);
                 contaJose = queryConta.setMaxResults(1).getSingleResult();
             } catch (NoResultException ex) {
-                // Se não existir, cria uma (ou lança um erro, dependendo da regra de negócio)
                 System.out.println("Conta bancária não encontrada, criando uma nova.");
                 contaJose = new ContaBancariaJose();
                 em.persist(contaJose);
             }
 
-            // Passo 3: Atualizar os valores nos objetos gerenciados
-
-            // Atualiza o saldo da conta
             contaJose.setEntrada(contaJose.getEntrada() + this.preco);
-            // Opcional: Atualizar o saldo total
-            // contaJose.setSaldo(contaJose.getSaldo() + this.preco);
 
-            // Diminui o estoque do prato
             Prato pratoGerenciado = em.merge(this);
             pratoGerenciado.setQuantidade(pratoGerenciado.getQuantidade() - 1);
 
-            // Passo 4: Persistir as alterações
-            em.merge(contaJose); // Salva a alteração na conta
+            em.merge(contaJose);
 
-            transaction.commit(); // Confirma a transação
-            return true; // Sucesso
+            transaction.commit();
+            return true;
 
         } catch (Exception ex) {
             if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
             }
             ex.printStackTrace();
-            // Lançar um alerta ou tratar o erro de forma apropriada
             Alert errorAlert = new Alert(Alert.AlertType.ERROR);
             errorAlert.setTitle("Erro na Transação");
             errorAlert.setHeaderText("Falha ao processar a entrega do prato.");
@@ -156,7 +131,6 @@ public class Prato implements Serializable {
         }
     }
 
-    // --- Getters e Setters ---
     public Long getId() {return id;}
     public float getPreco() {return preco;}
     public List<Ingrediente> getIngredientes() {return ingredientes;}

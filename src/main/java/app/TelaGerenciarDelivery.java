@@ -61,11 +61,9 @@ public class TelaGerenciarDelivery extends Tela {
         layoutPrincipal.setTop(blocoTitulo);
 
         TextField pesquisaNome = new TextField();
-        // --- TRADUÇÃO ---
         pesquisaNome.setPromptText(Tela.emFrances ? "Rechercher par nom" : "Pesquisar por nome");
         pesquisaNome.setMinWidth(300);
 
-        // --- TRADUÇÃO ---
         Button limparPesquisa = new Button(Tela.emFrances ? "Nettoyer" : "Limpar");
 
         HBox barraPesquisa = new HBox(10, pesquisaNome, limparPesquisa);
@@ -125,10 +123,8 @@ public class TelaGerenciarDelivery extends Tela {
     private TableView<Pedido> criarTabelaPedidos() {
         TableView<Pedido> tabela = new TableView<>();
         tabela.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY_FLEX_LAST_COLUMN);
-        // --- TRADUÇÃO ---
         tabela.setPlaceholder(new Label(Tela.emFrances ? "Aucune commande à afficher." : "Nenhum pedido para exibir."));
 
-        // --- TRADUÇÃO ---
         TableColumn<Pedido, String> colunaCliente = new TableColumn<>(Tela.emFrances ? "Client" : "Cliente");
         colunaCliente.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getConsumidor() != null ?
@@ -136,7 +132,6 @@ public class TelaGerenciarDelivery extends Tela {
         );
         colunaCliente.setPrefWidth(250);
 
-        // --- TRADUÇÃO ---
         TableColumn<Pedido, Float> colunaTotal = new TableColumn<>(Tela.emFrances ? "Valeur Totale" : "Valor Total");
         colunaTotal.setCellValueFactory(cellData ->
                 new SimpleFloatProperty(cellData.getValue().getPagamento() != null ?
@@ -152,7 +147,6 @@ public class TelaGerenciarDelivery extends Tela {
         });
         colunaTotal.setPrefWidth(150);
 
-        // --- TRADUÇÃO ---
         TableColumn<Pedido, String> colunaStatus = new TableColumn<>(Tela.emFrances ? "Statut" : "Status");
         colunaStatus.setCellValueFactory(cellData ->
                 new SimpleStringProperty(cellData.getValue().getStatus() != null ?
@@ -174,7 +168,6 @@ public class TelaGerenciarDelivery extends Tela {
                         "-fx-border-radius: 8; -fx-background-radius: 8;"
         );
 
-        // --- TRADUÇÃO ---
         Label tituloDetalhes = new Label(Tela.emFrances ? "Détails de la Commande" : "Detalhes do Pedido");
         tituloDetalhes.setFont(Font.font("Arial", FontWeight.BOLD, 18));
         tituloDetalhes.setTextFill(Color.web("#B8860B"));
@@ -182,24 +175,20 @@ public class TelaGerenciarDelivery extends Tela {
         tituloDetalhes.setAlignment(Pos.CENTER);
 
         VBox infoBox = new VBox(5);
-        // --- TRADUÇÃO ---
         clienteLabel = new Label(Tela.emFrances ? "Client : -" : "Cliente: -");
         totalLabel = new Label(Tela.emFrances ? "Valeur Totale : -" : "Valor Total: -");
         statusAtualLabel = new Label(Tela.emFrances ? "Statut Actuel : -" : "Status Atual: -");
         infoBox.getChildren().addAll(clienteLabel, totalLabel, statusAtualLabel);
 
-        // --- TRADUÇÃO ---
         Label itensLabel = new Label(Tela.emFrances ? "Articles de la Commande :" : "Itens do Pedido:");
         detalhesListView = new ListView<>();
         VBox.setVgrow(detalhesListView, Priority.ALWAYS);
 
-        // --- TRADUÇÃO ---
         Label mudarStatusLabel = new Label(Tela.emFrances ? "Changer le Statut pour :" : "Alterar Status para:");
         statusComboBox = new ComboBox<>(FXCollections.observableArrayList(PedidoStatus.values()));
         statusComboBox.setDisable(true);
         statusComboBox.setMaxWidth(Double.MAX_VALUE);
 
-        // --- TRADUÇÃO ---
         salvarStatusButton = new Button(Tela.emFrances ? "Enregistrer le Statut" : "Salvar Status");
         salvarStatusButton.setDisable(true);
         salvarStatusButton.setMaxWidth(Double.MAX_VALUE);
@@ -210,12 +199,10 @@ public class TelaGerenciarDelivery extends Tela {
     }
 
     private void popularPainelDetalhes(Pedido pedido) {
-        // --- TRADUÇÃO ---
         clienteLabel.setText((Tela.emFrances ? "Client : " : "Cliente: ") + (pedido.getConsumidor() != null ? pedido.getConsumidor().getNome() : "N/A"));
         totalLabel.setText((Tela.emFrances ? "Valeur Totale : " : "Valor Total: ") + (pedido.getPagamento() != null ? String.format("R$ %.2f", pedido.getPagamento().getPreco()) : "R$ 0,00"));
 
         PedidoStatus statusAtual = pedido.getStatus();
-        // --- TRADUÇÃO ---
         statusAtualLabel.setText((Tela.emFrances ? "Statut Actuel : " : "Status Atual: ") + (statusAtual != null ? statusAtual.toString() : "N/A"));
         statusComboBox.setValue(statusAtual);
 
@@ -235,7 +222,6 @@ public class TelaGerenciarDelivery extends Tela {
     }
 
     private void limparPainelDetalhes() {
-        // --- TRADUÇÃO ---
         clienteLabel.setText(Tela.emFrances ? "Client : -" : "Cliente: -");
         totalLabel.setText(Tela.emFrances ? "Valeur Totale : -" : "Valor Total: -");
         statusAtualLabel.setText(Tela.emFrances ? "Statut Actuel : -" : "Status Atual: -");
@@ -256,12 +242,10 @@ public class TelaGerenciarDelivery extends Tela {
             statusAtualLabel.setText((Tela.emFrances ? "Statut Actuel : " : "Status Atual: ") + novoStatus.toString());
             tabelaPedidos.refresh();
 
-            // --- TRADUÇÃO ---
             Alert alert = new Alert(Alert.AlertType.INFORMATION, (Tela.emFrances ? "Statut mis à jour à '" : "Status atualizado para '") + novoStatus + "'!");
             alert.setHeaderText(Tela.emFrances ? "Statut Mis à Jour" : "Status Atualizado");
             alert.showAndWait();
         } else {
-            // --- TRADUÇÃO ---
             Alert alert = new Alert(Alert.AlertType.WARNING, Tela.emFrances ? "Veuillez sélectionner une commande et un nouveau statut à enregistrer." : "Selecione um pedido e um novo status para salvar.");
             alert.setHeaderText(Tela.emFrances ? "Aucune Modification Détectée" : "Nenhuma Alteração Detectada");
             alert.showAndWait();

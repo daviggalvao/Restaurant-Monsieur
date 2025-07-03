@@ -1,19 +1,19 @@
 .button {
--fx-background-color: #500020;          // Vinho escuro
--fx-text-fill: #ffcc00;                  // Amarelo
+-fx-background-color: #500020;
+-fx-text-fill: #ffcc00;
 -fx-font-weight: bold;
 -fx-font-size: 14px;
--fx-padding: 10 20 10 20;                 // Espaçamento interno
--fx-background-radius: 10;               // Bordas arredondadas
+-fx-padding: 10 20 10 20;
+-fx-background-radius: 10;
 -fx-border-radius: 6;
--fx-border-color: #ffcc00;                // Borda amarela
+-fx-border-color: #ffcc00;
 -fx-border-width: 2;
--fx-cursor: hand;                            // Cursor de mãozinha no hover
+-fx-cursor: hand;
 }
 
 .button:hover {
--fx-background-color: #ffcc00;            // Fundo amarelo ao passar o mouse
--fx-text-fill: #500020;                    // Texto vinho escuro
+-fx-background-color: #ffcc00;
+-fx-text-fill: #500020;
 -fx-font-weight: bold;
 -fx-font-size: 14px;
 -fx-padding: 10 20 10 20;

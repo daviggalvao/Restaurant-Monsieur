@@ -22,8 +22,6 @@ public class TelaServicos extends Tela {
         super(stage);
     }
 
-    // Este método criarWebview é para os CARDS, não para o BotaoVoltar.
-    // Ele não deve interferir no estilo do BotaoVoltar.
     private WebView criarWebview(String svgPath, double minSize, double prefSize, double maxSize, boolean mouseTransparent){
         WebView webView = new WebView();
         webView.setMinSize(minSize, minSize);
@@ -187,13 +185,10 @@ public class TelaServicos extends Tela {
         root.setAlignment(Pos.CENTER);
         root.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        // --- CORREÇÃO AQUI ---
-        // Definimos a ação para voltar à TelaInicial e passamos para o botão
         Runnable acaoVoltar = () -> new TelaInicial(super.getStage()).mostrarTela();
         BotaoVoltar.criarEPosicionar(root, acaoVoltar);
 
         Scene scene = new Scene(root);
-        // ... (lógica de responsividade existente)
         scene.widthProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal.doubleValue() < 1200) {
                 tituloPrincipal.setFont(Font.font(playfairFontTitulo.getFamily(), 52));

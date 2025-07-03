@@ -1,6 +1,6 @@
-package app; // Ou com.seuprojeto.ui, etc.
+package app;
 
-import classes.Prato; // Importa sua classe Prato
+import classes.Prato;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -8,7 +8,6 @@ import javafx.beans.property.SimpleObjectProperty;
 
 public class ItemCarrinhoUI {
     private final ObjectProperty<Prato> prato = new SimpleObjectProperty<>();
-    // Quantidade DESTE item NO CARRINHO da UI
     private final IntegerProperty quantidadeNoCarrinho = new SimpleIntegerProperty();
 
     public ItemCarrinhoUI(Prato prato, int quantidadeNoCarrinho) {

@@ -8,13 +8,11 @@ import java.util.List;
 public class PopularBancoDeDados {
 
     public void popular(EntityManager em) {
-        // --- Clientes e Funcionários ---
         Cliente cliente = new Cliente("Davi Galvão", LocalDate.of(2025, 5, 2),"SQS 203 Bl.C", "davigalvao@gmail.com", "senha123");
         Cliente cliente2 = new Cliente("Roberto Neto", LocalDate.of(2025, 5, 2),"SQS 203 Bl.C", "robertoneto@gmail.com", "senha123");
         Funcionario funcionario = new Funcionario("Jorge", LocalDate.of(2025, 5, 2), "SQN 406 Bl.A", FuncionarioCargo.CHEF, 4000.0f, LocalDate.now(), "senha123", "jorge@gmail.com");
         Funcionario funcionario2 = new Funcionario("Carlos", LocalDate.of(2025, 5, 2), "SQS 407 Bl.C", FuncionarioCargo.GARCOM, 2500.0f, LocalDate.now(), "senha123", "carlos@gmail.com");
 
-        // --- Ingredientes ---
         Ingrediente ingrediente = new Ingrediente("Puré de Batata trufado", 15.0f, 10, LocalDate.of(2025, 10, 5));
         Ingrediente ingrediente2 = new Ingrediente("Entrecote com molho mostarda", 35.0f, 10, LocalDate.of(2025, 10, 5));
         Ingrediente ingrediente3 = new Ingrediente("Alcatra com molho hollandeise", 40.0f, 10, LocalDate.of(2025, 10, 5));
@@ -26,7 +24,6 @@ public class PopularBancoDeDados {
         Ingrediente ingrediente9 = new Ingrediente("Risoto de açafrão", 20.0f, 10, LocalDate.of(2025, 10, 5));
         Ingrediente ingrediente10 = new Ingrediente("Vieiras Salteadas", 43.0f, 10, LocalDate.of(2025, 10, 5));
 
-        // --- Pratos (com listas de ingredientes separadas para maior clareza) ---
         List<Ingrediente> ingredientesMbappe = List.of(ingrediente, ingrediente2);
         Prato prato = new Prato(95.79f, ingredientesMbappe, "Kyllian Mbappé", "Uma explosão de sabor e velocidade no paladar, finalização impecável. Acompanha purê de batatas trufado.", 3);
 

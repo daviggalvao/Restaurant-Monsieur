@@ -21,7 +21,6 @@ import java.util.Optional;
 
 public class TelaFuncionarios extends Tela {
 
-    // Usaremos esta lista para que a tabela se atualize dinamicamente
     private ObservableList<Funcionario> masterData;
 
     public TelaFuncionarios(Stage stage) {
@@ -30,7 +29,6 @@ public class TelaFuncionarios extends Tela {
 
     @Override
     public Scene criarScene() {
-        // ... (código da UI inicial sem alterações)
         Font playfairFontTitulo = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 50);
         Font playfairFontSubs = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 45);
         Font interfontRodape1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 15);
@@ -59,21 +57,19 @@ public class TelaFuncionarios extends Tela {
         TableColumn<Funcionario, String> nomeColuna = new TableColumn<>(Tela.emFrances ? "Nom" : "Nome");
         nomeColuna.setCellValueFactory(new PropertyValueFactory<>("nome"));
         TableColumn<Funcionario, FuncionarioCargo> cargoColuna = new TableColumn<>(Tela.emFrances ? "Position" : "Cargo");
-        // MUDANÇA: Simplificado para usar PropertyValueFactory, já que o campo 'cargo' não é mais uma Property do JavaFX
         cargoColuna.setCellValueFactory(new PropertyValueFactory<>("cargo"));
         TableColumn<Funcionario, LocalDate> contratoColuna = new TableColumn<>(Tela.emFrances ? "Contracter" : "Contrato");
         contratoColuna.setCellValueFactory(new PropertyValueFactory<>("dataContrato"));
 
-        // --- LÓGICA DO BOTÃO "PROMOVER" ---
         TableColumn<Funcionario, Void> promoverColuna = new TableColumn<>(Tela.emFrances ? "Promouvoir" : "Promover");
         promoverColuna.setCellFactory(coluna -> new TableCell<>() {
             private final Button botao = new Button(Tela.emFrances ? "Promouvoir" : "Promover");
             {
                 botao.setOnAction(event -> {
                     Funcionario func = getTableView().getItems().get(getIndex());
-                    func.promocao(); // Modifica o objeto em memória
-                    func.salvar();   // Persiste a modificação no banco de dados
-                    getTableView().refresh(); // Atualiza a tabela na UI
+                    func.promocao();
+                    func.salvar();
+                    getTableView().refresh();
                 });
             }
             @Override
@@ -83,14 +79,12 @@ public class TelaFuncionarios extends Tela {
             }
         });
 
-        // --- LÓGICA DO BOTÃO "DEMITIR" ---
         TableColumn<Funcionario, Void> demitirColuna = new TableColumn<>(Tela.emFrances ? "Licencier" : "Demitir");
         demitirColuna.setCellFactory(coluna -> new TableCell<>() {
             private final Button botaoDemitir = new Button(Tela.emFrances ? "Licencier" : "Demitir");
             {
                 botaoDemitir.setOnAction(event -> {
                     Funcionario func = getTableView().getItems().get(getIndex());
-                    // Adiciona uma confirmação para evitar demissões acidentais
                     Alert confirmacao = new Alert(Alert.AlertType.CONFIRMATION);
                     confirmacao.setTitle("Confirmar Demissão");
                     confirmacao.setHeaderText("Tem a certeza que deseja demitir " + func.getNome() + "?");
@@ -98,9 +92,9 @@ public class TelaFuncionarios extends Tela {
 
                     Optional<ButtonType> resultado = confirmacao.showAndWait();
                     if (resultado.isPresent() && resultado.get() == ButtonType.OK) {
-                        func.demitirFuncionario(); // Altera o status para DEMITIDO
-                        func.salvar();             // Salva essa alteração no banco
-                        masterData.remove(func); // Remove da lista visível na tabela
+                        func.demitirFuncionario();
+                        func.salvar();
+                        masterData.remove(func);
                     }
                 });
             }
@@ -114,14 +108,12 @@ public class TelaFuncionarios extends Tela {
         tabela.getColumns().addAll(nomeColuna, cargoColuna, contratoColuna, promoverColuna, demitirColuna);
         tabela.getStylesheets().add(getClass().getResource("/css/table.css").toExternalForm());
 
-        // --- CARREGAMENTO INICIAL DOS DADOS ---
         List<Funcionario> funcionariosDoBanco = Funcionario.listarTodos();
         this.masterData = FXCollections.observableArrayList(funcionariosDoBanco);
 
         FilteredList<Funcionario> filteredData = new FilteredList<>(masterData, p -> true);
         tabela.setItems(filteredData);
 
-        // ... (código da barra de pesquisa sem alterações)
         pesquisaNome.textProperty().addListener((obs, oldValue, newValue) -> {
             filteredData.setPredicate(funcionario -> {
                 if (newValue == null || newValue.isEmpty()) return true;
@@ -133,8 +125,6 @@ public class TelaFuncionarios extends Tela {
             filteredData.setPredicate(p -> true);
         });
 
-        // --- LÓGICA DO FORMULÁRIO DE CONTRATAÇÃO ---
-        // ... (código de criação dos componentes do formulário sem alterações)
         VBox promocaoBox = new VBox(20, promotion, barraPesquisa, tabela);
         promocaoBox.setAlignment(Pos.TOP_CENTER);
         promocaoBox.setPadding(new Insets(0, 10, 0, 10));
@@ -173,7 +163,7 @@ public class TelaFuncionarios extends Tela {
         lblCargo.setStyle("-fx-text-fill: #FFC300;");
         ComboBox<FuncionarioCargo> cbCargo = new ComboBox<>();
         cbCargo.getItems().addAll(FuncionarioCargo.values());
-        cbCargo.getItems().remove(FuncionarioCargo.DEMITIDO); // Não se pode contratar alguém já demitido
+        cbCargo.getItems().remove(FuncionarioCargo.DEMITIDO);
         cbCargo.setPromptText(Tela.emFrances ? "Sélectionnez le poste" : "Selecione o cargo");
         cbCargo.setPrefHeight(40);
         cbCargo.setMinWidth(200);
@@ -192,7 +182,6 @@ public class TelaFuncionarios extends Tela {
         Button confirm = new Button(Tela.emFrances ? "Confirmer l'embauche" : "Confirmar Contratação");
         confirm.getStyleClass().add("button");
         confirm.setOnAction(event -> {
-            // Validar campos
             if (tfNome.getText().isEmpty() || dpData.getValue() == null || cbCargo.getValue() == null || tfEmail.getText().isEmpty() || tfSenha.getText().isEmpty()) {
                 Alert alerta = new Alert(Alert.AlertType.WARNING);
                 alerta.setTitle("Campos Obrigatórios");
@@ -201,39 +190,32 @@ public class TelaFuncionarios extends Tela {
                 return;
             }
 
-            // Criar novo funcionário com os dados do formulário
             Funcionario novoFuncionario = new Funcionario(
                     tfNome.getText(),
                     dpData.getValue(),
-                    null, // Endereço pode ser opcional ou adicionado depois
+                    null,
                     cbCargo.getValue(),
-                    0, // Salário inicial pode ser 0 ou um valor base
-                    LocalDate.now(), // Data do contrato é a data atual
+                    0,
+                    LocalDate.now(),
                     tfSenha.getText(),
                     tfEmail.getText()
             );
 
-            // Salvar no banco de dados
             novoFuncionario.salvar();
-
-            // Adicionar à lista da tabela para atualização automática da UI
             masterData.add(novoFuncionario);
 
-            // Limpar formulário
             tfNome.clear();
             dpData.setValue(null);
             cbCargo.setValue(null);
             tfEmail.clear();
             tfSenha.clear();
 
-            // Mensagem de sucesso
             Alert sucesso = new Alert(Alert.AlertType.INFORMATION);
             sucesso.setTitle("Contratação Realizada");
             sucesso.setHeaderText("Novo funcionário contratado com sucesso!");
             sucesso.showAndWait();
         });
 
-        // ... (resto do código de layout da UI sem alterações)
         VBox contratoBox = new VBox(20, register, inputs, confirm);
         contratoBox.setAlignment(Pos.TOP_CENTER);
         contratoBox.setPadding(new Insets(0, 10, 0, 10));

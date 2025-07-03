@@ -7,7 +7,7 @@ import jakarta.persistence.Persistence;
     public class JpaUtil {
 
         private static final EntityManagerFactory FACTORY =
-                Persistence.createEntityManagerFactory("mysql-jpa"); // Mesmo nome do persistence.xml
+                Persistence.createEntityManagerFactory("mysql-jpa");
 
         public static EntityManagerFactory getFactory() {
             return FACTORY;

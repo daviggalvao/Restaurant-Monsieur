@@ -20,7 +20,7 @@ import javafx.stage.Stage;
 
 import java.time.LocalDate;
 
-public class TelaReserva extends Tela { // 1. Garante que herda de Tela
+public class TelaReserva extends Tela {
 
     public TelaReserva(Stage stage) {
         super(stage);
@@ -34,8 +34,8 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
         alerta.showAndWait();
     }
 
-    @Override // 2. Implementa o método abstrato criarScene()
-    public Scene criarScene() { // MUDANÇA AQUI: de void mostrarTela() para Scene criarScene()
+    @Override
+    public Scene criarScene() {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 52);
         Font playfairFont2 = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 26);
         Font interfont1 = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"), 20);
@@ -93,7 +93,6 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
                         "-fx-text-fill: #FFC300; " +
                         "-fx-padding: 5px 0; " +
 
-                        // Estilo da caixa não selecionada
                         "-box-background-color: white; " +
                         "-box-border-color: #999999; " +
                         "-box-border-radius: 3px; " +
@@ -101,7 +100,6 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
                         "-box-background-radius: 3px; " +
                         "-box-padding: 3px; " +
 
-                        // Estilo do check mark
                         "-mark-color: #4CAF50; " +
                         "-mark-shape: 'M 5 10 L 8 13 L 13 5'; ";
 
@@ -239,23 +237,17 @@ public class TelaReserva extends Tela { // 1. Garante que herda de Tela
         root.setAlignment(Pos.CENTER);
         root.setStyle(estiloFundoVinho);
 
-        // --- INÍCIO DA MODIFICAÇÃO ---
-        // 1. Criar um StackPane para ser o novo root da cena
         StackPane stackPane = new StackPane();
-        stackPane.getChildren().add(root); // Adiciona o VBox o riginal
+        stackPane.getChildren().add(root);
 
-        // 2. Criar e posicionar o botão de voltar
         BotaoVoltar.criarEPosicionar(stackPane, () -> {
             new TelaInicial(super.getStage()).mostrarTela();
         });
 
-        // 3. Criar a cena com o StackPane
         Scene scene = new Scene(stackPane);
-        // --- FIM DA MODIFICAÇÃO ---
 
         scene.getStylesheets().add(getClass().getResource("/css/button.css").toExternalForm());
 
-        // Comandos de stage removidos conforme a estrutura
-        return scene; // Retorna a Scene
+        return scene;
     }
 }

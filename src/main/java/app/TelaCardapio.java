@@ -172,13 +172,9 @@ public class TelaCardapio extends Tela {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        // --- INÍCIO DA INTEGRAÇÃO ---
-
         StackPane layoutFinal = new StackPane();
         layoutFinal.getChildren().add(scrollPane);
 
-        // --- CORREÇÃO AQUI ---
-        // Define o fundo do StackPane raiz para evitar o retângulo branco.
         layoutFinal.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
         Runnable acaoVoltar = () -> new TelaServicos(super.getStage()).mostrarTela();
@@ -186,8 +182,6 @@ public class TelaCardapio extends Tela {
         BotaoVoltar.criarEPosicionar(layoutFinal, acaoVoltar);
 
         Scene scene = new Scene(layoutFinal);
-
-        // --- FIM DA INTEGRAÇÃO ---
 
         scene.widthProperty().addListener((obs, oldVal, newVal) -> {
             double paddingLateralBase = 120;

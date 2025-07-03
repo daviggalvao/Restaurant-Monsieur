@@ -19,7 +19,6 @@ public class TelaGerente extends Tela {
         super(stage);
     }
 
-    // ... (método createCard permanece o mesmo)
     private VBox createCard(String svgPath, String titleText, String descText, String borderColor, String textColor) {
         Font playfairFont = Font.loadFont(getClass().getResourceAsStream("/fonts/PlayfairDisplay-Bold.ttf"), 30);
         Font interfont = Font.loadFont(getClass().getResourceAsStream("/fonts/Inter-VariableFont_opsz,wght.ttf"),12);
@@ -134,7 +133,6 @@ public class TelaGerente extends Tela {
         scrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
         scrollPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
-        // --- MUDANÇAS PARA ADICIONAR O BOTÃO VOLTAR ---
         StackPane stackPane = new StackPane(scrollPane);
         stackPane.setStyle("-fx-background-color: " + estiloFundoVinho + ";");
 
@@ -143,7 +141,6 @@ public class TelaGerente extends Tela {
 
         Scene scene = new Scene(stackPane);
         scene.widthProperty().addListener((obs, oldVal, newVal) -> {
-            // ... (lógica de responsividade existente)
         });
 
         return scene;
