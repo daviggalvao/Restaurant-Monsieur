@@ -115,3 +115,50 @@ Certifique-se de ter as seguintes ferramentas instaladas:
 
 8.  **Imagem de Referência Tela Inicial:**
     ![Alt text](./TelaInicial.png)
+
+## 👥 Colaboradores
+
+Agradecemos às seguintes pessoas que contribuíram para este projeto:
+
+<br>
+
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/daviggalvao">
+        <img src="https://github.com/daviggalvao.png?size=100" width="100px;" alt="Foto de daviggalvao"/>
+        <br />
+        <sub>
+          <b>daviggalvao</b>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/RobertorNeto">
+        <img src="https://github.com/RobertorNeto.png?size=100" width="100px;" alt="Foto de RobertorNeto"/>
+        <br />
+        <sub>
+          <b>RobertorNeto</b>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Redondave">
+        <img src="https://github.com/Redondave.png?size=100" width="100px;" alt="Foto de Redondave"/>
+        <br />
+        <sub>
+          <b>Redondave</b>
+        </sub>
+      </a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/TagFernandes">
+        <img src="https://github.com/TagFernandes.png?size=100" width="100px;" alt="Foto de TagFernandes"/>
+        <br />
+        <sub>
+          <b>TagFernandes</b>
+        </sub>
+      </a>
+    </td>
+  </tr>
+</table>
