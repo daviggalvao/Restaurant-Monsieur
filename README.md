@@ -1,120 +1,131 @@
-# TP1 - Projeto de Técnicas de Programação 1
+#  Restaurante Monsieur
 
-## Visão Geral do Projeto
+> Aplicação em Java desenvolvida para a disciplina de Técnicas de Programação 1, focada em Programação Orientada a Objetos, GUI com JavaFX e persistência de dados.
 
-Este projeto, desenvolvido para a disciplina de Técnicas de Programação 1 (TP1), é uma aplicação em Java focada no aprendizado e aplicação de conceitos fundamentais de Programação Orientada a Objetos (POO). Ele também explora a criação de interfaces gráficas de usuário (GUI) utilizando JavaFX, e a persistência de dados através de tecnologias como Maven como builder, ORM (Hibernate), banco de dados MySQL e Docker para gerenciamento do ambiente de banco de dados. A senha de Administrador no programa é PSG5-0
+<p align="center">
+  <a href="#-tecnologias-utilizadas">
+    <img src="https://img.shields.io/badge/Java-17%2B-orange?style=for-the-badge&logo=openjdk" alt="Java">
+    <img src="https://img.shields.io/badge/JavaFX-SDK-blueviolet?style=for-the-badge&logo=openjfx" alt="JavaFX">
+    <img src="https://img.shields.io/badge/Maven-Builder-red?style=for-the-badge&logo=apache-maven" alt="Maven">
+    <img src="https://img.shields.io/badge/Hibernate-ORM-lightcoral?style=for-the-badge&logo=hibernate" alt="Hibernate">
+    <img src="https://img.shields.io/badge/MySQL-Database-blue?style=for-the-badge&logo=mysql" alt="MySQL">
+    <img src="https://img.shields.io/badge/Docker-Container-informational?style=for-the-badge&logo=docker" alt="Docker">
+  </a>
+</p>
 
-## Objetivos de Aprendizagem
+---
 
-* **Programação Orientada a Objetos (POO):** Compreender e aplicar os pilares da POO, como encapsulamento, herança, polimorfismo e abstração, na construção de um sistema robusto e modular.
-* **JavaFX:** Desenvolver interfaces gráficas de usuário interativas e responsivas, utilizando os recursos e componentes da biblioteca JavaFX.
-* **Maven:** Builder para facilitar gerenciamento de arquivos e dependências
-* **ORM (Hibernate):** Aprender a mapear objetos Java para tabelas de banco de dados e vice-versa, utilizando o Hibernate para simplificar a interação com o banco de dados.
-* **Banco de Dados MySQL:** Configurar e interagir com um banco de dados relacional MySQL para armazenamento e recuperação de dados da aplicação.
-* **Docker:** Utilizar Docker para empacotar e gerenciar o ambiente do banco de dados MySQL, facilitando a configuração e manipulação do mesmo em diferentes ambientes de desenvolvimento.
+## 🎯 Objetivos de Aprendizagem
 
-## Estrutura do Projeto
+-   **Programação Orientada a Objetos (POO):** Aplicar os pilares de encapsulamento, herança, polimorfismo e abstração.
+-   **JavaFX:** Desenvolver interfaces gráficas de usuário (GUI) interativas e responsivas.
+-   **Maven:** Utilizar como builder para facilitar o gerenciamento de arquivos e dependências.
+-   **ORM (Hibernate):** Mapear objetos Java para tabelas de banco de dados, simplificando a persistência de dados.
+-   **Banco de Dados MySQL:** Configurar e interagir com um banco de dados relacional.
+-   **Docker:** Gerenciar o ambiente do banco de dados MySQL de forma conteinerizada.
 
-O projeto é dividido em módulos lógicos que representam as diferentes camadas da aplicação:
+<br>
 
-* **`classes/`**: Contém as classes que representam as entidades do domínio do problema (ex: `Cliente`, `Funcionario`, `Pedido`, `Prato`, `Ingrediente`, etc.), aplicando os princípios de POO.
-* **`database/`**: Inclui a configuração do Hibernate e a lógica para interação com o banco de dados MySQL.
-* **`app/`**: Contém os arquivos nativos e controladores Java para as telas da interface gráfica desenvolvidas com JavaFX.
+<details>
+  <summary>📸 **Preview da Aplicação**</summary>
+  <br>
+  <p align="center">
+    <img src="./TelaInicial.png" alt="Imagem de Referência Tela Inicial" width="80%">
+  </p>
+</details>
 
-## Tecnologias Utilizadas
+---
 
-* **Linguagem de Programação:** Java
-* **Builder:** Maven
-* **Interface Gráfica (GUI):** JavaFX
-* **Mapeamento Objeto-Relacional (ORM):** Hibernate (com JPA)
-* **Banco de Dados:** MySQL
-* **Virtualização/Conteinerização:** Docker
+## 🏗️ Estrutura do Projeto
 
-## Como Executar o Projeto
+O projeto é dividido nas seguintes camadas lógicas:
 
-Para configurar e executar este projeto em sua máquina local, siga os passos abaixo:
+-   **`classes/`**: Contém as classes de entidade do domínio (`Cliente`, `Funcionario`, `Pedido`, etc.).
+-   **`database/`**: Inclui a configuração do Hibernate e a lógica de interação com o banco de dados.
+-   **`app/`**: Contém os arquivos nativos e controladores Java para as telas da interface gráfica desenvolvidas com JavaFX.
 
-### Pré-requisitos
+---
 
-Certifique-se de ter as seguintes ferramentas instaladas:
+## 🛠️ Tecnologias Utilizadas
 
-* **JDK (Java Development Kit) 17 ou superior**
-* **Maven** (para gerenciamento de dependências)
-* **Docker Desktop** (ou Docker Engine)
-* **Um IDE** como IntelliJ IDEA, Eclipse ou VS Code com suporte a Java e Maven.
-* **(Opcional) MySQL Workbench:** Ferramenta gráfica para gerenciar seu banco de dados MySQL.
+| Tecnologia                  | Propósito                           |
+| --------------------------- | ----------------------------------- |
+| **Java** | Linguagem de Programação (Core)     |
+| **Maven** | Builder e Gerenciador de Dependências |
+| **JavaFX** | Interface Gráfica (GUI)             |
+| **Hibernate (JPA)** | Mapeamento Objeto-Relacional (ORM)  |
+| **MySQL** | Banco de Dados Relacional           |
+| **Docker** | Virtualização/Conteinerização do DB |
 
-### Passos para Configuração e Execução
+> 🔑 **Senha de Administrador:** `PSG5-0`
+
+---
+
+## 🚀 Como Executar o Projeto
+
+<details>
+  <summary>Clique para expandir os passos de configuração e execução</summary>
+  <br>
+
+### **Pré-requisitos**
+
+-   JDK (Java Development Kit) 17 ou superior
+-   Maven
+-   Docker Desktop (ou Docker Engine)
+-   Um IDE de sua preferência (IntelliJ IDEA, Eclipse, VS Code)
+-   (Opcional) MySQL Workbench
+
+---
+
+### **Passos para Configuração e Execução**
 
 1.  **Clone o Repositório:**
     ```bash
-    git clone https://github.com/RobertorNeto/Restaurante-Monsieur
+    git clone [https://github.com/RobertorNeto/Restaurante-Monsieur](https://github.com/RobertorNeto/Restaurante-Monsieur)
     cd ./Restaurante-Monsieur
     ```
 
-2.  **Configurar o Banco de Dados com Docker:**
-    * Navegue até a raiz que contém o `Docker-Compose`.
-    * Construa e inicie o container MySQL.:
+2.  **Inicie o Banco de Dados com Docker:**
+    * Construa e inicie o container MySQL com Docker Compose:
         ```bash
         docker-compose up -d
         ```
-        *(Isso iniciará um container MySQL no Docker. As credenciais e a porta devem estar configuradas no `docker-compose.yml` ou em variáveis de ambiente.)*
 
-3.  **Configurar o Banco de Dados MySQL (Manual/Opcional):**
-    * Se você deseja uma configuração manual ou precisa de controle via interface gráfica:
-        * Baixe e instale o [MySQL Workbench](https://www.mysql.com/products/workbench/).
-        * Crie uma nova conexão no MySQL Workbench.
-        * **Usuário:** `root`
-        * **Senha:** `senha123` (ou a senha que você configurou no seu `docker-compose.yml` ou `Dockerfile`).
-        * **Porta:** Por padrão, o MySQL no Docker pode ser mapeado para a porta `3306`. Verifique a configuração do seu `docker-compose.yml`.
-        * Após conectar, crie um novo esquema (banco de dados) com o nome `restaurantemonsieur`. Você pode fazer isso executando o seguinte comando SQL na aba de query:
-            ```sql
-            CREATE DATABASE IF NOT EXISTS restaurantemonsieur;
-            ```
-        * **Importante:** No arquivo `src/main/resources/META-INF/persistence.xml`, verifique a string de conexão JDBC. Certifique-se de que a porta esteja definida como `3306` (ou a porta que seu container Docker está utilizando) e que o usuário e senha correspondam aos que você está usando (padrão esperado: `user="root"` e `password="senha123"`). Exemplo de ajuste:
-            ```xml
-            <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/restaurantemonsieur?createDatabaseIfNotExist=true"/>
-            <property name="jakarta.persistence.jdbc.user" value="root"/>
-            <property name="jakarta.persistence.jdbc.password" value="senha123"/>
-            ```
+3.  **Configure o Banco de Dados (Manual/Opcional):**
+    * **Conexão:** Use as credenciais (`root` / `senha123`) e a porta (`3306`) definidas no `docker-compose.yml` para conectar-se via MySQL Workbench.
+    * **Schema:** Crie o banco de dados se ele não existir:
+        ```sql
+        CREATE DATABASE IF NOT EXISTS restaurantemonsieur;
+        ```
+    * **Persistence.xml:** Verifique se o arquivo `src/main/resources/META-INF/persistence.xml` está com a string de conexão, usuário e senha corretos.
+        ```xml
+        <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/restaurantemonsieur?createDatabaseIfNotExist=true"/>
+        <property name="jakarta.persistence.jdbc.user" value="root"/>
+        <property name="jakarta.persistence.jdbc.password" value="senha123"/>
+        ```
+
 4.  **Configuração JavaFX para IntelliJ IDEA (Opcional):**
-    * Se você estiver usando o IntelliJ IDEA para desenvolver e executar a aplicação JavaFX, siga estes passos para configurar o SDK do JavaFX:
-        1.  Baixe o SDK do JavaFX para sua plataforma (ex: `openjfx-24.0.1_windows-x64_bin-sdk.zip`) do site oficial do OpenJFX.
-        2.  Descompacte o arquivo `.zip` em um local de sua preferência (ex: `C:\openjfx-24.0.1_windows-x64_bin-sdk\javafx-sdk-24.0.1`).
-        3.  No IntelliJ IDEA, vá em `File > Project Structure...` (ou `Ctrl+Alt+Shift+S`).
-        4.  Na janela `Project Structure`, selecione `Libraries` no painel esquerdo.
-        5.  Clique no sinal de `+` e escolha `Java`.
-        6.  Navegue até a pasta `lib` dentro do diretório onde você descompactou o SDK do JavaFX (ex: `C:\openjfx-24.0.1_windows-x64_bin-sdk\javafx-sdk-24.0.1\lib`). Selecione-a e clique em `OK`.
-        7.  Adicione essa biblioteca ao seu módulo clicando em `Add to Modules` e selecionando o módulo principal do seu projeto. Clique em `OK`.
-        8.  Agora, para executar a aplicação JavaFX, você precisará adicionar as opções de VM (Virtual Machine) à sua configuração de execução:
-            * Vá em `Run > Edit Configurations...`.
-            * Selecione sua configuração de execução da aplicação (geralmente `App` ou `Main`).
-            * No campo `VM options`, adicione a seguinte linha, ajustando o caminho para o seu SDK do JavaFX:
-                ```
-                --module-path "C:\openjfx-24.0.1_windows-x64_bin-sdk\javafx-sdk-24.0.1\lib" --add-modules javafx.controls,javafx.fxml,javafx.web
-                ```
-                *(Substitua o caminho `"C:\openjfx-24.0.1_windows-x64_bin-sdk\javafx-sdk-24.0.1\lib"` pelo caminho real para a pasta `lib` do seu SDK do JavaFX.)*
-            * Clique em `Apply` e depois em `OK`.
+    1.  Baixe o [SDK do JavaFX](https://openjfx.io/) e descompacte.
+    2.  No IntelliJ, vá em `File > Project Structure... > Libraries` e adicione a pasta `lib` do SDK do JavaFX como uma biblioteca do projeto.
+    3.  Vá em `Run > Edit Configurations...` e adicione as seguintes opções de VM, ajustando o caminho para o seu SDK:
+        ```
+        --module-path "CAMINHO_PARA_SEU_JAVAFX_SDK/lib" --add-modules javafx.controls,javafx.fxml,javafx.web
+        ```
 
-5.  **Configurar o Hibernate:**
-    * Verifique o arquivo `src/main/resources/META-INF/persistence.xml` (ou o caminho equivalente) para garantir que as configurações de conexão com o banco de dados (URL, usuário, senha) correspondam às do seu container Docker MySQL.
-
-6.  **Construir o Projeto com Maven:**
-    * No diretório raiz do projeto, execute o Maven para baixar as dependências e compilar o código:
+5.  **Construa o Projeto com Maven:**
+    * Baixe as dependências e compile o código:
         ```bash
         mvn clean install
         ```
 
-7.  **Executar a Aplicação:**
-    * Você pode executar a aplicação através do seu IDE (localizando a classe `Main` ou a classe principal da aplicação JavaFX e executando-a).
-    * Alternativamente, após a fase `install` do Maven, um JAR executável pode ter sido gerado na pasta `target`. Você pode executá-lo via linha de comando (se o `pom.xml` estiver configurado para gerar um JAR executável JavaFX):
+6.  **Execute a Aplicação:**
+    * Execute a classe principal através do seu IDE ou utilize o JAR gerado na pasta `target`:
         ```bash
         java -jar target/nome-do-seu-jar.jar
         ```
-        *(Substitua `nome-do-seu-jar.jar` pelo nome real do arquivo JAR gerado.)*
+</details>
 
-8.  **Imagem de Referência Tela Inicial:**
-    ![Alt text](./TelaInicial.png)
+---
 
 ## 👥 Colaboradores
 
@@ -122,7 +133,7 @@ Agradecemos às seguintes pessoas que contribuíram para este projeto:
 
 <br>
 
-<table>
+<table align="center">
   <tr>
     <td align="center">
       <a href="https://github.com/daviggalvao">
